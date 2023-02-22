@@ -1,4 +1,4 @@
-ThisBuild / version      := "0.1.0-SNAPSHOT"
+ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "3.2.2"
 
 lazy val root = project
@@ -12,6 +12,6 @@ lazy val certificateNumberScraper = project
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.6",
       "dev.zio" %% "zio-http" % "0.0.4",
-      "dev.zio" %% "zio-streams" % "2.0.6",
+      "dev.zio" %% "zio-streams" % "2.0.6"
     )
   )
