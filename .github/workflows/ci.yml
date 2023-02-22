@@ -1,0 +1,27 @@
+name: Continuous Integration
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: sbt
+
+      - name: Test
+        run: sbt -v +test
+
+      - name: Format
+        run: sbt -v scalafmtCheck scalafmtSbtCheck
