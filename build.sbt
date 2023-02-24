@@ -24,8 +24,8 @@ lazy val common = project
 lazy val certificateNumberScraper = project
   .settings(
     libraryDependencies ++= List(
-      "dev.zio" %% "zio" % "2.0.6",
+      "dev.zio" %% "zio" % "2.0.9",
       "dev.zio" %% "zio-http" % "0.0.4",
-      "dev.zio" %% "zio-streams" % "2.0.6"
+      "dev.zio" %% "zio-streams" % "2.0.9"
     )
   )
