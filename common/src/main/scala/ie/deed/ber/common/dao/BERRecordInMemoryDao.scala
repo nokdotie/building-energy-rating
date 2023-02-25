@@ -1,6 +1,5 @@
 package ie.deed.ber.common.dao
 
-import ie.deed.ber.common.dao.BERRecordInMemoryDao.recordsByBerNumber
 import ie.deed.ber.common.model.*
 import ie.deed.ber.common.model.BERClass.*
 import ie.deed.ber.common.model.DwellingType.*
@@ -12,15 +11,23 @@ import java.time.format.DateTimeFormatter
 
 object BERRecordInMemoryDao extends BERRecordDao {
 
-  def getByBerNumber(number: Int): Option[BERRecord] = recordsByBerNumber.get(number)
+  override def getByBerNumber(number: Int): Option[BERRecord] =
+    recordsByBerNumber.get(number)
 
-  lazy val recordsByBerNumber: Map[Int, BERRecord] = records.groupMapReduce(_.number)(record => record)((a, _) => a)
+  override def getByEirCode(eirCode: String): Option[BERRecord] =
+    recordsByEirCode.get(eirCode)
 
-  private val formatter =  DateTimeFormatter.ofPattern("dd-MM-yyy")
+  private lazy val recordsByBerNumber: Map[Int, BERRecord] =
+    records.groupMapReduce(_.number)(record => record)((a, _) => a)
+
+  private lazy val recordsByEirCode: Map[String, BERRecord] =
+    records.flatMap(record => record.address.eirCode.map((_, record))).toMap
+
+  private val formatter = DateTimeFormatter.ofPattern("dd-MM-yyy")
 
   private val records = List(
     BERRecord(
-      number = 100469675,
+        number = 100469675,
       MPRN = None,
       dateOfIssue = LocalDate.parse("20-08-2022", formatter),
       dateValidUntil = LocalDate.parse("20-08-2032", formatter),
@@ -28,18 +35,15 @@ object BERRecordInMemoryDao extends BERRecordDao {
       co2EmissionIndicator = CO2EmissionIndicator(39.72),
       typeOfRating = ExistingDwelling,
       DEAPVersion = "4.1.0",
-      address = Address("33 HAZELWOOD\nCOSMONA\nLOUGHREA\nCO. GALWAY"),
+      address = Address("33 HAZELWOOD\nCOSMONA\nLOUGHREA\nCO. GALWAY", eirCode = Some("H62XE37")),
       dwellingType = SemiDetachedHouse,
       floorArea = FloorArea(116.26),
       yearOfConstruction = 2002,
       certificate = BERCertificate(
-        certificateUrl = URL(
-          "https://ndber.seai.ie/pass/Download/PassDownloadBER.ashx?type=nas&ber=100469675&file=bercert"
-        ),
+        certificateUrl =
+          "https://ndber.seai.ie/pass/Download/PassDownloadBER.ashx?type=nas&ber=100469675&file=bercert",
         advisoryReportUrl = Option(
-          URL(
-            "https://ndber.seai.ie/pass/Download/PassDownloadBER.ashx?type=nas&ber=100469675&file=advisoryreport"
-          )
+          "https://ndber.seai.ie/pass/Download/PassDownloadBER.ashx?type=nas&ber=100469675&file=advisoryreport"
         )
       )
     ),
@@ -57,13 +61,10 @@ object BERRecordInMemoryDao extends BERRecordDao {
       floorArea = FloorArea(176.5),
       yearOfConstruction = 2005,
       certificate = BERCertificate(
-        certificateUrl = URL(
-          "https://ndber.seai.ie/pass/Download/PassDownloadBER.ashx?type=nas&ber=100469683&file=bercert"
-        ),
+        certificateUrl =
+          "https://ndber.seai.ie/pass/Download/PassDownloadBER.ashx?type=nas&ber=100469683&file=bercert",
         advisoryReportUrl = Option(
-          URL(
-            "https://ndber.seai.ie/pass/Download/PassDownloadBER.ashx?type=nas&ber=100469683&file=advisoryreport"
-          )
+          "https://ndber.seai.ie/pass/Download/PassDownloadBER.ashx?type=nas&ber=100469683&file=advisoryreport"
         )
       )
     ),
@@ -81,9 +82,8 @@ object BERRecordInMemoryDao extends BERRecordDao {
       floorArea = FloorArea(119.06),
       yearOfConstruction = 1976,
       certificate = BERCertificate(
-        certificateUrl = URL(
-          "https://ndber.seai.ie/PASS/Download/PassDownloadBER.ashx?type=nas&ber=100469758&file=bercert"
-        ),
+        certificateUrl =
+          "https://ndber.seai.ie/PASS/Download/PassDownloadBER.ashx?type=nas&ber=100469758&file=bercert",
         advisoryReportUrl = None
       )
     )

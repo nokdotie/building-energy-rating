@@ -3,6 +3,7 @@ package ie.deed.ber.common.model
 import java.net.URL
 import java.time.{LocalDate, Year}
 import java.util.Date
+import zio.json.{DeriveJsonCodec, DeriveJsonDecoder, DeriveJsonEncoder, JsonCodec, JsonDecoder, JsonEncoder}
 
 enum BERClass {
   case A1, A2, A3, B1, B2, B3, C1, C2, C3, D1, D2, E1, E2, F, G
@@ -36,7 +37,7 @@ object FloorArea {
   private val sqmToSqf: Double = 10.763914692
 }
 
-case class BERCertificate(certificateUrl: URL, advisoryReportUrl: Option[URL])
+case class BERCertificate(certificateUrl: String, advisoryReportUrl: Option[String])
 
 case class BERRecord(
     number: Int,

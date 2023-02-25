@@ -1,6 +1,5 @@
 package ie.deed.ber.common.dao
 
-import ie.deed.ber.common.dao.BERRecordInMemoryDao
 import ie.deed.ber.common.model.BERRecord
 import munit.FunSuite
 
