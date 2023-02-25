@@ -65,6 +65,6 @@ object Main extends ZIOAppDefault {
   def run = app.provide(
     ClientConfig.default,
     Client.fromConfig,
-    ZLayer.succeed(FileStore)
+    ZLayer.succeed(MongoStore)
   )
 }
