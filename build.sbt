@@ -26,6 +26,7 @@ lazy val certificateNumberScraper = project
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.9",
       "dev.zio" %% "zio-http" % "0.0.4",
-      "dev.zio" %% "zio-streams" % "2.0.9"
+      "dev.zio" %% "zio-streams" % "2.0.9",
+      "org.mongodb.scala" % "mongo-scala-driver_2.13" % "4.9.0"
     )
   )
