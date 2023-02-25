@@ -4,15 +4,13 @@ import zio.{durationInt, Schedule, ZIO, ZIOAppDefault, ZLayer}
 import zio.http.{Client, ClientConfig, Middleware}
 import zio.stream.{ZPipeline, ZStream, ZSink}
 
-val certificateNumbersStream: ZStream[Any, Nothing, Int] = {
+val certificateNumbers: ZStream[Any, Nothing, Int] = {
   val smallestCertificateNumber = 100_000_000
-  val biggestCertificateNumber = 200_000_000
 
-  ZStream.range(smallestCertificateNumber, biggestCertificateNumber)
+  ZStream.iterate(smallestCertificateNumber)(_ + 1)
 }
 
-val collectExistingCertificateNumbers
-    : ZPipeline[Client, Throwable, Int, Int] = {
+val testExistence: ZPipeline[Client, Throwable, Int, Option[Int]] = {
   val concurrency = 25
 
   ZPipeline[Int]
@@ -20,12 +18,23 @@ val collectExistingCertificateNumbers
       val url = certificateUrl(certificateNumber)
 
       resourceExists(url)
-        .map { Option.unless(_)(certificateNumber) }
+        .map { Option.when(_)(certificateNumber) }
     }
-    .collectSome
 }
 
-val upsertExistingCertificateNumbers: ZPipeline[Store, Throwable, Int, Unit] =
+val takeWhileExists: ZPipeline[Any, Throwable, Option[Int], Int] = {
+  val maxIsEmptyCount = 1_000
+
+  ZPipeline
+    .scan[Option[Int], (Int, Option[Int])]((0, None)) {
+      case ((isEmptyCount, _), None) => (isEmptyCount + 1, None)
+      case (_, certificateNumber)    => (0, certificateNumber)
+    }
+    .takeWhile { (isEmptyCount, _) => isEmptyCount <= maxIsEmptyCount }
+    .collect { case (_, Some(certificateNumber)) => certificateNumber }
+}
+
+val upsert: ZPipeline[Store, Throwable, Int, Unit] =
   ZPipeline.unwrap(Store.upsert)
 
 def certificateUrl(certificateNumber: Int): String =
@@ -44,11 +53,12 @@ def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
 }
 
 val app: ZIO[Client with Store, Throwable, Unit] =
-  certificateNumbersStream
+  certificateNumbers
     .debug("Certificate Number")
-    .via(collectExistingCertificateNumbers)
+    .via(testExistence)
+    .via(takeWhileExists)
     .debug("Certificate Number Exists")
-    .via(upsertExistingCertificateNumbers)
+    .via(upsert)
     .runDrain
 
 object Main extends ZIOAppDefault {
