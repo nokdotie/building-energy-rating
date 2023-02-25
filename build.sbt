@@ -7,19 +7,13 @@ lazy val root = project
     libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
   )
 
-lazy val api = project
-  .settings(
-    name := "api",
-    libraryDependencies += "dev.zio" %% "zio-http" % "0.0.4",
-    libraryDependencies += "io.d11" %% "zhttp" % "2.0.0-RC11",
-    libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
-  )
-
 lazy val common = project
+  .in(file("common"))
   .settings(
     name := "common",
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.9",
+      "dev.zio" %% "zio-json" % "0.4.2",
       "com.google.cloud" % "google-cloud-firestore" % "3.8.1",
       "org.scalameta" %% "munit" % "0.7.29" % Test
     )
