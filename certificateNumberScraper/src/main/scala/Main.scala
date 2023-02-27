@@ -9,12 +9,20 @@ import ie.deed.ber.common.certificate.{
   CertificateNumberStore,
   GoogleFirestoreCertificateNumberStore
 }
+import scala.util.chaining.scalaUtilChainingOps
 
-val certificateNumbers: ZStream[Any, Nothing, CertificateNumber] = {
+val certificateNumbers
+    : ZStream[CertificateNumberStore, Throwable, CertificateNumber] = {
   val smallestCertificateNumber = 100_000_000
-  ZStream
-    .iterate(smallestCertificateNumber)(_ + 1)
-    .map { CertificateNumber.apply }
+
+  CertificateNumberStore.memento
+    .map { _.fold(smallestCertificateNumber) { _.value } }
+    .pipe { ZStream.fromZIO }
+    .flatMap { certificateNumber =>
+      ZStream
+        .iterate(certificateNumber + 1)(_ + 1)
+        .map { CertificateNumber.apply }
+    }
 }
 
 val testExistence: ZPipeline[
