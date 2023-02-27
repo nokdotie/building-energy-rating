@@ -31,7 +31,7 @@ class GoogleFirestoreCertificateNumberStore(
         collectionReference <- firestore.collection(collectionPath)
         querySnapshot <- ZIO.fromFutureJava {
             collectionReference
-                .orderBy("certificate-number", Query.Direction.DESCENDING)
+                .orderBy(certificateNumberField, Query.Direction.DESCENDING)
                 .limit(1)
                 .get()
         }
