@@ -4,15 +4,25 @@ import zio.{durationInt, Schedule, Scope, ZIO, ZIOAppDefault, ZLayer}
 import zio.http.{Client, ClientConfig, Middleware}
 import zio.gcp.firestore.Firestore
 import zio.stream.{ZPipeline, ZStream, ZSink}
-import ie.deed.ber.common.certificate.{CertificateNumber, CertificateNumberStore, GoogleFirestoreCertificateNumberStore}
+import ie.deed.ber.common.certificate.{
+  CertificateNumber,
+  CertificateNumberStore,
+  GoogleFirestoreCertificateNumberStore
+}
 
 val certificateNumbers: ZStream[Any, Nothing, CertificateNumber] = {
   val smallestCertificateNumber = 100_000_000
-  ZStream.iterate(smallestCertificateNumber)(_ + 1)
+  ZStream
+    .iterate(smallestCertificateNumber)(_ + 1)
     .map { CertificateNumber.apply }
 }
 
-val testExistence: ZPipeline[Client, Throwable, CertificateNumber, (CertificateNumber, Boolean)] = {
+val testExistence: ZPipeline[
+  Client,
+  Throwable,
+  CertificateNumber,
+  (CertificateNumber, Boolean)
+] = {
   val concurrency = 25
 
   ZPipeline[CertificateNumber]
@@ -24,12 +34,19 @@ val testExistence: ZPipeline[Client, Throwable, CertificateNumber, (CertificateN
     }
 }
 
-val takeWhileExists: ZPipeline[Any, Throwable, (CertificateNumber, Boolean), CertificateNumber] = {
+val takeWhileExists: ZPipeline[
+  Any,
+  Throwable,
+  (CertificateNumber, Boolean),
+  CertificateNumber
+] = {
   val largestCertificateNumberSeen = CertificateNumber(109_500_000)
   val largestIsEmptyCountSeen = 1_000 // Not true, but more practical
 
   ZPipeline
-    .scan[(CertificateNumber, Boolean), (CertificateNumber, Boolean, Int)]((CertificateNumber(0), false, 0)) {
+    .scan[(CertificateNumber, Boolean), (CertificateNumber, Boolean, Int)](
+      (CertificateNumber(0), false, 0)
+    ) {
       case (_, (certificateNumber, true)) => (certificateNumber, true, 0)
       case ((_, _, isEmptyCount), (certificateNumber, false)) =>
         (certificateNumber, false, isEmptyCount + 1)
@@ -45,9 +62,9 @@ val takeWhileExists: ZPipeline[Any, Throwable, (CertificateNumber, Boolean), Cer
     .collect { case (certificateNumber, true, _) => certificateNumber }
 }
 
-val upsert: ZPipeline[CertificateNumberStore, Throwable, CertificateNumber, Unit] =
-  ZPipeline
-    .chunks
+val upsert
+    : ZPipeline[CertificateNumberStore, Throwable, CertificateNumber, Unit] =
+  ZPipeline.chunks
     .mapZIO { chunks => CertificateNumberStore.upsertBatch(chunks.toList) }
 
 def certificateUrl(certificateNumber: CertificateNumber): String =
