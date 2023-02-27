@@ -1,0 +1,35 @@
+name: Certificate Number Scraper
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: '0 0 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  job:
+    name: Schedule
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: sbt
+
+      - name: Setup GCP credentials
+        run: echo ${{ secrets.GCP_CREDENTIALS }} > application_credentials.json
+
+      - name: Run
+        run: sbt -v certificateNumberScraper/run
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: application_credentials.json
+          ENV: production
