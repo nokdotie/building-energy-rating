@@ -1,18 +1,21 @@
 import java.io.File
 import java.nio.file.StandardOpenOption.APPEND
-import zio.{durationInt, Schedule, ZIO, ZIOAppDefault, ZLayer}
+import zio.{durationInt, Schedule, Scope, ZIO, ZIOAppDefault, ZLayer}
 import zio.http.{Client, ClientConfig, Middleware}
+import zio.gcp.firestore.Firestore
 import zio.stream.{ZPipeline, ZStream, ZSink}
+import ie.deed.ber.common.certificate.{CertificateNumber, CertificateNumberStore, GoogleFirestoreCertificateNumberStore}
 
-val certificateNumbers: ZStream[Any, Nothing, Int] = {
+val certificateNumbers: ZStream[Any, Nothing, CertificateNumber] = {
   val smallestCertificateNumber = 100_000_000
   ZStream.iterate(smallestCertificateNumber)(_ + 1)
+    .map { CertificateNumber.apply }
 }
 
-val testExistence: ZPipeline[Client, Throwable, Int, (Int, Boolean)] = {
+val testExistence: ZPipeline[Client, Throwable, CertificateNumber, (CertificateNumber, Boolean)] = {
   val concurrency = 25
 
-  ZPipeline[Int]
+  ZPipeline[CertificateNumber]
     .mapZIOParUnordered(concurrency) { certificateNumber =>
       val url = certificateUrl(certificateNumber)
 
@@ -21,19 +24,19 @@ val testExistence: ZPipeline[Client, Throwable, Int, (Int, Boolean)] = {
     }
 }
 
-val takeWhileExists: ZPipeline[Any, Throwable, (Int, Boolean), Int] = {
-  val largestCertificateNumberSeen = 109_500_000
+val takeWhileExists: ZPipeline[Any, Throwable, (CertificateNumber, Boolean), CertificateNumber] = {
+  val largestCertificateNumberSeen = CertificateNumber(109_500_000)
   val largestIsEmptyCountSeen = 1_000 // Not true, but more practical
 
   ZPipeline
-    .scan[(Int, Boolean), (Int, Boolean, Int)]((0, false, 0)) {
+    .scan[(CertificateNumber, Boolean), (CertificateNumber, Boolean, Int)]((CertificateNumber(0), false, 0)) {
       case (_, (certificateNumber, true)) => (certificateNumber, true, 0)
       case ((_, _, isEmptyCount), (certificateNumber, false)) =>
         (certificateNumber, false, isEmptyCount + 1)
     }
     .takeWhile {
       case (certificateNumber, _, _)
-          if certificateNumber <= largestCertificateNumberSeen =>
+          if certificateNumber.value <= largestCertificateNumberSeen.value =>
         true
       case (_, _, isEmptyCount) if isEmptyCount <= largestIsEmptyCountSeen =>
         true
@@ -42,11 +45,13 @@ val takeWhileExists: ZPipeline[Any, Throwable, (Int, Boolean), Int] = {
     .collect { case (certificateNumber, true, _) => certificateNumber }
 }
 
-val upsert: ZPipeline[Store, Throwable, Int, Unit] =
-  ZPipeline.unwrap(Store.upsert)
+val upsert: ZPipeline[CertificateNumberStore, Throwable, CertificateNumber, Unit] =
+  ZPipeline
+    .chunks
+    .mapZIO { chunks => CertificateNumberStore.upsertBatch(chunks.toList) }
 
-def certificateUrl(certificateNumber: Int): String =
-  s"https://ndber.seai.ie/PASS/Download/PassDownloadBER.ashx?type=nas&file=bercert&ber=$certificateNumber"
+def certificateUrl(certificateNumber: CertificateNumber): String =
+  s"https://ndber.seai.ie/PASS/Download/PassDownloadBER.ashx?type=nas&file=bercert&ber=${certificateNumber.value}"
 
 def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
   val timeoutAfter = 2.seconds
@@ -60,19 +65,22 @@ def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
     .map { !_.startsWith("File Not found") }
 }
 
-val app: ZIO[Client with Store, Throwable, Unit] =
+val app: ZIO[Client with CertificateNumberStore, Throwable, Unit] =
   certificateNumbers
     .debug("Certificate Number")
     .via(testExistence)
     .via(takeWhileExists)
     .debug("Certificate Number Exists")
     .via(upsert)
+    .debug("Certificate Number Upserted")
     .runDrain
 
 object Main extends ZIOAppDefault {
   def run = app.provide(
-    ClientConfig.default,
     Client.fromConfig,
-    ZLayer.succeed(MongoStore)
+    ClientConfig.default,
+    Firestore.live,
+    GoogleFirestoreCertificateNumberStore.layer,
+    Scope.default
   )
 }
