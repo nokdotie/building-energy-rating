@@ -14,9 +14,10 @@ import scala.util.chaining.scalaUtilChainingOps
 val certificateNumbers
     : ZStream[CertificateNumberStore, Throwable, CertificateNumber] = {
   val smallestCertificateNumber = 100_000_000
+  val padding = 10_000
 
   CertificateNumberStore.memento
-    .map { _.fold(smallestCertificateNumber) { _.value } }
+    .map { _.fold(smallestCertificateNumber) { _.value - padding } }
     .pipe { ZStream.fromZIO }
     .flatMap { certificateNumber =>
       ZStream
