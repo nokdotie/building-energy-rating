@@ -11,26 +11,20 @@ import ie.deed.ber.common.certificate.{
 }
 import scala.util.chaining.scalaUtilChainingOps
 
-val certificateNumbers
-    : ZStream[CertificateNumberStore, Throwable, CertificateNumber] = {
+val certificateNumbers: ZStream[Any, Throwable, CertificateNumber] = {
   val smallestCertificateNumber = 100_000_000
-  val padding = 10_000
+  val biggestCertificateNumber = 110_000_000
 
-  CertificateNumberStore.memento
-    .map { _.fold(smallestCertificateNumber) { _.value - padding } }
-    .pipe { ZStream.fromZIO }
-    .flatMap { certificateNumber =>
-      ZStream
-        .iterate(certificateNumber + 1)(_ + 1)
-        .map { CertificateNumber.apply }
-    }
+  ZStream
+    .range(smallestCertificateNumber, biggestCertificateNumber)
+    .map { CertificateNumber.apply }
 }
 
-val testExistence: ZPipeline[
+val filterExists: ZPipeline[
   Client,
   Throwable,
   CertificateNumber,
-  (CertificateNumber, Boolean)
+  CertificateNumber
 ] = {
   val concurrency = 25
 
@@ -39,36 +33,9 @@ val testExistence: ZPipeline[
       val url = certificateUrl(certificateNumber)
 
       resourceExists(url)
-        .map { (certificateNumber, _) }
+        .map { Option.when(_)(certificateNumber) }
     }
-}
-
-val takeWhileExists: ZPipeline[
-  Any,
-  Throwable,
-  (CertificateNumber, Boolean),
-  CertificateNumber
-] = {
-  val largestCertificateNumberSeen = CertificateNumber(109_500_000)
-  val largestIsEmptyCountSeen = 1_000 // Not true, but more practical
-
-  ZPipeline
-    .scan[(CertificateNumber, Boolean), (CertificateNumber, Boolean, Int)](
-      (CertificateNumber(0), false, 0)
-    ) {
-      case (_, (certificateNumber, true)) => (certificateNumber, true, 0)
-      case ((_, _, isEmptyCount), (certificateNumber, false)) =>
-        (certificateNumber, false, isEmptyCount + 1)
-    }
-    .takeWhile {
-      case (certificateNumber, _, _)
-          if certificateNumber.value <= largestCertificateNumberSeen.value =>
-        true
-      case (_, _, isEmptyCount) if isEmptyCount <= largestIsEmptyCountSeen =>
-        true
-      case _ => false
-    }
-    .collect { case (certificateNumber, true, _) => certificateNumber }
+    .collectSome
 }
 
 val upsert
@@ -94,8 +61,7 @@ def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
 val app: ZIO[Client with CertificateNumberStore, Throwable, Unit] =
   certificateNumbers
     .debug("Certificate Number")
-    .via(testExistence)
-    .via(takeWhileExists)
+    .via(filterExists)
     .debug("Certificate Number Exists")
     .via(upsert)
     .debug("Certificate Number Upserted")
