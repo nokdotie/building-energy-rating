@@ -1,9 +1,7 @@
-import java.io.File
-import java.nio.file.StandardOpenOption.APPEND
-import zio.{durationInt, Random, Schedule, Scope, ZIO, ZIOAppDefault, ZLayer}
-import zio.http.{Client, ClientConfig, Middleware}
+import zio.{durationInt, Random, Schedule, Scope, ZIO, ZIOAppDefault}
+import zio.http.{Client, ClientConfig}
 import zio.gcp.firestore.Firestore
-import zio.stream.{ZPipeline, ZStream, ZSink}
+import zio.stream.{ZPipeline, ZStream}
 import ie.deed.ber.common.certificate.{
   CertificateNumber,
   CertificateNumberStore,
