@@ -1,6 +1,6 @@
 import java.io.File
 import java.nio.file.StandardOpenOption.APPEND
-import zio.{durationInt, Schedule, Scope, ZIO, ZIOAppDefault, ZLayer}
+import zio.{durationInt, Random, Schedule, Scope, ZIO, ZIOAppDefault, ZLayer}
 import zio.http.{Client, ClientConfig, Middleware}
 import zio.gcp.firestore.Firestore
 import zio.stream.{ZPipeline, ZStream, ZSink}
@@ -12,11 +12,18 @@ import ie.deed.ber.common.certificate.{
 import scala.util.chaining.scalaUtilChainingOps
 
 val certificateNumbers: ZStream[Any, Throwable, CertificateNumber] = {
-  val smallestCertificateNumber = 100_000_000
-  val biggestCertificateNumber = 110_000_000
+  val start = 100_000_000
+  val end = 110_000_000
 
-  ZStream
-    .range(smallestCertificateNumber, biggestCertificateNumber)
+  Random
+    .nextIntBetween(start, end)
+    .pipe { ZStream.fromZIO }
+    .flatMap { mid =>
+      val midEnd = ZStream.range(mid, end)
+      val startMid = ZStream.range(start, mid)
+
+      midEnd.concat(startMid)
+    }
     .map { CertificateNumber.apply }
 }
 
