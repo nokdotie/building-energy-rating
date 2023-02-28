@@ -34,3 +34,10 @@ lazy val certificateNumberScraper = project
       "dev.zio" %% "zio-streams" % "2.0.9"
     )
   )
+
+lazy val certificateScraper = project
+  .settings(
+    libraryDependencies ++= List(
+      "com.microsoft.playwright" % "playwright" % "1.30.0"
+    )
+  )
