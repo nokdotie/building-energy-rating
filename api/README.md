@@ -1,7 +1,7 @@
 ### Examples
 
-* http://localhost:8091/ber/by-number/100469675
-* http://localhost:8091/ber/by-eir-code/H62XE37
+* http://localhost:8091/ber/100469675
+* http://localhost:8091/eircode/H62XE37/ber
 ``` json
 {
   "number" : 100469675,
