@@ -8,9 +8,7 @@ lazy val root = project
   )
 
 lazy val common = project
-  .in(file("common"))
   .settings(
-    name := "common",
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.9",
       "dev.zio" %% "zio-json" % "0.4.2",
