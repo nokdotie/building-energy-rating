@@ -9,16 +9,15 @@ import BERRecordCodecs.*
 class BERApp(dao: BERRecordDao) {
 
   val http: Http[Any, Nothing, Request, Response] = Http.collect[Request] {
-    case Method.GET -> _ / "ber" / "by-number" / int(number) =>
+    case Method.GET -> _ / "ber" / int(certificateNumber) =>
       dao
-        .getByBerNumber(number)
-        .map(berRecord => Response.json(berRecord.toJsonPretty))
+        .getByBerNumber(certificateNumber)
+        .map(berRecord => Response.json(berRecord.toJson))
         .getOrElse(Response(Status.NotFound))
-    case Method.GET -> _ / "ber" / "by-eir-code" / eirCode =>
+    case Method.GET -> _ / "eircode" / eirCode / "ber" =>
       dao
         .getByEirCode(eirCode)
-        .map(berRecord => Response.json(berRecord.toJsonPretty))
+        .map(berRecord => Response.json(berRecord.toJson))
         .getOrElse(Response(Status.NotFound))
   }
-
 }
