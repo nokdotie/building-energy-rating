@@ -44,9 +44,11 @@ val filterExists: ZPipeline[
 }
 
 val upsert
-    : ZPipeline[CertificateNumberStore, Throwable, CertificateNumber, Unit] =
-  ZPipeline.chunks
+    : ZPipeline[CertificateNumberStore, Throwable, CertificateNumber, Int] =
+  ZPipeline
+    .chunks[CertificateNumber]
     .mapZIO { chunks => CertificateNumberStore.upsertBatch(chunks.toList) }
+    .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
 def certificateUrl(certificateNumber: CertificateNumber): String =
   s"https://ndber.seai.ie/PASS/Download/PassDownloadBER.ashx?type=nas&file=bercert&ber=${certificateNumber.value}"
@@ -63,6 +65,8 @@ def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
     .map { !_.startsWith("File Not found") }
 }
 
+val upsertLimit = 5_000
+
 val app: ZIO[Client with CertificateNumberStore, Throwable, Unit] =
   certificateNumbers
     .debug("Certificate Number")
@@ -70,6 +74,7 @@ val app: ZIO[Client with CertificateNumberStore, Throwable, Unit] =
     .debug("Certificate Number Exists")
     .via(upsert)
     .debug("Certificate Number Upserted")
+    .takeWhile { _ < upsertLimit }
     .runDrain
 
 object Main extends ZIOAppDefault {
