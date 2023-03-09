@@ -42,79 +42,97 @@ def getFieldValue(page: Page, fieldName: String): String = {
     .trim
 }
 
+val seaiDateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+
 val getCertificate: ZPipeline[
   ZPlaywright with Scope,
   Throwable,
   CertificateNumber,
-  (
-      String,
-      String,
-      String,
-      String,
-      String,
-      String,
-      String,
-      String,
-      String,
-      String,
-      String,
-      String
-  )
+  Certificate
 ] = {
-  val concurrency = 1
+  val concurrency = 5
 
   ZPipeline[CertificateNumber]
-    .mapZIOParUnordered(concurrency) { certificateNumber =>
+    // .mapZIOParUnordered(concurrency) { certificateNumber =>
+    .mapZIO { certificateNumber =>
       ZPlaywright.acquireRelease.flatMap { page =>
-        ZIO.attemptBlocking {
-          page.navigate("https://ndber.seai.ie/PASS/ber/search.aspx")
+        ZIO
+          .attemptBlocking {
+            page.navigate("https://ndber.seai.ie/PASS/BER/Search.aspx")
 
-          page
-            .locator(s"${idSelectorPrefix}_dfSearch_Bottomsearch")
-            .click()
+            page.waitForTimeout(1000)
 
-          page
-            .locator(s"${idSelectorPrefix}_dfSearch_txtBERNumber")
-            .fill(certificateNumber.value.toString)
+            val captcha = page.inputValue(s"${idSelectorPrefix}_captcha")
+            println(s"Captcha: $captcha")
 
-          page
-            .locator(s"${idSelectorPrefix}_dfSearch_Bottomsearch")
-            .click()
+            page.fill(
+              s"${idSelectorPrefix}_dfSearch_txtBERNumber",
+              certificateNumber.value.toString
+            )
+            page.click(s"${idSelectorPrefix}_dfSearch_Bottomsearch")
 
-          page
-            .locator(
+            page.click(
               s"${idSelectorPrefix}_gridRatings_gridview_ctl02_ViewDetails"
             )
-            .click()
 
-          val address = getFieldValue(page, "PublishingAddress")
-          val buildingEnergyRating = getFieldValue(page, "EnergyRating")
-          val co2EmissionsIndicator = getFieldValue(page, "CDERValue")
-          val dwellingType = getFieldValue(page, "DwellingType")
-          val dateOfIssue = getFieldValue(page, "DateOfIssue")
-          val dateValidUntil = getFieldValue(page, "DateValidUntil")
-          val berDecNumber = getFieldValue(page, "BERNumber")
-          val mprn = getFieldValue(page, "MPRN")
-          val yearOfConstruction = getFieldValue(page, "DateOfConstruction")
-          val typeOfRating = getFieldValue(page, "TypeOfRating")
-          val deapVersion = getFieldValue(page, "BERTool")
-          val floorArea = getFieldValue(page, "FloorArea")
+            val typeOfRating = getFieldValue(page, "TypeOfRating").pipe {
+              TypeOfRating.tryFromString
+            }.get
 
-          (
-            address,
-            buildingEnergyRating,
-            co2EmissionsIndicator,
-            dwellingType,
-            dateOfIssue,
-            dateValidUntil,
-            berDecNumber,
-            mprn,
-            yearOfConstruction,
-            typeOfRating,
-            deapVersion,
-            floorArea,
-          )
-        }
+            val issuedOn = getFieldValue(page, "DateOfIssue")
+              .pipe { LocalDate.parse(_, seaiDateTimeFormat) }
+            val validUntil = getFieldValue(page, "DateValidUntil")
+              .pipe { LocalDate.parse(_, seaiDateTimeFormat) }
+
+            val propertyMeterPointReferenceNumber =
+              getFieldValue(page, "MPRN")
+                .pipe { _.toIntOption }
+                .map { MeterPointReferenceNumber.apply }
+
+            val address = getFieldValue(page, "PublishingAddress")
+              .pipe { Address.apply }
+
+            val propertyConstructedOn =
+              getFieldValue(page, "DateOfConstruction")
+                .pipe { Year.parse }
+
+            val propertyType = getFieldValue(page, "DwellingType").pipe {
+              PropertyType.tryFromString
+            }.get
+
+            val propertyFloorArea = getFieldValue(page, "FloorArea").pipe {
+              SquareMeter.tryFromString
+            }.get
+
+            val domesticEnergyAssessmentProcedureVersion =
+              getFieldValue(page, "BERTool").pipe {
+                DomesticEnergyAssessmentProcedureVersion.tryFromString
+              }.get
+
+            val energyRating = getFieldValue(page, "EnergyRating").pipe {
+              KilowattHourPerSquareMetrePerYear.tryFromString
+            }.get
+
+            val carbonDioxideEmissionsIndicator =
+              getFieldValue(page, "CDERValue").pipe {
+                KilogramOfCarbonDioxidePerSquareMetrePerYear.tryFromString
+              }.get
+
+            Certificate(
+              certificateNumber,
+              typeOfRating,
+              issuedOn,
+              validUntil,
+              propertyMeterPointReferenceNumber,
+              address,
+              propertyConstructedOn,
+              propertyType,
+              propertyFloorArea,
+              domesticEnergyAssessmentProcedureVersion,
+              energyRating,
+              carbonDioxideEmissionsIndicator
+            )
+          }
       }
     }
 }
@@ -127,5 +145,8 @@ val app: ZIO[ZPlaywright with Scope, Throwable, Unit] =
     .runDrain
 
 object Main extends ZIOAppDefault {
-  def run = app.provide(ZPlaywright.live, Scope.default)
+  def run = app.provide(
+    ZPlaywright.live,
+    Scope.default
+  )
 }
