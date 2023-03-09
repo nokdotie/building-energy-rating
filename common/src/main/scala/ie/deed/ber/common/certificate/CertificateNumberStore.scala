@@ -13,13 +13,13 @@ import scala.collection.JavaConverters.{
 trait CertificateNumberStore {
   def upsertBatch(
       certificateNumbers: Iterable[CertificateNumber]
-  ): ZIO[Any, Throwable, Unit]
+  ): ZIO[Any, Throwable, Int]
 }
 
 object CertificateNumberStore {
   def upsertBatch(
       certificateNumbers: Iterable[CertificateNumber]
-  ): ZIO[CertificateNumberStore, Throwable, Unit] =
+  ): ZIO[CertificateNumberStore, Throwable, Int] =
     ZIO.serviceWithZIO[CertificateNumberStore](
       _.upsertBatch(certificateNumbers)
     )
@@ -31,7 +31,7 @@ class GoogleFirestoreCertificateNumberStore(
 ) extends CertificateNumberStore {
   def upsertBatch(
       certificateNumbers: Iterable[CertificateNumber]
-  ): ZIO[Any, Throwable, Unit] =
+  ): ZIO[Any, Throwable, Int] =
     for {
       collectionReference <- firestore.collection(collectionPath)
       documentReferences <- certificateNumbers
@@ -48,8 +48,8 @@ class GoogleFirestoreCertificateNumberStore(
       _ = documentReferences.foreach { (certificateNumber, documentReference) =>
         writeBatch.set(documentReference, Map.empty.asJava, SetOptions.merge)
       }
-      _ <- firestore.commit(writeBatch)
-    } yield ()
+      results <- firestore.commit(writeBatch)
+    } yield results.size
 }
 
 object GoogleFirestoreCertificateNumberStore {
