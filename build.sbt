@@ -28,6 +28,7 @@ lazy val certificateNumberScraper = project
   )
 
 lazy val certificateScraper = project
+  .dependsOn(common)
   .settings(
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.9",
