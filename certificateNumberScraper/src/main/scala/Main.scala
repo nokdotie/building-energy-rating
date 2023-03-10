@@ -79,7 +79,6 @@ val app: ZIO[Client with CertificateNumberStore, Throwable, Unit] =
 
 object Main extends ZIOAppDefault {
   def run = app
-    .fold(_ => ExitCode.failure, _ => ExitCode.success)
     .provide(
       Client.fromConfig,
       ClientConfig.default,
@@ -87,4 +86,5 @@ object Main extends ZIOAppDefault {
       GoogleFirestoreCertificateNumberStore.layer,
       Scope.default
     )
+    .fold(_ => ExitCode.failure, _ => ExitCode.success)
 }
