@@ -65,7 +65,7 @@ def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
     .map { !_.startsWith("File Not found") }
 }
 
-val upsertLimit = 5_000
+val upsertLimit = 1_000
 
 val app: ZIO[Client with CertificateNumberStore, Throwable, Unit] =
   certificateNumbers
