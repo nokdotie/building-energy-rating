@@ -1,11 +1,12 @@
 package zio.gcp.firestore
 
 import com.google.api.core.ApiFutureToListenableFuture
+import com.google.api.gax.core.FixedCredentialsProvider
 import com.google.cloud.firestore
 import com.google.cloud.firestore.{Firestore => _, _}
-
 import scala.jdk.CollectionConverters._
 import zio._
+import zio.gcp.auth.GoogleCredentials
 
 object Firestore {
 
@@ -49,9 +50,18 @@ object Firestore {
   def live: ZLayer[Scope, Throwable, Firestore] =
     ZLayer.fromZIO {
       val acquire: Task[firestore.Firestore] =
-        ZIO.attempt(
-          FirestoreOptions.getDefaultInstance().toBuilder().build().getService()
-        )
+        GoogleCredentials.applicationDefault
+          .flatMap { credentials =>
+            ZIO.attempt {
+              FirestoreOptions
+                .getDefaultInstance()
+                .toBuilder()
+                .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+                .build()
+                .getService()
+            }
+          }
+
       val release = (firestore: com.google.cloud.firestore.Firestore) =>
         ZIO.attempt(firestore.close()).orDie
 

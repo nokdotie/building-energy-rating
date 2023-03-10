@@ -25,11 +25,8 @@ jobs:
           java-version: 17
           cache: sbt
 
-      - name: Setup GCP credentials
-        run: echo ${{ secrets.GCP_CREDENTIALS }} > application_credentials.json
-
       - name: Run
         run: sbt -v certificateNumberScraper/run
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: application_credentials.json
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
           ENV: production
