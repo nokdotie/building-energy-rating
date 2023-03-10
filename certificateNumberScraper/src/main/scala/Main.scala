@@ -1,4 +1,4 @@
-import zio.{durationInt, Random, Schedule, Scope, ZIO, ZIOAppDefault}
+import zio.{durationInt, ExitCode, Random, Schedule, Scope, ZIO, ZIOAppDefault}
 import zio.http.{Client, ClientConfig}
 import zio.gcp.firestore.Firestore
 import zio.stream.{ZPipeline, ZStream}
@@ -78,11 +78,13 @@ val app: ZIO[Client with CertificateNumberStore, Throwable, Unit] =
     .runDrain
 
 object Main extends ZIOAppDefault {
-  def run = app.provide(
-    Client.fromConfig,
-    ClientConfig.default,
-    Firestore.live,
-    GoogleFirestoreCertificateNumberStore.layer,
-    Scope.default
-  )
+  def run = app
+    .fold(_ => ExitCode.failure, _ => ExitCode.success)
+    .provide(
+      Client.fromConfig,
+      ClientConfig.default,
+      Firestore.live,
+      GoogleFirestoreCertificateNumberStore.layer,
+      Scope.default
+    )
 }
