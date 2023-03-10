@@ -6,6 +6,7 @@ import com.google.cloud.firestore.{Firestore => _, _}
 
 import scala.jdk.CollectionConverters._
 import zio._
+import com.google.auth.oauth2.GoogleCredentials
 
 object Firestore {
 
@@ -50,8 +51,14 @@ object Firestore {
     ZLayer.fromZIO {
       val acquire: Task[firestore.Firestore] =
         ZIO.attempt(
-          FirestoreOptions.getDefaultInstance().toBuilder().build().getService()
+          FirestoreOptions
+            .getDefaultInstance()
+            .toBuilder()
+            .setCredentials(GoogleCredentials.getApplicationDefault())
+            .build()
+            .getService()
         )
+
       val release = (firestore: com.google.cloud.firestore.Firestore) =>
         ZIO.attempt(firestore.close()).orDie
 
