@@ -26,10 +26,10 @@ jobs:
           cache: sbt
 
       - name: Setup GCP credentials
-        run: echo "${{ secrets.GCP_CREDENTIALS }}" > application_credentials.json
+        run: echo "${{ secrets.GCP_CREDENTIALS }}" > ${{ github.workspace }}/application_credentials.json
 
       - name: Run
         run: sbt -v certificateNumberScraper/run
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: application_credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ github.workspace }}/application_credentials.json
           ENV: production
