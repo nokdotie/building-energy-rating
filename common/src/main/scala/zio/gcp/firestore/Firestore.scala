@@ -56,7 +56,9 @@ object Firestore {
               FirestoreOptions
                 .getDefaultInstance()
                 .toBuilder()
-                .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+                .setCredentialsProvider(
+                  FixedCredentialsProvider.create(credentials)
+                )
                 .build()
                 .getService()
             }

@@ -4,10 +4,11 @@ import zio.gcp.firestore.Firestore
 import zio.stream.{ZPipeline, ZStream}
 import ie.deed.ber.common.certificate.{
   CertificateNumber,
-  CertificateNumberStore,
-  GoogleFirestoreCertificateNumberStore
+  CertificateStore,
+  GoogleFirestoreCertificateStore
 }
 import scala.util.chaining.scalaUtilChainingOps
+import ie.deed.ber.common.certificate.Certificate
 
 val certificateNumbers: ZStream[Any, Throwable, CertificateNumber] = {
   val start = 100_000_000
@@ -43,11 +44,11 @@ val filterExists: ZPipeline[
     .collectSome
 }
 
-val upsert
-    : ZPipeline[CertificateNumberStore, Throwable, CertificateNumber, Int] =
+val upsert: ZPipeline[CertificateStore, Throwable, CertificateNumber, Int] =
   ZPipeline
-    .chunks[CertificateNumber]
-    .mapZIO { chunks => CertificateNumberStore.upsertBatch(chunks.toList) }
+    .map { Certificate(_, None) }
+    .chunks
+    .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList) }
     .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
 def certificateUrl(certificateNumber: CertificateNumber): String =
@@ -67,7 +68,7 @@ def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
 
 val upsertLimit = 1_000
 
-val app: ZIO[Client with CertificateNumberStore, Throwable, Unit] =
+val app: ZIO[Client with CertificateStore, Throwable, Unit] =
   certificateNumbers
     .debug("Certificate Number")
     .via(filterExists)
@@ -82,7 +83,7 @@ object Main extends ZIOAppDefault {
     Client.fromConfig,
     ClientConfig.default,
     Firestore.live,
-    GoogleFirestoreCertificateNumberStore.layer,
+    GoogleFirestoreCertificateStore.layer,
     Scope.default
   )
 }
