@@ -1,10 +1,14 @@
 import com.microsoft.playwright._
 import ie.deed.ber.common.certificate.{
+  Certificate,
   CertificateNumber,
   CertificateStore,
   GoogleFirestoreCertificateStore
 }
-import ie.deed.ber.common.certificate.seaiie._
+import ie.deed.ber.common.certificate.seaiie.{
+  Certificate => SeaiIeCertificate,
+  _
+}
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, Year}
 import scala.util.chaining.scalaUtilChainingOps
@@ -106,27 +110,43 @@ val getCertificate: ZPipeline[
               }.get
 
             Certificate(
-              typeOfRating,
-              issuedOn,
-              validUntil,
-              address,
-              propertyConstructedOn,
-              propertyType,
-              propertyFloorArea,
-              domesticEnergyAssessmentProcedureVersion,
-              energyRating,
-              carbonDioxideEmissionsIndicator
+              certificateNumber,
+              Some(
+                SeaiIeCertificate(
+                  typeOfRating,
+                  issuedOn,
+                  validUntil,
+                  address,
+                  propertyConstructedOn,
+                  propertyType,
+                  propertyFloorArea,
+                  domesticEnergyAssessmentProcedureVersion,
+                  energyRating,
+                  carbonDioxideEmissionsIndicator
+                )
+              )
             )
           }
       }
     }
 }
 
+val upsert: ZPipeline[CertificateStore, Throwable, Certificate, Int] =
+  ZPipeline
+    .chunks[Certificate]
+    .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList) }
+    .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
+
+val upsertLimit = 1_000
+
 val app: ZIO[CertificateStore with ZPlaywright with Scope, Throwable, Unit] =
   certificateNumbers
     .debug("Certificate Number")
     .via(getCertificate)
     .debug("Certificate")
+    .via(upsert)
+    .debug("Certificate Number Upserted")
+    .takeWhile { _ < upsertLimit }
     .runDrain
 
 object Main extends ZIOAppDefault {
