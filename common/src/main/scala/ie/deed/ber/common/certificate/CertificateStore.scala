@@ -44,13 +44,13 @@ class GoogleFirestoreCertificateStore(
           "type-of-rating" -> seaiie.typeOfRating.toString,
           "issued-on" -> seaiie.issuedOn.toString,
           "valid-until" -> seaiie.validUntil.toString,
-          "property-address" -> seaiie.propertyAddress.value.toString,
+          "property-address" -> seaiie.propertyAddress.value,
           "property-constructed-on" -> seaiie.propertyConstructedOn.toString,
           "property-type" -> seaiie.propertyType.toString,
-          "property-floor-area" -> seaiie.propertyFloorArea.value.toString,
+          "property-floor-area-in-m2" -> seaiie.propertyFloorArea.value.toString,
           "domestic-energy-assessment-procedure-version" -> seaiie.domesticEnergyAssessmentProcedureVersion.toString,
-          "energy-rating" -> seaiie.energyRating.value.toString,
-          "carbon-dioxide-emissions-indicator" -> seaiie.carbonDioxideEmissionsIndicator.value.toString
+          "energy-rating-in-kWh/m2/yr" -> seaiie.energyRating.value.toString,
+          "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr" -> seaiie.carbonDioxideEmissionsIndicator.value.toString
         ).asJava
       }
     ).asJava
