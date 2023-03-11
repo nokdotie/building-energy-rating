@@ -58,24 +58,30 @@ class GoogleFirestoreCertificateStore(
   def upsertBatch(
       certificates: Iterable[Certificate]
   ): ZIO[Any, Throwable, Int] =
-    for {
-      collectionReference <- firestore.collection(collectionPath)
-      documentReferences <- certificates
-        .map { certificate =>
-          firestore
-            .document(
-              collectionReference,
-              DocumentPath(certificate.number.value.toString)
-            )
-            .map { (certificate, _) }
+    if (certificates.isEmpty) ZIO.succeed(0)
+    else
+      for {
+        collectionReference <- firestore.collection(collectionPath)
+        documentReferences <- certificates
+          .map { certificate =>
+            firestore
+              .document(
+                collectionReference,
+                DocumentPath(certificate.number.value.toString)
+              )
+              .map { (certificate, _) }
+          }
+          .pipe { ZIO.collectAll }
+        writeBatch <- firestore.batch
+        _ = documentReferences.foreach { (certificate, documentReference) =>
+          writeBatch.set(
+            documentReference,
+            toMap(certificate),
+            SetOptions.merge
+          )
         }
-        .pipe { ZIO.collectAll }
-      writeBatch <- firestore.batch
-      _ = documentReferences.foreach { (certificate, documentReference) =>
-        writeBatch.set(documentReference, toMap(certificate), SetOptions.merge)
-      }
-      results <- firestore.commit(writeBatch)
-    } yield results.size
+        results <- firestore.commit(writeBatch)
+      } yield results.size
 
   val streamMissingSeaiIe: ZStream[Any, Throwable, CertificateNumber] = {
     val limit = 100
