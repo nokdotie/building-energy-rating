@@ -47,8 +47,8 @@ val filterExists: ZPipeline[
 val upsert: ZPipeline[CertificateStore, Throwable, CertificateNumber, Int] =
   ZPipeline
     .map { Certificate(_, None) }
-    .chunks
-    .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList) }
+    .grouped(100)
+    .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList).retryN(3) }
     .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
 def certificateUrl(certificateNumber: CertificateNumber): String =
