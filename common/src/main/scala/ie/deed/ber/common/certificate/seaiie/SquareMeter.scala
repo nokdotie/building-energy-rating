@@ -1,6 +1,7 @@
 package ie.deed.ber.common.certificate.seaiie
 
 import scala.util.Try
+import zio.json._
 
 final case class SquareMeter(value: Float) extends AnyVal
 object SquareMeter {
@@ -12,4 +13,7 @@ object SquareMeter {
       .map { SquareMeter.apply }
       .toRight(Exception(s"Invalid property floor area: $value"))
       .toTry
+
+  implicit val encoder: JsonEncoder[SquareMeter] =
+    JsonEncoder[Float].contramap(_.value)
 }
