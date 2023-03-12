@@ -8,5 +8,3 @@ trait BERRecordDao {
 
   def getByEirCode(eirCode: String): Option[BERRecord]
 }
-
-

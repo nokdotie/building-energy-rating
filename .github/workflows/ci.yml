@@ -23,4 +23,4 @@ jobs:
         run: sbt -v +test
 
       - name: Format
-        run: sbt -v scalafmtCheck scalafmtSbtCheck
+        run: sbt -v scalafmtCheckAll scalafmtSbtCheck

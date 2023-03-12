@@ -27,7 +27,7 @@ object BERRecordInMemoryDao extends BERRecordDao {
 
   private val records = List(
     BERRecord(
-        number = 100469675,
+      number = 100469675,
       MPRN = None,
       dateOfIssue = LocalDate.parse("20-08-2022", formatter),
       dateValidUntil = LocalDate.parse("20-08-2032", formatter),
@@ -35,7 +35,10 @@ object BERRecordInMemoryDao extends BERRecordDao {
       co2EmissionIndicator = CO2EmissionIndicator(39.72),
       typeOfRating = ExistingDwelling,
       DEAPVersion = "4.1.0",
-      address = Address("33 HAZELWOOD\nCOSMONA\nLOUGHREA\nCO. GALWAY", eirCode = Some("H62XE37")),
+      address = Address(
+        "33 HAZELWOOD\nCOSMONA\nLOUGHREA\nCO. GALWAY",
+        eirCode = Some("H62XE37")
+      ),
       dwellingType = SemiDetachedHouse,
       floorArea = FloorArea(116.26),
       yearOfConstruction = 2002,

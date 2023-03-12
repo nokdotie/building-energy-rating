@@ -3,9 +3,7 @@ ThisBuild / scalaVersion := "3.2.2"
 
 lazy val root = project
   .in(file("."))
-  .settings(
-    libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test
-  )
+  .aggregate(common, certificateNumberScraper, certificateScraper)
 
 lazy val common = project
   .settings(
