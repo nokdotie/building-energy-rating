@@ -37,4 +37,4 @@ jobs:
           echo "IMAGE=$(sbt -batch -error 'print api:dockerAlias' | head -c -4)" >> $GITHUB_ENV
 
       - name: Deploy docker image
-        run: gcloud run deploy website --image "${{ env.IMAGE }}" --region europe-west1
+        run: gcloud run deploy building-energy-rating --image "${{ env.IMAGE }}" --region europe-west1
