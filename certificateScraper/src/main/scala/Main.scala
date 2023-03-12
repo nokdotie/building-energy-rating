@@ -135,7 +135,7 @@ val getCertificate: ZPipeline[
 
 val upsert: ZPipeline[CertificateStore, Throwable, Certificate, Int] =
   ZPipeline
-    .grouped[Certificate](100)
+    .groupedWithin[Certificate](100, 10.seconds)
     .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList).retryN(3) }
     .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
