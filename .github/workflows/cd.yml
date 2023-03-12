@@ -34,7 +34,7 @@ jobs:
       - name: Build and push docker image
         run: |
           sbt -v api/docker:publish
-          echo "IMAGE=$(sbt -batch -error 'print api:dockerAlias' | head -c -4)" >> $GITHUB_ENV
+          echo "IMAGE=$(sbt -batch -error 'print api/dockerAlias' | head -c -4)" >> $GITHUB_ENV
 
       - name: Deploy docker image
         run: gcloud run deploy building-energy-rating --image "${{ env.IMAGE }}" --region europe-west1
