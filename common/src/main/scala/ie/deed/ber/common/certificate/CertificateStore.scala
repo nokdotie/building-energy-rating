@@ -1,35 +1,40 @@
 package ie.deed.ber.common.certificate
 
 import com.google.cloud.firestore._
+import java.time.{LocalDate, Year}
+import ie.deed.ber.common.certificate.seaiie.{
+  Certificate => SeaiIeCertificate,
+  _
+}
+import scala.util.Try
+import scala.util.chaining.scalaUtilChainingOps
+import scala.collection.JavaConverters._
 import zio._
 import zio.stream.ZStream
 import zio.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
-import scala.util.chaining.scalaUtilChainingOps
-import scala.collection.JavaConverters.{
-  asScalaBufferConverter,
-  mapAsJavaMapConverter,
-  mapAsScalaMapConverter
-}
 
 trait CertificateStore {
-  def upsertBatch(
-      certificates: Iterable[Certificate]
-  ): ZIO[Any, Throwable, Int]
+  def upsertBatch(certificates: Iterable[Certificate]): ZIO[Any, Throwable, Int]
 
   val streamMissingSeaiIe: ZStream[Any, Throwable, CertificateNumber]
+
+  def getById(id: CertificateNumber): ZIO[Any, Throwable, Option[Certificate]]
 }
 
 object CertificateStore {
   def upsertBatch(
       certificates: Iterable[Certificate]
   ): ZIO[CertificateStore, Throwable, Int] =
-    ZIO.serviceWithZIO[CertificateStore](
-      _.upsertBatch(certificates)
-    )
+    ZIO.serviceWithZIO[CertificateStore] { _.upsertBatch(certificates) }
 
   val streamMissingSeaiIe
       : ZStream[CertificateStore, Throwable, CertificateNumber] =
     ZStream.serviceWithStream[CertificateStore](_.streamMissingSeaiIe)
+
+  def getById(
+      id: CertificateNumber
+  ): ZIO[CertificateStore, Throwable, Option[Certificate]] =
+    ZIO.serviceWithZIO[CertificateStore] { _.getById(id) }
 }
 
 class GoogleFirestoreCertificateStore(
@@ -39,7 +44,7 @@ class GoogleFirestoreCertificateStore(
   private val seaiIeField = "seai-ie"
   private def toMap(certificate: Certificate): java.util.Map[String, Any] =
     Map(
-      "seai-ie" -> certificate.`seai.ie`.fold(null) { seaiie =>
+      seaiIeField -> certificate.`seai.ie`.fold(null) { seaiie =>
         Map(
           "type-of-rating" -> seaiie.typeOfRating.toString,
           "issued-on" -> seaiie.issuedOn.toString,
@@ -54,6 +59,88 @@ class GoogleFirestoreCertificateStore(
         ).asJava
       }
     ).asJava
+
+  private def fromMap(
+      id: CertificateNumber,
+      map: java.util.Map[String, Any]
+  ): Certificate =
+    Certificate(
+      id,
+      (for {
+        seaiIeField <- Try {
+          map.get(seaiIeField).asInstanceOf[java.util.Map[String, Any]]
+        }
+        typeOfRating <- Try {
+          seaiIeField.get("type-of-rating").asInstanceOf[String].pipe {
+            TypeOfRating.valueOf
+          }
+        }
+        issuedOn <- Try {
+          seaiIeField.get("issued-on").asInstanceOf[String].pipe {
+            LocalDate.parse
+          }
+        }
+        validUntil <- Try {
+          seaiIeField.get("valid-until").asInstanceOf[String].pipe {
+            LocalDate.parse
+          }
+        }
+        propertyAddress <- Try {
+          seaiIeField.get("property-address").asInstanceOf[String].pipe {
+            Address.apply
+          }
+        }
+        propertyConstructedOn <- Try {
+          seaiIeField.get("property-constructed-on").asInstanceOf[String].pipe {
+            Year.parse
+          }
+        }
+        propertyType <- Try {
+          seaiIeField.get("property-type").asInstanceOf[String].pipe {
+            PropertyType.valueOf
+          }
+        }
+        propertyFloorArea <- Try {
+          seaiIeField
+            .get("property-floor-area-in-m2")
+            .asInstanceOf[String]
+            .pipe { _.toFloat }
+            .pipe { SquareMeter(_) }
+        }
+        domesticEnergyAssessmentProcedureVersion <- Try {
+          seaiIeField
+            .get("domestic-energy-assessment-procedure-version")
+            .asInstanceOf[String]
+            .pipe { DomesticEnergyAssessmentProcedureVersion.valueOf }
+        }
+        energyRating <- Try {
+          seaiIeField
+            .get("energy-rating-in-kWh/m2/yr")
+            .asInstanceOf[String]
+            .pipe { _.toFloat }
+            .pipe { KilowattHourPerSquareMetrePerYear.apply }
+        }
+        carbonDioxideEmissionsIndicator <- Try {
+          seaiIeField
+            .get("carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr")
+            .asInstanceOf[String]
+            .pipe { _.toFloat }
+            .pipe { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
+        }
+      } yield SeaiIeCertificate(
+        typeOfRating = typeOfRating,
+        issuedOn = issuedOn,
+        validUntil = validUntil,
+        propertyAddress = propertyAddress,
+        propertyConstructedOn = propertyConstructedOn,
+        propertyType = propertyType,
+        propertyFloorArea = propertyFloorArea,
+        domesticEnergyAssessmentProcedureVersion =
+          domesticEnergyAssessmentProcedureVersion,
+        energyRating = energyRating,
+        carbonDioxideEmissionsIndicator = carbonDioxideEmissionsIndicator
+      )).toOption
+    )
 
   def upsertBatch(
       certificates: Iterable[Certificate]
@@ -107,6 +194,19 @@ class GoogleFirestoreCertificateStore(
       .takeWhile { _.nonEmpty }
       .flattenIterables
   }
+
+  def getById(id: CertificateNumber): ZIO[Any, Throwable, Option[Certificate]] =
+    firestore
+      .collection(collectionPath)
+      .flatMap { collectionReference =>
+        val query = collectionReference.document(id.value.toString())
+        ZIO.fromFutureJava { query.get() }
+      }
+      .map { snapshot =>
+        Option.when(snapshot.exists) {
+          snapshot.getData.pipe { fromMap(id, _) }
+        }
+      }
 }
 
 object GoogleFirestoreCertificateStore {
