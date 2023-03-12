@@ -1,6 +1,5 @@
 package ie.deed.ber.api
 
-import ie.deed.ber.common.dao.BERRecordInMemoryDao
 import ie.deed.ber.common.certificate.GoogleFirestoreCertificateStore
 import zio._
 import zio.http._
