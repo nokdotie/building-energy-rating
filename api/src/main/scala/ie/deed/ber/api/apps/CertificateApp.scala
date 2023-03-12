@@ -17,7 +17,7 @@ object CertificateApp {
                 _ => Response(Status.InternalServerError),
             {
                 case None => Response(Status.NotFound)
-                case Some(certificate) => Response.json(certificate.toString)
+                case Some(certificate) => Response.json(certificate.toJson)
             })
   }
 }

@@ -1,6 +1,7 @@
 package ie.deed.ber.common.certificate.seaiie
 
 import scala.util.{Try, Failure, Success}
+import zio.json._
 
 enum TypeOfRating {
   case NewDwelling
@@ -15,4 +16,7 @@ object TypeOfRating {
     case "Existing Dwelling" => Success(ExistingDwelling)
     case unknown => Failure(Exception(s"Unknown type of rating: $unknown"))
   }
+
+  implicit val encoder: JsonEncoder[TypeOfRating] =
+    JsonEncoder[String].contramap(_.toString)
 }

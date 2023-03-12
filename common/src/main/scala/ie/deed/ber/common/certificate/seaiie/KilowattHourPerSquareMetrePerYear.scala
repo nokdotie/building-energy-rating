@@ -1,6 +1,7 @@
 package ie.deed.ber.common.certificate.seaiie
 
 import scala.util.Try
+import zio.json._
 
 final case class KilowattHourPerSquareMetrePerYear(value: Float) extends AnyVal
 object KilowattHourPerSquareMetrePerYear {
@@ -14,4 +15,7 @@ object KilowattHourPerSquareMetrePerYear {
         Exception(s"Invalid kilowatt hour per square metre per year: $value")
       )
       .toTry
+
+  implicit val encoder: JsonEncoder[KilowattHourPerSquareMetrePerYear] =
+    JsonEncoder[Float].contramap(_.value)
 }
