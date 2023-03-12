@@ -1,6 +1,6 @@
 package ie.deed.ber.common.certificate.seaiie
 
-import scala.util.{Try, Failure,Success}
+import scala.util.{Try, Failure, Success}
 
 enum TypeOfRating {
   case NewDwelling
@@ -8,11 +8,11 @@ enum TypeOfRating {
 }
 
 object TypeOfRating {
-    import TypeOfRating._
+  import TypeOfRating._
 
-    def tryFromString(value: String): Try[TypeOfRating] = value match {
-        case "New Dwelling" => Success(NewDwelling)
-        case "Existing Dwelling" => Success(ExistingDwelling)
-        case unknown => Failure(Exception(s"Unknown type of rating: $unknown"))
-    }
+  def tryFromString(value: String): Try[TypeOfRating] = value match {
+    case "New Dwelling"      => Success(NewDwelling)
+    case "Existing Dwelling" => Success(ExistingDwelling)
+    case unknown => Failure(Exception(s"Unknown type of rating: $unknown"))
+  }
 }
