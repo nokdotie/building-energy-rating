@@ -1,0 +1,40 @@
+name: Continuous Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  cd:
+    name: Continuous Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: sbt
+
+      - name: Login to GCP
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: deed-ie
+          service_account_email: ${{ secrets.GCP_EMAIL }}
+          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: Login to GCP docker
+        run: gcloud auth configure-docker --quiet
+
+      - name: Build and push docker image
+        run: |
+          sbt -v api/docker:publish
+          echo "IMAGE=$(sbt -batch -error 'print api:dockerAlias' | head -c -4)" >> $GITHUB_ENV
+
+      - name: Deploy docker image
+        run: gcloud run deploy website --image "${{ env.IMAGE }}" --region europe-west1
