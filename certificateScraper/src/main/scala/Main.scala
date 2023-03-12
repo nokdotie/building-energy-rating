@@ -47,94 +47,96 @@ val getCertificate: ZPipeline[
   Certificate
 ] = {
   val concurrency = 5
+  val timeoutInMilliseconds = 3000
 
   ZPipeline[CertificateNumber]
-    // .mapZIOParUnordered(concurrency) { certificateNumber =>
-    .mapZIO { certificateNumber =>
-      ZPlaywright.acquireRelease.flatMap { page =>
-        ZIO
-          .attemptBlocking {
-            page.navigate("https://ndber.seai.ie/PASS/BER/Search.aspx")
+    .mapZIOParUnordered(concurrency) { certificateNumber =>
+      ZPlaywright.acquireRelease
+        .flatMap { page =>
+          ZIO
+            .attemptBlocking {
+              page.navigate("https://ndber.seai.ie/PASS/BER/Search.aspx")
 
-            page.waitForTimeout(1000)
+              page.fill(
+                s"${idSelectorPrefix}_dfSearch_txtBERNumber",
+                certificateNumber.value.toString,
+                Page.FillOptions().setTimeout(timeoutInMilliseconds)
+              )
+              page.click(
+                s"${idSelectorPrefix}_dfSearch_Bottomsearch",
+                Page.ClickOptions().setTimeout(timeoutInMilliseconds)
+              )
 
-            val captcha = page.inputValue(s"${idSelectorPrefix}_captcha")
-            println(s"Captcha: $captcha")
+              page.click(
+                s"${idSelectorPrefix}_gridRatings_gridview_ctl02_ViewDetails",
+                Page.ClickOptions().setTimeout(timeoutInMilliseconds)
+              )
 
-            page.fill(
-              s"${idSelectorPrefix}_dfSearch_txtBERNumber",
-              certificateNumber.value.toString
-            )
-            page.click(s"${idSelectorPrefix}_dfSearch_Bottomsearch")
-
-            page.click(
-              s"${idSelectorPrefix}_gridRatings_gridview_ctl02_ViewDetails"
-            )
-
-            val typeOfRating = getFieldValue(page, "TypeOfRating").pipe {
-              TypeOfRating.tryFromString
-            }.get
-
-            val issuedOn = getFieldValue(page, "DateOfIssue")
-              .pipe { LocalDate.parse(_, seaiDateTimeFormat) }
-            val validUntil = getFieldValue(page, "DateValidUntil")
-              .pipe { LocalDate.parse(_, seaiDateTimeFormat) }
-
-            val address = getFieldValue(page, "PublishingAddress")
-              .pipe { Address.apply }
-
-            val propertyConstructedOn =
-              getFieldValue(page, "DateOfConstruction")
-                .pipe { Year.parse }
-
-            val propertyType = getFieldValue(page, "DwellingType").pipe {
-              PropertyType.tryFromString
-            }.get
-
-            val propertyFloorArea = getFieldValue(page, "FloorArea").pipe {
-              SquareMeter.tryFromString
-            }.get
-
-            val domesticEnergyAssessmentProcedureVersion =
-              getFieldValue(page, "BERTool").pipe {
-                DomesticEnergyAssessmentProcedureVersion.tryFromString
+              val typeOfRating = getFieldValue(page, "TypeOfRating").pipe {
+                TypeOfRating.tryFromString
               }.get
 
-            val energyRating = getFieldValue(page, "EnergyRating").pipe {
-              KilowattHourPerSquareMetrePerYear.tryFromString
-            }.get
+              val issuedOn = getFieldValue(page, "DateOfIssue")
+                .pipe { LocalDate.parse(_, seaiDateTimeFormat) }
+              val validUntil = getFieldValue(page, "DateValidUntil")
+                .pipe { LocalDate.parse(_, seaiDateTimeFormat) }
 
-            val carbonDioxideEmissionsIndicator =
-              getFieldValue(page, "CDERValue").pipe {
-                KilogramOfCarbonDioxidePerSquareMetrePerYear.tryFromString
+              val address = getFieldValue(page, "PublishingAddress")
+                .pipe { Address.apply }
+
+              val propertyConstructedOn =
+                getFieldValue(page, "DateOfConstruction")
+                  .pipe { Year.parse }
+
+              val propertyType = getFieldValue(page, "DwellingType").pipe {
+                PropertyType.tryFromString
               }.get
 
-            Certificate(
-              certificateNumber,
-              Some(
-                SeaiIeCertificate(
-                  typeOfRating,
-                  issuedOn,
-                  validUntil,
-                  address,
-                  propertyConstructedOn,
-                  propertyType,
-                  propertyFloorArea,
-                  domesticEnergyAssessmentProcedureVersion,
-                  energyRating,
-                  carbonDioxideEmissionsIndicator
+              val propertyFloorArea = getFieldValue(page, "FloorArea").pipe {
+                SquareMeter.tryFromString
+              }.get
+
+              val domesticEnergyAssessmentProcedureVersion =
+                getFieldValue(page, "BERTool").pipe {
+                  DomesticEnergyAssessmentProcedureVersion.tryFromString
+                }.get
+
+              val energyRating = getFieldValue(page, "EnergyRating").pipe {
+                KilowattHourPerSquareMetrePerYear.tryFromString
+              }.get
+
+              val carbonDioxideEmissionsIndicator =
+                getFieldValue(page, "CDERValue").pipe {
+                  KilogramOfCarbonDioxidePerSquareMetrePerYear.tryFromString
+                }.get
+
+              Certificate(
+                certificateNumber,
+                Some(
+                  SeaiIeCertificate(
+                    typeOfRating,
+                    issuedOn,
+                    validUntil,
+                    address,
+                    propertyConstructedOn,
+                    propertyType,
+                    propertyFloorArea,
+                    domesticEnergyAssessmentProcedureVersion,
+                    energyRating,
+                    carbonDioxideEmissionsIndicator
+                  )
                 )
               )
-            )
-          }
-      }
+            }
+        }
+        .retryN(3)
     }
 }
 
 val upsert: ZPipeline[CertificateStore, Throwable, Certificate, Int] =
   ZPipeline
-    .chunks[Certificate]
-    .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList) }
+    .grouped[Certificate](100)
+    .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList).retryN(3) }
     .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
 val upsertLimit = 1_000
