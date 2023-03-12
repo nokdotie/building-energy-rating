@@ -19,19 +19,21 @@ object MainApp extends ZIOAppDefault {
 
   private val routes =
     apps.CertificateApp.http ++
-    TokenGenerationApp.apply()
+      TokenGenerationApp.apply()
 
   private val app =
     routes // @@ Middleware.debug @@ Middleware.cors(corsConfig) @@ Middleware.csrfGenerate()
 
   override val run = for {
     _ <- Console.printLine(s"Starting server on http://localhost:8080")
-    _ <- Server.serve(app).provide(
-      Server.default,
-    Firestore.live,
-    GoogleFirestoreCertificateStore.layer,
-    Scope.default,
-    )
+    _ <- Server
+      .serve(app)
+      .provide(
+        Server.default,
+        Firestore.live,
+        GoogleFirestoreCertificateStore.layer,
+        Scope.default
+      )
   } yield ()
 
 }
