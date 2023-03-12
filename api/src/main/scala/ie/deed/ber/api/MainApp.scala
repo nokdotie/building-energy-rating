@@ -1,10 +1,10 @@
 package ie.deed.ber.api
 
 import ie.deed.ber.common.dao.BERRecordInMemoryDao
-import zio.*
-import zhttp.http.*
-import zhttp.http.middleware.Cors.CorsConfig
-import zhttp.service.Server
+import zio._
+import zio.http._
+import zio.http.model.Method
+import zio.http.middleware.Cors.CorsConfig
 
 object MainApp extends ZIOAppDefault {
 
@@ -16,17 +16,15 @@ object MainApp extends ZIOAppDefault {
     allowedMethods = Some(Set(Method.GET, Method.POST))
   )
 
-  private val port = 8091
-  private val routes = TokenGenerationApp.apply() ++ new BERApp(BERRecordInMemoryDao).http
-    
-  private val routesWithMiddleware =
-    routes @@ Middleware.debug @@ Middleware.cors(corsConfig) @@ Middleware
-      .csrfGenerate()
+  private val routes =
+    TokenGenerationApp.apply() ++ BERApp(BERRecordInMemoryDao).http
 
-  private val httpServer = for {
-    _ <- Console.printLine(s"Starting server on http://localhost:$port")
-    _ <- Server.start(port, routesWithMiddleware)
-  } yield ExitCode.success
+  private val app =
+    routes // @@ Middleware.debug @@ Middleware.cors(corsConfig) @@ Middleware.csrfGenerate()
 
-  override def run: ZIO[Any, Any, Any] = httpServer
+  override val run = for {
+    _ <- Console.printLine(s"Starting server on http://localhost:8080")
+    _ <- Server.serve(app).provide(Server.default)
+  } yield ()
+
 }

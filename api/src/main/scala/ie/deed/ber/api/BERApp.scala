@@ -2,7 +2,8 @@ package ie.deed.ber.api
 
 import ie.deed.ber.common.dao.BERRecordDao
 import ie.deed.ber.common.model.*
-import zhttp.http.*
+import zio.http.*
+import zio.http.model.*
 import zio.json.*
 import BERRecordCodecs.*
 
