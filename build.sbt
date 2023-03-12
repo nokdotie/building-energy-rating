@@ -3,7 +3,7 @@ ThisBuild / scalaVersion := "3.2.2"
 
 lazy val root = project
   .in(file("."))
-  .aggregate(common, certificateNumberScraper, certificateScraper)
+  .aggregate(common, api, certificateNumberScraper, certificateScraper)
 
 lazy val common = project
   .settings(
