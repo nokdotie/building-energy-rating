@@ -15,6 +15,15 @@ lazy val common = project
     )
   )
 
+lazy val api = project
+  .dependsOn(common)
+  .settings(
+    libraryDependencies ++= List(
+      "dev.zio" %% "zio" % "2.0.9",
+      "dev.zio" %% "zio-http" % "0.0.4",
+    )
+  )
+
 lazy val certificateNumberScraper = project
   .dependsOn(common)
   .settings(
