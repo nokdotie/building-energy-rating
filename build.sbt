@@ -1,5 +1,8 @@
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "3.2.2"
+ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+// https://oss.sonatype.org/content/repositories/snapshots/dev/zio/zio-http_3/
 
 lazy val root = project
   .in(file("."))
@@ -22,7 +25,7 @@ lazy val api = project
     dockerExposedPorts ++= Seq(8080),
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.9",
-      "dev.zio" %% "zio-http" % "0.0.4"
+      "dev.zio" %% "zio-http" % "0.0.4+42-6f1aa906-SNAPSHOT"
     )
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -32,7 +35,7 @@ lazy val certificateNumberScraper = project
   .settings(
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.9",
-      "dev.zio" %% "zio-http" % "0.0.4",
+      "dev.zio" %% "zio-http" % "0.0.4+42-6f1aa906-SNAPSHOT",
       "dev.zio" %% "zio-streams" % "2.0.9"
     )
   )

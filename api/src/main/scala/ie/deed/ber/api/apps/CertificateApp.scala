@@ -11,11 +11,11 @@ object CertificateApp {
 
   val http: Http[CertificateStore, Nothing, Request, Response] =
     Http.collectZIO[Request] {
-      case Method.GET -> _ / "ber" / int(certificateNumber) =>
+      case Method.GET -> !! / "ber" / int(certificateNumber) =>
         CertificateNumber(certificateNumber)
           .pipe { CertificateStore.getById }
           .fold(
-            _ => Response(Status.InternalServerError),
+            { case _ => Response(Status.InternalServerError) },
             {
               case None              => Response(Status.NotFound)
               case Some(certificate) => Response.json(certificate.toJson)

@@ -7,6 +7,7 @@ import zio.http.model.Method
 import zio.http.middleware.Cors.CorsConfig
 import zio.gcp.firestore.Firestore
 
+import ie.deed.ber.api.apps.CertificateApp
 object MainApp extends ZIOAppDefault {
 
   // CORS
@@ -19,10 +20,14 @@ object MainApp extends ZIOAppDefault {
 
   private val routes =
     apps.CertificateApp.http ++
-      TokenGenerationApp.apply()
+      TokenGenerationApp.apply() ++
+      apps.HealthApp.http
 
-  private val app =
-    routes // @@ Middleware.debug @@ Middleware.cors(corsConfig) @@ Middleware.csrfGenerate()
+  private val app = (
+    routes @@ HttpAppMiddleware.debug @@ HttpAppMiddleware.cors(
+      corsConfig
+    ) // @@ HttpAppMiddleware.csrfGenerate()
+  ).withDefaultErrorResponse
 
   override val run = for {
     _ <- Console.printLine(s"Starting server on http://localhost:8080")

@@ -47,7 +47,7 @@ object Firestore {
     ): Task[CollectionReference]
   }
 
-  def live: ZLayer[Scope, Throwable, Firestore] =
+  val live: ZLayer[Scope, Throwable, Firestore] =
     ZLayer.fromZIO {
       val acquire: Task[firestore.Firestore] =
         GoogleCredentials.applicationDefault
