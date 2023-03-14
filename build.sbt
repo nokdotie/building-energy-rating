@@ -24,7 +24,7 @@ lazy val api = project
     dockerRepository := Some("gcr.io/deed-ie"),
     dockerExposedPorts ++= Seq(8080),
     libraryDependencies ++= List(
-      "dev.zio" %% "zio-http" % "0.0.4+42-6f1aa906-SNAPSHOT"
+      "dev.zio" %% "zio-http" % "0.0.5"
     )
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -33,7 +33,7 @@ lazy val certificateNumberScraper = project
   .dependsOn(common)
   .settings(
     libraryDependencies ++= List(
-      "dev.zio" %% "zio-http" % "0.0.4+42-6f1aa906-SNAPSHOT"
+      "dev.zio" %% "zio-http" % "0.0.5"
     )
   )
 
