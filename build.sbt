@@ -17,8 +17,8 @@ lazy val root = project
 lazy val common = project
   .settings(
     libraryDependencies ++= List(
-      "dev.zio" %% "zio" % "2.0.9",
-      "dev.zio" %% "zio-streams" % "2.0.9",
+      "dev.zio" %% "zio" % "2.0.10",
+      "dev.zio" %% "zio-streams" % "2.0.10",
       "com.google.cloud" % "google-cloud-firestore" % "3.8.1",
       "org.scalameta" %% "munit" % "0.7.29" % Test
     )
