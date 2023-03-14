@@ -41,6 +41,6 @@ lazy val certificateScraper = project
   .dependsOn(common)
   .settings(
     libraryDependencies ++= List(
-      "com.microsoft.playwright" % "playwright" % "1.30.0"
+      "com.microsoft.playwright" % "playwright" % "1.31.0"
     )
   )
