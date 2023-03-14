@@ -1,7 +1,6 @@
 package ie.deed.ber.common.certificate.seaiie
 
 import scala.util.{Try, Success, Failure}
-import zio.json._
 
 enum DomesticEnergyAssessmentProcedureVersion {
   case `3.2.1`
@@ -24,7 +23,4 @@ object DomesticEnergyAssessmentProcedureVersion {
         )
       )
   }
-
-  implicit val encoder: JsonEncoder[DomesticEnergyAssessmentProcedureVersion] =
-    JsonEncoder[String].contramap(_.toString)
 }

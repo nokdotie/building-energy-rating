@@ -7,7 +7,6 @@ import zio.http.model.Method
 import zio.http.middleware.Cors.CorsConfig
 import zio.gcp.firestore.Firestore
 
-import ie.deed.ber.api.apps.CertificateApp
 object MainApp extends ZIOAppDefault {
 
   // CORS
@@ -19,7 +18,7 @@ object MainApp extends ZIOAppDefault {
   )
 
   private val routes =
-    apps.CertificateApp.http ++
+    apps.ApiV1CertificateApp.http ++
       TokenGenerationApp.apply() ++
       apps.HealthApp.http
 

@@ -1,7 +1,6 @@
 package ie.deed.ber.common.certificate.seaiie
 
 import scala.util.{Try, Success, Failure}
-import zio.json._
 
 enum PropertyType {
   case Maisonette
@@ -24,7 +23,4 @@ object PropertyType {
     case "Top-floor apartment"    => Success(TopFloorApartment)
     case unknown => Failure(Exception(s"Unknown property type: $unknown"))
   }
-
-  implicit val encoder: JsonEncoder[PropertyType] =
-    JsonEncoder[String].contramap(_.toString)
 }
