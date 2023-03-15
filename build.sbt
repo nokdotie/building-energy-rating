@@ -10,7 +10,8 @@ lazy val root = project
     common,
     api,
     certificateNumberScraper,
-    certificateScraperNdberSeaiIePassBerSearchAspx
+    certificateScraperNdberSeaiIePassBerSearchAspx,
+    certificateScraperNdberSeaiIePassDownloadPassdownloadberAshx
   )
 
 lazy val common = project
@@ -49,3 +50,6 @@ lazy val certificateScraperNdberSeaiIePassBerSearchAspx = project
       "com.microsoft.playwright" % "playwright" % "1.30.0"
     )
   )
+
+lazy val certificateScraperNdberSeaiIePassDownloadPassdownloadberAshx = project
+  .dependsOn(common)
