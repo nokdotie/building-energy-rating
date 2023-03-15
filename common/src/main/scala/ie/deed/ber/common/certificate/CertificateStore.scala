@@ -42,9 +42,9 @@ class GoogleFirestoreCertificateStore(
     collectionPath: CollectionPath
 ) extends CertificateStore {
   private val seaiIeField = "seai-ie"
-  private def toMap(certificate: Certificate): java.util.Map[String, Any] =
-    Map(
-      seaiIeField -> certificate.`ndber.seai.ie/pass/ber/search.aspx`.fold(
+  private def toMap(certificate: Certificate): java.util.Map[String, Any] = {
+    val `ndber.seai.ie/pass/ber/search.aspx` =
+      certificate.`ndber.seai.ie/pass/ber/search.aspx`.fold(
         null
       ) { seaiie =>
         Map(
@@ -60,7 +60,15 @@ class GoogleFirestoreCertificateStore(
           "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr" -> seaiie.carbonDioxideEmissionsIndicator.value.toString
         ).asJava
       }
+
+    val `ndber.seai.ie/pass/download/passdownloadber.ashx` = null
+
+    Map(
+      seaiIeField -> `ndber.seai.ie/pass/ber/search.aspx`,
+      "ndber.seai.ie/pass/ber/search.aspx" -> `ndber.seai.ie/pass/ber/search.aspx`,
+      "ndber.seai.ie/pass/download/passdownloadber.ashx" -> `ndber.seai.ie/pass/download/passdownloadber.ashx`
     ).asJava
+  }
 
   private def fromMap(
       id: CertificateNumber,
@@ -141,7 +149,8 @@ class GoogleFirestoreCertificateStore(
           domesticEnergyAssessmentProcedureVersion,
         energyRating = energyRating,
         carbonDioxideEmissionsIndicator = carbonDioxideEmissionsIndicator
-      )).toOption
+      )).toOption,
+      None
     )
 
   def upsertBatch(

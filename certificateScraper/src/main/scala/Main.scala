@@ -123,7 +123,8 @@ val getCertificate: ZPipeline[
                     energyRating,
                     carbonDioxideEmissionsIndicator
                   )
-                )
+                ),
+                None
               )
             }
         }

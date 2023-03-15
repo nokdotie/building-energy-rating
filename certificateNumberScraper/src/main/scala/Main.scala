@@ -46,7 +46,7 @@ val filterExists: ZPipeline[
 
 val upsert: ZPipeline[CertificateStore, Throwable, CertificateNumber, Int] =
   ZPipeline
-    .map { Certificate(_, None) }
+    .map { Certificate(_, None, None) }
     .groupedWithin(100, 10.seconds)
     .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList).retryN(3) }
     .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
