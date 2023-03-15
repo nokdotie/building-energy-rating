@@ -2,8 +2,8 @@ package ie.deed.ber.common.certificate
 
 import com.google.cloud.firestore._
 import java.time.{LocalDate, Year}
-import ie.deed.ber.common.certificate.seaiie.{
-  Certificate => SeaiIeCertificate,
+import ie.deed.ber.common.certificate.ndberseaiiepassbersearchaspx.{
+  Certificate => _,
   _
 }
 import scala.util.Try
@@ -44,7 +44,9 @@ class GoogleFirestoreCertificateStore(
   private val seaiIeField = "seai-ie"
   private def toMap(certificate: Certificate): java.util.Map[String, Any] =
     Map(
-      seaiIeField -> certificate.`seai.ie`.fold(null) { seaiie =>
+      seaiIeField -> certificate.`ndber.seai.ie/pass/ber/search.aspx`.fold(
+        null
+      ) { seaiie =>
         Map(
           "type-of-rating" -> seaiie.typeOfRating.toString,
           "issued-on" -> seaiie.issuedOn.toString,
@@ -127,7 +129,7 @@ class GoogleFirestoreCertificateStore(
             .pipe { _.toFloat }
             .pipe { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
         }
-      } yield SeaiIeCertificate(
+      } yield ndberseaiiepassbersearchaspx.Certificate(
         typeOfRating = typeOfRating,
         issuedOn = issuedOn,
         validUntil = validUntil,

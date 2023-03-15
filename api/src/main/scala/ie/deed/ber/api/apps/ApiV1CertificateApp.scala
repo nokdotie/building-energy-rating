@@ -29,19 +29,28 @@ object ApiV1CertificateApp {
     def fromInternal(internal: InternalCertificate): Certificate =
       Certificate(
         certificateNumber = internal.number.value,
-        certificateIssuedOn = internal.`seai.ie`.fold("")(_.issuedOn.toString),
-        certificateValidUntil =
-          internal.`seai.ie`.fold("")(_.validUntil.toString),
-        propertyAddress = internal.`seai.ie`.fold("")(_.propertyAddress.value),
-        propertyConstructedOn =
-          internal.`seai.ie`.fold(0)(_.propertyConstructedOn.getValue),
-        propertyType = internal.`seai.ie`.fold("")(_.propertyType.toString),
-        floorAreaInSquareMeter =
-          internal.`seai.ie`.fold(0f)(_.propertyFloorArea.value),
+        certificateIssuedOn = internal.`ndber.seai.ie/pass/ber/search.aspx`
+          .fold("")(_.issuedOn.toString),
+        certificateValidUntil = internal.`ndber.seai.ie/pass/ber/search.aspx`
+          .fold("")(_.validUntil.toString),
+        propertyAddress = internal.`ndber.seai.ie/pass/ber/search.aspx`.fold(
+          ""
+        )(_.propertyAddress.value),
+        propertyConstructedOn = internal.`ndber.seai.ie/pass/ber/search.aspx`
+          .fold(0)(_.propertyConstructedOn.getValue),
+        propertyType = internal.`ndber.seai.ie/pass/ber/search.aspx`.fold("")(
+          _.propertyType.toString
+        ),
+        floorAreaInSquareMeter = internal.`ndber.seai.ie/pass/ber/search.aspx`
+          .fold(0f)(_.propertyFloorArea.value),
         energyRatingInKilowattHourPerSquareMetrePerYear =
-          internal.`seai.ie`.fold(0f)(_.energyRating.value),
+          internal.`ndber.seai.ie/pass/ber/search.aspx`.fold(0f)(
+            _.energyRating.value
+          ),
         carbonDioxideEmissionsIndicatorInKilogramOfCarbonDioxidePerSquareMetrePerYear =
-          internal.`seai.ie`.fold(0f)(_.carbonDioxideEmissionsIndicator.value)
+          internal.`ndber.seai.ie/pass/ber/search.aspx`.fold(0f)(
+            _.carbonDioxideEmissionsIndicator.value
+          )
       )
 
     implicit val encoder: JsonEncoder[Certificate] =

@@ -1,4 +1,4 @@
-package ie.deed.ber.common.certificate.seaiie
+package ie.deed.ber.common.certificate.ndberseaiiepassbersearchaspx
 
 import java.time.{LocalDate, Year}
 import scala.util.{Failure, Success}
