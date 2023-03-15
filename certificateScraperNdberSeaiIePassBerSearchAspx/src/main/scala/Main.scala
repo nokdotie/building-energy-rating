@@ -1,13 +1,11 @@
+import ie.deed.ber.common.certificate.ndberseaiiepassbersearchaspx
+import ie.deed.ber.common.certificate.ndberseaiiepassbersearchaspx._
 import com.microsoft.playwright._
 import ie.deed.ber.common.certificate.{
   Certificate,
   CertificateNumber,
   CertificateStore,
   GoogleFirestoreCertificateStore
-}
-import ie.deed.ber.common.certificate.seaiie.{
-  Certificate => SeaiIeCertificate,
-  _
 }
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, Year}
@@ -113,7 +111,7 @@ val getCertificate: ZPipeline[
               Certificate(
                 certificateNumber,
                 Some(
-                  SeaiIeCertificate(
+                  ndberseaiiepassbersearchaspx.Certificate(
                     typeOfRating,
                     issuedOn,
                     validUntil,
@@ -125,7 +123,8 @@ val getCertificate: ZPipeline[
                     energyRating,
                     carbonDioxideEmissionsIndicator
                   )
-                )
+                ),
+                None
               )
             }
         }
