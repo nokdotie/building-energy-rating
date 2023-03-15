@@ -6,7 +6,12 @@ ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/c
 
 lazy val root = project
   .in(file("."))
-  .aggregate(common, api, certificateNumberScraper, certificateScraper)
+  .aggregate(
+    common,
+    api,
+    certificateNumberScraper,
+    certificateScraperNdberSeaiIePassBerSearchAspx
+  )
 
 lazy val common = project
   .settings(
@@ -37,7 +42,7 @@ lazy val certificateNumberScraper = project
     )
   )
 
-lazy val certificateScraper = project
+lazy val certificateScraperNdberSeaiIePassBerSearchAspx = project
   .dependsOn(common)
   .settings(
     libraryDependencies ++= List(
