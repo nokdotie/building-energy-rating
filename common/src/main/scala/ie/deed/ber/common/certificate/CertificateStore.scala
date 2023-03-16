@@ -2,10 +2,7 @@ package ie.deed.ber.common.certificate
 
 import com.google.cloud.firestore._
 import java.time.{LocalDate, Year}
-import ie.deed.ber.common.certificate.ndberseaiiepassbersearchaspx.{
-  Certificate => _,
-  _
-}
+import ie.seai.ber.certificate._
 import scala.util.Try
 import scala.util.chaining.scalaUtilChainingOps
 import scala.collection.JavaConverters._
@@ -43,30 +40,29 @@ class GoogleFirestoreCertificateStore(
 ) extends CertificateStore {
   private val seaiIeField = "seai-ie"
   private def toMap(certificate: Certificate): java.util.Map[String, Any] = {
-    val `ndber.seai.ie/pass/ber/search.aspx` =
-      certificate.`ndber.seai.ie/pass/ber/search.aspx`.fold(
-        null
-      ) { seaiie =>
-        Map(
-          "type-of-rating" -> seaiie.typeOfRating.toString,
-          "issued-on" -> seaiie.issuedOn.toString,
-          "valid-until" -> seaiie.validUntil.toString,
-          "property-address" -> seaiie.propertyAddress.value,
-          "property-constructed-on" -> seaiie.propertyConstructedOn.toString,
-          "property-type" -> seaiie.propertyType.toString,
-          "property-floor-area-in-m2" -> seaiie.propertyFloorArea.value.toString,
-          "domestic-energy-assessment-procedure-version" -> seaiie.domesticEnergyAssessmentProcedureVersion.toString,
-          "energy-rating-in-kWh/m2/yr" -> seaiie.energyRating.value.toString,
-          "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr" -> seaiie.carbonDioxideEmissionsIndicator.value.toString
-        ).asJava
-      }
+    val seaiIeHtmlCertificate = certificate.seaiIeHtmlCertificate.fold(
+      null
+    ) { seaiie =>
+      Map(
+        "type-of-rating" -> seaiie.typeOfRating.toString,
+        "issued-on" -> seaiie.issuedOn.toString,
+        "valid-until" -> seaiie.validUntil.toString,
+        "property-address" -> seaiie.propertyAddress.value,
+        "property-constructed-on" -> seaiie.propertyConstructedOn.toString,
+        "property-type" -> seaiie.propertyType.toString,
+        "property-floor-area-in-m2" -> seaiie.propertyFloorArea.value.toString,
+        "domestic-energy-assessment-procedure-version" -> seaiie.domesticEnergyAssessmentProcedureVersion.toString,
+        "energy-rating-in-kWh/m2/yr" -> seaiie.energyRating.value.toString,
+        "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr" -> seaiie.carbonDioxideEmissionsIndicator.value.toString
+      ).asJava
+    }
 
-    val `ndber.seai.ie/pass/download/passdownloadber.ashx` = null
+    val seaiIePdfCertificate = null
 
     Map(
-      seaiIeField -> `ndber.seai.ie/pass/ber/search.aspx`,
-      "ndber.seai.ie/pass/ber/search.aspx" -> `ndber.seai.ie/pass/ber/search.aspx`,
-      "ndber.seai.ie/pass/download/passdownloadber.ashx" -> `ndber.seai.ie/pass/download/passdownloadber.ashx`
+      seaiIeField -> seaiIeHtmlCertificate,
+      "seai-ie-html-certificate" -> seaiIeHtmlCertificate,
+      "seai-ie-pdf-certificate" -> seaiIePdfCertificate
     ).asJava
   }
 
@@ -137,7 +133,7 @@ class GoogleFirestoreCertificateStore(
             .pipe { _.toFloat }
             .pipe { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
         }
-      } yield ndberseaiiepassbersearchaspx.Certificate(
+      } yield HtmlCertificate(
         typeOfRating = typeOfRating,
         issuedOn = issuedOn,
         validUntil = validUntil,

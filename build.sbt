@@ -10,8 +10,8 @@ lazy val root = project
     common,
     api,
     certificateNumberScraper,
-    certificateScraperNdberSeaiIePassBerSearchAspx,
-    certificateScraperNdberSeaiIePassDownloadPassdownloadberAshx
+    certificateScraperSeaiIeHtml,
+    certificateScraperSeaiIePdf
   )
 
 lazy val common = project
@@ -43,7 +43,7 @@ lazy val certificateNumberScraper = project
     )
   )
 
-lazy val certificateScraperNdberSeaiIePassBerSearchAspx = project
+lazy val certificateScraperSeaiIeHtml = project
   .dependsOn(common)
   .settings(
     libraryDependencies ++= List(
@@ -51,5 +51,10 @@ lazy val certificateScraperNdberSeaiIePassBerSearchAspx = project
     )
   )
 
-lazy val certificateScraperNdberSeaiIePassDownloadPassdownloadberAshx = project
-  .dependsOn(common)
+lazy val certificateScraperSeaiIePdf = project
+  .dependsOn(common % "compile->compile;test->test")
+  .settings(
+    libraryDependencies ++= List(
+      "org.apache.pdfbox" % "pdfbox" % "2.0.27"
+    )
+  )

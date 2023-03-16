@@ -1,16 +1,17 @@
-package ie.deed.ber.common.certificate.ndberseaiiepassbersearchaspx
+package ie.seai.ber.certificate
 
 import java.time.{LocalDate, Year}
-import scala.util.{Failure, Success}
+import ie.seai.ber.certificate._
 
-final case class Certificate(
-    typeOfRating: TypeOfRating,
+import ie.seai.ber.certificate.AssessorCompanyNumber
+import ie.seai.ber.certificate.AssessorNumber
+case class PdfCertificate(
     issuedOn: LocalDate,
     validUntil: LocalDate,
     propertyAddress: Address,
-    propertyConstructedOn: Year,
-    propertyType: PropertyType,
-    propertyFloorArea: SquareMeter,
+    propertyEircode: Option[Eircode],
+    assessorNumber: AssessorNumber,
+    assessorCompanyNumber: AssessorCompanyNumber,
     domesticEnergyAssessmentProcedureVersion: DomesticEnergyAssessmentProcedureVersion,
     energyRating: KilowattHourPerSquareMetrePerYear,
     carbonDioxideEmissionsIndicator: KilogramOfCarbonDioxidePerSquareMetrePerYear
