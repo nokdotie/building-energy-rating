@@ -113,7 +113,9 @@ class PdfParserSuite extends munit.FunSuite {
       PdfCertificate(
         LocalDate.of(2023, 3, 9),
         LocalDate.of(2033, 3, 9),
-        Address("APARTMENT 22 LEVMOSS HALL\nLEVMOSS PARK\nTHE GALLOPS\nDUBLIN 18"),
+        Address(
+          "APARTMENT 22 LEVMOSS HALL\nLEVMOSS PARK\nTHE GALLOPS\nDUBLIN 18"
+        ),
         Some(Eircode("D18V9V2")),
         AssessorNumber(103350),
         AssessorCompanyNumber(103350),
@@ -134,6 +136,34 @@ class PdfParserSuite extends munit.FunSuite {
         DomesticEnergyAssessmentProcedureVersion.`4.1.0`,
         KilowattHourPerSquareMetrePerYear(148.69),
         KilogramOfCarbonDioxidePerSquareMetrePerYear(27.55)
+      )
+    ),
+    (
+      "./certificates/berCertificate_106559123.pdf",
+      PdfCertificate(
+        LocalDate.of(2014, 6, 28),
+        LocalDate.of(2024, 6, 28),
+        Address("RHINE\nKILLOE\nCO. LONGFORD"),
+        None,
+        AssessorNumber(105323),
+        AssessorCompanyNumber(105323),
+        DomesticEnergyAssessmentProcedureVersion.`3.2.1`,
+        KilowattHourPerSquareMetrePerYear(442.7),
+        KilogramOfCarbonDioxidePerSquareMetrePerYear(143.21)
+      )
+    ),
+    (
+      "./certificates/berCertificate_106559149.pdf",
+      PdfCertificate(
+        LocalDate.of(2014, 6, 29),
+        LocalDate.of(2024, 6, 29),
+        Address("303 CONNOLLY ROAD\nPORTLAW\nCO. WATERFORD"),
+        None,
+        AssessorNumber(104559),
+        AssessorCompanyNumber(104559),
+        DomesticEnergyAssessmentProcedureVersion.`3.2.1`,
+        KilowattHourPerSquareMetrePerYear(451.65),
+        KilogramOfCarbonDioxidePerSquareMetrePerYear(140.69)
       )
     )
   )
