@@ -5,6 +5,7 @@ import ie.seai.ber.certificate._
 
 class PdfParserSuite extends munit.FunSuite {
   val pdfPathAndExpectedPdfCertificate = List(
+    // 3.2.1
     (
       "./certificates/berCertificate_100000066.pdf",
       PdfCertificate(
@@ -49,6 +50,7 @@ class PdfParserSuite extends munit.FunSuite {
         KilogramOfCarbonDioxidePerSquareMetrePerYear(29.2)
       )
     ),
+    // 4.0.0
     (
       "./certificates/berCertificate_100000298.pdf",
       PdfCertificate(
@@ -91,6 +93,7 @@ class PdfParserSuite extends munit.FunSuite {
         KilogramOfCarbonDioxidePerSquareMetrePerYear(20.8)
       )
     ),
+    // 4.1.0
     (
       "./certificates/berCertificate_100000645.pdf",
       PdfCertificate(
@@ -103,6 +106,34 @@ class PdfParserSuite extends munit.FunSuite {
         DomesticEnergyAssessmentProcedureVersion.`4.1.0`,
         KilowattHourPerSquareMetrePerYear(143.07),
         KilogramOfCarbonDioxidePerSquareMetrePerYear(26.54)
+      )
+    ),
+    (
+      "./certificates/berCertificate_100000744.pdf",
+      PdfCertificate(
+        LocalDate.of(2023, 3, 9),
+        LocalDate.of(2033, 3, 9),
+        Address("APARTMENT 22 LEVMOSS HALL\nLEVMOSS PARK\nTHE GALLOPS\nDUBLIN 18"),
+        Some(Eircode("D18V9V2")),
+        AssessorNumber(103350),
+        AssessorCompanyNumber(103350),
+        DomesticEnergyAssessmentProcedureVersion.`4.1.0`,
+        KilowattHourPerSquareMetrePerYear(145.67),
+        KilogramOfCarbonDioxidePerSquareMetrePerYear(26.44)
+      )
+    ),
+    (
+      "./certificates/berCertificate_100000967.pdf",
+      PdfCertificate(
+        LocalDate.of(2022, 5, 25),
+        LocalDate.of(2032, 5, 25),
+        Address("APT 16 THE GALLOPS\nLEVMOSS HALL\nLEOPARDSTOWN\nDUBLIN 18"),
+        Some(Eircode("D18A213")),
+        AssessorNumber(103530),
+        AssessorCompanyNumber(103530),
+        DomesticEnergyAssessmentProcedureVersion.`4.1.0`,
+        KilowattHourPerSquareMetrePerYear(148.69),
+        KilogramOfCarbonDioxidePerSquareMetrePerYear(27.55)
       )
     )
   )
