@@ -4,21 +4,17 @@ import ie.deed.ber.common.certificate.{
   CertificateStore,
   GoogleFirestoreCertificateStore
 }
-import scala.util.chaining.scalaUtilChainingOps
-import zio._
-import zio.http.{Client, ClientConfig}
-import zio.gcp.firestore.Firestore
-import zio.stream._
 import ie.seai.ber.certificate._
 import java.io.File
-
-val certificateNumbers
-    : ZStream[CertificateStore, Throwable, CertificateNumber] =
-  CertificateStore.streamMissingSeaiIePdf
+import scala.util.chaining.scalaUtilChainingOps
+import zio.{Scope, ZIO, ZIOAppDefault}
+import zio.http.{Client, ClientConfig}
+import zio.gcp.firestore.Firestore
+import zio.stream.{ZPipeline, ZSink}
 
 def getPdfCertificate(
     certificateNumber: CertificateNumber
-): ZIO[Client, Throwable, PdfCertificate] =
+): ZIO[Client with ZPdfBox with Scope, Throwable, PdfCertificate] =
   for {
     file <- ZIO.attemptBlocking {
       File.createTempFile(certificateNumber.value.toString, ".pdf")
@@ -26,12 +22,13 @@ def getPdfCertificate(
     url = PdfCertificate.url(certificateNumber)
     response <- Client.request(url)
     _ <- response.body.asStream.run(ZSink.fromFile(file))
-    certificate <- ZIO.fromTry { PdfParser.tryParse(file) }
+    document <- ZPdfBox.acquireRelease(file)
+    certificate <- ZIO.fromTry { PdfParser.tryParse(document) }
     _ <- ZIO.attemptBlocking { file.delete }
   } yield certificate
 
 val getCertificates: ZPipeline[
-  Client,
+  Client with ZPdfBox with Scope,
   Throwable,
   CertificateNumber,
   Certificate
@@ -52,26 +49,25 @@ val getCertificates: ZPipeline[
     }
 }
 
-val upsert: ZPipeline[CertificateStore, Throwable, Certificate, Int] =
-  ZPipeline
-    .groupedWithin[Certificate](100, 10.seconds)
-    .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList).retryN(3) }
-    .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
+val upsertLimit = 1_000_000
 
-val upsertLimit = 1_000
-
-val app: ZIO[CertificateStore with Client, Throwable, Unit] =
-  certificateNumbers
+val app: ZIO[
+  CertificateStore with Client with ZPdfBox with Scope,
+  Throwable,
+  Unit
+] =
+  CertificateStore.streamMissingSeaiIePdf
     .debug("Certificate Number")
     .via(getCertificates)
     .debug("Certificate")
-    .via(upsert)
+    .via(CertificateStore.upsertPipeline)
     .debug("Certificate Upserted")
     .takeWhile { _ < upsertLimit }
     .runDrain
 
 object Main extends ZIOAppDefault {
   def run = app.provide(
+    ZPdfBox.live,
     Firestore.live,
     GoogleFirestoreCertificateStore.layer,
     Client.fromConfig,

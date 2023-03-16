@@ -9,9 +9,11 @@ import scala.collection.JavaConverters._
 import zio._
 import zio.stream.ZStream
 import zio.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
+import zio.stream.ZPipeline
 
 trait CertificateStore {
   def upsertBatch(certificates: Iterable[Certificate]): ZIO[Any, Throwable, Int]
+  val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int]
 
   val streamMissingSeaiIeHtml: ZStream[Any, Throwable, CertificateNumber]
   val streamMissingSeaiIePdf: ZStream[Any, Throwable, CertificateNumber]
@@ -24,6 +26,9 @@ object CertificateStore {
       certificates: Iterable[Certificate]
   ): ZIO[CertificateStore, Throwable, Int] =
     ZIO.serviceWithZIO[CertificateStore] { _.upsertBatch(certificates) }
+
+  val upsertPipeline: ZPipeline[CertificateStore, Throwable, Certificate, Int] =
+    ZPipeline.serviceWithPipeline[CertificateStore] { _.upsertPipeline }
 
   val streamMissingSeaiIeHtml
       : ZStream[CertificateStore, Throwable, CertificateNumber] =
@@ -209,6 +214,12 @@ class GoogleFirestoreCertificateStore(
         }
         results <- firestore.commit(writeBatch)
       } yield results.size
+
+  val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int] =
+    ZPipeline
+      .groupedWithin[Certificate](100, 10.seconds)
+      .mapZIO { chunks => upsertBatch(chunks.toList) }
+      .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
   val streamMissingSeaiIeHtml: ZStream[Any, Throwable, CertificateNumber] =
     streamMissing(seaiIeHtmlCertificateField)

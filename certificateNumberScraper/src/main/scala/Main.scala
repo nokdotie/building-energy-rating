@@ -45,13 +45,6 @@ val filterExists: ZPipeline[
     .collectSome
 }
 
-val upsert: ZPipeline[CertificateStore, Throwable, CertificateNumber, Int] =
-  ZPipeline
-    .map { Certificate(_, None, None) }
-    .groupedWithin(100, 10.seconds)
-    .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList).retryN(3) }
-    .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
-
 def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
   val timeoutAfter = 2.seconds
   val retryAfter = 1.second
@@ -71,7 +64,8 @@ val app: ZIO[Client with CertificateStore, Throwable, Unit] =
     .debug("Certificate Number")
     .via(filterExists)
     .debug("Certificate Number Exists")
-    .via(upsert)
+    .map { Certificate(_, None, None) }
+    .via(CertificateStore.upsertPipeline)
     .debug("Certificate Number Upserted")
     .takeWhile { _ < upsertLimit }
     .runDrain

@@ -1,7 +1,9 @@
-import scala.util.chaining.scalaUtilChainingOps
 import java.io.File
 import java.time.LocalDate
 import ie.seai.ber.certificate._
+import org.apache.pdfbox.pdmodel.PDDocument
+import scala.util.Using
+import scala.util.chaining.scalaUtilChainingOps
 
 class PdfParserSuite extends munit.FunSuite {
   val pdfPathAndExpectedPdfCertificate = List(
@@ -171,11 +173,15 @@ class PdfParserSuite extends munit.FunSuite {
   test("should parse all certificates correctly") {
     pdfPathAndExpectedPdfCertificate.foreach {
       (pdfPath, expectedPdfCertificate) =>
-        val file =
-          getClass().getClassLoader().getResource(pdfPath).getFile().pipe {
-            File(_)
-          }
-        val pdfCertificate = PdfParser.tryParse(file).get
+        val file = getClass()
+          .getClassLoader()
+          .getResource(pdfPath)
+          .getFile()
+          .pipe { File(_) }
+
+        val pdfCertificate = Using(PDDocument.load(file)) {
+          PdfParser.tryParse
+        }.flatten.get
 
         assertEquals(pdfCertificate, expectedPdfCertificate)
     }

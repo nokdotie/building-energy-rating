@@ -1,6 +1,6 @@
 import com.microsoft.playwright._
 import java.io.Closeable
-import zio._
+import zio.{Scope, ZIO, ZLayer}
 
 trait ZPlaywright {
   val acquireRelease: ZIO[Scope, Throwable, Page]
