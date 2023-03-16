@@ -58,7 +58,7 @@ val upsert: ZPipeline[CertificateStore, Throwable, Certificate, Int] =
     .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList).retryN(3) }
     .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
-val upsertLimit = 1_000_000
+val upsertLimit = 1_000
 
 val app: ZIO[CertificateStore with Client, Throwable, Unit] =
   certificateNumbers
