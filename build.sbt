@@ -55,6 +55,7 @@ lazy val certificateScraperSeaiIePdf = project
   .dependsOn(common % "compile->compile;test->test")
   .settings(
     libraryDependencies ++= List(
-      "org.apache.pdfbox" % "pdfbox" % "2.0.27"
+      "org.apache.pdfbox" % "pdfbox" % "2.0.27",
+      "dev.zio" %% "zio-http" % "0.0.4+42-6f1aa906-SNAPSHOT"
     )
   )

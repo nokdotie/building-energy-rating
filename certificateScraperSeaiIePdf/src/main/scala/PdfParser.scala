@@ -28,7 +28,7 @@ object PdfParser {
         "Building Energy Rating",
         new Rectangle(10, 300, 430, 450)
       )
-      stripper.addRegion("Carbon Dioxide", new Rectangle(450, 300, 130, 400))
+      stripper.addRegion("Carbon Dioxide", new Rectangle(450, 300, 130, 410))
       stripper.addRegion(
         "Domestic Energy Assessment Procedure Version",
         new Rectangle(490, 820, 100, 20)

@@ -15,7 +15,7 @@ import ie.seai.ber.certificate._
 
 val certificateNumbers
     : ZStream[CertificateStore, Throwable, CertificateNumber] =
-  CertificateStore.streamMissingSeaiIe
+  CertificateStore.streamMissingSeaiIeHtml
 
 val idSelectorPrefix = "#ctl00_DefaultContent_BERSearch"
 def getFieldValue(page: Page, fieldName: String): String = {
