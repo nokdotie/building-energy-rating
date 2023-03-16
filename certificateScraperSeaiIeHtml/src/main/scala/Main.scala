@@ -1,5 +1,3 @@
-import ie.deed.ber.common.certificate.ndberseaiiepassbersearchaspx
-import ie.deed.ber.common.certificate.ndberseaiiepassbersearchaspx._
 import com.microsoft.playwright._
 import ie.deed.ber.common.certificate.{
   Certificate,
@@ -13,10 +11,11 @@ import scala.util.chaining.scalaUtilChainingOps
 import zio._
 import zio.gcp.firestore.Firestore
 import zio.stream._
+import ie.seai.ber.certificate._
 
 val certificateNumbers
     : ZStream[CertificateStore, Throwable, CertificateNumber] =
-  CertificateStore.streamMissingSeaiIe
+  CertificateStore.streamMissingSeaiIeHtml
 
 val idSelectorPrefix = "#ctl00_DefaultContent_BERSearch"
 def getFieldValue(page: Page, fieldName: String): String = {
@@ -111,7 +110,7 @@ val getCertificate: ZPipeline[
               Certificate(
                 certificateNumber,
                 Some(
-                  ndberseaiiepassbersearchaspx.Certificate(
+                  HtmlCertificate(
                     typeOfRating,
                     issuedOn,
                     validUntil,

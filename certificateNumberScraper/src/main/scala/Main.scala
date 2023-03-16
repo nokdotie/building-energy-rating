@@ -9,6 +9,7 @@ import ie.deed.ber.common.certificate.{
 }
 import scala.util.chaining.scalaUtilChainingOps
 import ie.deed.ber.common.certificate.Certificate
+import ie.seai.ber.certificate.PdfCertificate
 
 val certificateNumbers: ZStream[Any, Throwable, CertificateNumber] = {
   val start = 100_000_000
@@ -36,7 +37,7 @@ val filterExists: ZPipeline[
 
   ZPipeline[CertificateNumber]
     .mapZIOParUnordered(concurrency) { certificateNumber =>
-      val url = certificateUrl(certificateNumber)
+      val url = PdfCertificate.url(certificateNumber)
 
       resourceExists(url)
         .map { Option.when(_)(certificateNumber) }
@@ -50,9 +51,6 @@ val upsert: ZPipeline[CertificateStore, Throwable, CertificateNumber, Int] =
     .groupedWithin(100, 10.seconds)
     .mapZIO { chunks => CertificateStore.upsertBatch(chunks.toList).retryN(3) }
     .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
-
-def certificateUrl(certificateNumber: CertificateNumber): String =
-  s"https://ndber.seai.ie/PASS/Download/PassDownloadBER.ashx?type=nas&file=bercert&ber=${certificateNumber.value}"
 
 def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
   val timeoutAfter = 2.seconds

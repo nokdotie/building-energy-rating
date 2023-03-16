@@ -1,9 +1,8 @@
-package ie.deed.ber.common.certificate.ndberseaiiepassbersearchaspx
+package ie.seai.ber.certificate
 
 import java.time.{LocalDate, Year}
-import scala.util.{Failure, Success}
 
-final case class Certificate(
+case class HtmlCertificate(
     typeOfRating: TypeOfRating,
     issuedOn: LocalDate,
     validUntil: LocalDate,

@@ -1,4 +1,4 @@
-name: Certificate Scraper
+name: Certificate Scraper HTML
 
 on:
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
           cache: sbt
 
       - name: Run
-        run: sbt -v certificateScraperNdberSeaiIePassBerSearchAspx/run
+        run: sbt -v certificateScraperSeaiIeHtml/run
         env:
           GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
           ENV: production

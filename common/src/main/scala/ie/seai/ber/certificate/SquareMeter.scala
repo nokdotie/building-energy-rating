@@ -1,4 +1,4 @@
-package ie.deed.ber.common.certificate.ndberseaiiepassbersearchaspx
+package ie.seai.ber.certificate
 
 import scala.util.Try
 

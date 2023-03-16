@@ -29,26 +29,26 @@ object ApiV1CertificateApp {
     def fromInternal(internal: InternalCertificate): Certificate =
       Certificate(
         certificateNumber = internal.number.value,
-        certificateIssuedOn = internal.`ndber.seai.ie/pass/ber/search.aspx`
+        certificateIssuedOn = internal.seaiIeHtmlCertificate
           .fold("")(_.issuedOn.toString),
-        certificateValidUntil = internal.`ndber.seai.ie/pass/ber/search.aspx`
+        certificateValidUntil = internal.seaiIeHtmlCertificate
           .fold("")(_.validUntil.toString),
-        propertyAddress = internal.`ndber.seai.ie/pass/ber/search.aspx`.fold(
+        propertyAddress = internal.seaiIeHtmlCertificate.fold(
           ""
         )(_.propertyAddress.value),
-        propertyConstructedOn = internal.`ndber.seai.ie/pass/ber/search.aspx`
+        propertyConstructedOn = internal.seaiIeHtmlCertificate
           .fold(0)(_.propertyConstructedOn.getValue),
-        propertyType = internal.`ndber.seai.ie/pass/ber/search.aspx`.fold("")(
+        propertyType = internal.seaiIeHtmlCertificate.fold("")(
           _.propertyType.toString
         ),
-        floorAreaInSquareMeter = internal.`ndber.seai.ie/pass/ber/search.aspx`
+        floorAreaInSquareMeter = internal.seaiIeHtmlCertificate
           .fold(0f)(_.propertyFloorArea.value),
         energyRatingInKilowattHourPerSquareMetrePerYear =
-          internal.`ndber.seai.ie/pass/ber/search.aspx`.fold(0f)(
+          internal.seaiIeHtmlCertificate.fold(0f)(
             _.energyRating.value
           ),
         carbonDioxideEmissionsIndicatorInKilogramOfCarbonDioxidePerSquareMetrePerYear =
-          internal.`ndber.seai.ie/pass/ber/search.aspx`.fold(0f)(
+          internal.seaiIeHtmlCertificate.fold(0f)(
             _.carbonDioxideEmissionsIndicator.value
           )
       )
