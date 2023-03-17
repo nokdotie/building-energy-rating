@@ -238,30 +238,33 @@ class GoogleFirestoreCertificateStore(
 
   private def streamMissing(
       missingField: String
-  ): ZStream[Any, Throwable, CertificateNumber] = {
-    val limit = 100
+  ): ZStream[Any, Throwable, CertificateNumber] =
     ZStream
-      .iterate(0)(_ + limit)
-      .mapZIO { offset =>
+      .unfoldZIO(CertificateNumber(0)) { case lastCertificateNumber =>
         firestore
           .collection(collectionPath)
           .flatMap { collectionReference =>
             val query = collectionReference
+              .whereGreaterThan(
+                FieldPath.documentId,
+                lastCertificateNumber.value.toString
+              )
               .whereEqualTo(missingField, null)
-              .limit(limit)
-              .offset(offset)
+              .limit(100)
 
             ZIO.fromFutureJava { query.get() }
           }
-      }
-      .map { querySnapshot =>
-        querySnapshot.getDocuments.asScala
-          .flatMap { _.getId.toIntOption }
-          .map { CertificateNumber.apply }
+          .map { querySnapshot =>
+            querySnapshot.getDocuments.asScala
+              .flatMap { _.getId.toIntOption }
+              .map { CertificateNumber.apply }
+          }
+          .map { certificateNumbers =>
+            certificateNumbers.lastOption.map { (certificateNumbers, _) }
+          }
       }
       .takeWhile { _.nonEmpty }
       .flattenIterables
-  }
 
   def getById(id: CertificateNumber): ZIO[Any, Throwable, Option[Certificate]] =
     firestore
