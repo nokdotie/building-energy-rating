@@ -9,7 +9,7 @@ class PdfParserSuite extends munit.FunSuite {
   val pdfPathAndExpectedPdfCertificate = List(
     // 3.2.1
     (
-      "./certificates/berCertificate_100000066.pdf",
+      "./certificates/100000066.pdf",
       PdfCertificate(
         LocalDate.of(2018, 9, 2),
         LocalDate.of(2028, 9, 2),
@@ -25,7 +25,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/berCertificate_100000181.pdf",
+      "./certificates/100000181.pdf",
       PdfCertificate(
         LocalDate.of(2019, 6, 3),
         LocalDate.of(2029, 6, 3),
@@ -39,7 +39,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/berCertificate_100000280.pdf",
+      "./certificates/100000280.pdf",
       PdfCertificate(
         LocalDate.of(2016, 4, 25),
         LocalDate.of(2026, 4, 25),
@@ -54,7 +54,7 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     // 4.0.0
     (
-      "./certificates/berCertificate_100000298.pdf",
+      "./certificates/100000298.pdf",
       PdfCertificate(
         LocalDate.of(2020, 8, 15),
         LocalDate.of(2030, 8, 15),
@@ -68,7 +68,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/berCertificate_100000595.pdf",
+      "./certificates/100000595.pdf",
       PdfCertificate(
         LocalDate.of(2022, 1, 20),
         LocalDate.of(2032, 1, 20),
@@ -82,7 +82,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/berCertificate_100000652.pdf",
+      "./certificates/100000652.pdf",
       PdfCertificate(
         LocalDate.of(2021, 10, 18),
         LocalDate.of(2031, 10, 18),
@@ -97,7 +97,7 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     // 4.1.0
     (
-      "./certificates/berCertificate_100000645.pdf",
+      "./certificates/100000645.pdf",
       PdfCertificate(
         LocalDate.of(2022, 9, 23),
         LocalDate.of(2032, 9, 23),
@@ -111,7 +111,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/berCertificate_100000744.pdf",
+      "./certificates/100000744.pdf",
       PdfCertificate(
         LocalDate.of(2023, 3, 9),
         LocalDate.of(2033, 3, 9),
@@ -127,7 +127,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/berCertificate_100000967.pdf",
+      "./certificates/100000967.pdf",
       PdfCertificate(
         LocalDate.of(2022, 5, 25),
         LocalDate.of(2032, 5, 25),
@@ -141,7 +141,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/berCertificate_106559123.pdf",
+      "./certificates/106559123.pdf",
       PdfCertificate(
         LocalDate.of(2014, 6, 28),
         LocalDate.of(2024, 6, 28),
@@ -155,7 +155,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/berCertificate_106559149.pdf",
+      "./certificates/106559149.pdf",
       PdfCertificate(
         LocalDate.of(2014, 6, 29),
         LocalDate.of(2024, 6, 29),
