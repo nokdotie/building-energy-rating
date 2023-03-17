@@ -189,7 +189,7 @@ class PageParserSuite extends munit.FunSuite {
                 .getResource(htmlPath)
                 .getFile()
 
-                    page.navigate(s"file://$file")
+              page.navigate(s"file://$file")
 
               val htmlCertificate = PageParser.tryParse(page).get
 
