@@ -227,7 +227,7 @@ class GoogleFirestoreCertificateStore(
   val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int] =
     ZPipeline
       .groupedWithin[Certificate](100, 10.seconds)
-      .mapZIO { chunks => upsertBatch(chunks.toList) }
+      .mapZIO { chunks => upsertBatch(chunks.toList).retryN(3) }
       .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
   val streamMissingSeaiIeHtml: ZStream[Any, Throwable, CertificateNumber] =
