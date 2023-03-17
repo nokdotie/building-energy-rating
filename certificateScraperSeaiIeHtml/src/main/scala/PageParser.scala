@@ -55,13 +55,19 @@ object PageParser {
       propertyType <- tryInnerHtml(page, "DwellingType")
         .flatMap { PropertyType.tryFromString }
       propertyFloorArea <- tryInnerHtml(page, "FloorArea")
-        .flatMap { SquareMeter.tryFromString }
+        .flatMap { tryFindMatch(_, "^([0-9.]+) \\(m2\\)$".r) }
+        .flatMap { str => Try { str.toFloat } }
+        .map { SquareMeter.apply }
       domesticEnergyAssessmentProcedureVersion <- tryInnerHtml(page, "BERTool")
         .flatMap { DomesticEnergyAssessmentProcedureVersion.tryFromString }
       energyRating <- tryInnerHtml(page, "EnergyRating")
-        .flatMap { KilowattHourPerSquareMetrePerYear.tryFromString }
+        .flatMap { tryFindMatch(_, "([0-9.]+) \\(kWh/m2/yr\\)".r) }
+        .flatMap { str => Try { str.toFloat } }
+        .map { KilowattHourPerSquareMetrePerYear.apply }
       carbonDioxideEmissionsIndicator <- tryInnerHtml(page, "CDERValue")
-        .flatMap { KilogramOfCarbonDioxidePerSquareMetrePerYear.tryFromString }
+        .flatMap { tryFindMatch(_, "^([0-9.]+) \\(kgCO2/m2/yr\\)$".r) }
+        .flatMap { str => Try { str.toFloat } }
+        .map { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
     } yield HtmlCertificate(
       rating,
       typeOfRating,

@@ -73,9 +73,15 @@ object PdfParser {
         "DEAP Version: ([0-9]\\.[0-9]\\.[0-9])".r
       )
         .flatMap { DomesticEnergyAssessmentProcedureVersion.tryFromString }
-      energyRating <- KilowattHourPerSquareMetrePerYear.tryFromString(text)
-      carbonDioxideEmissionsIndicator <-
-        KilogramOfCarbonDioxidePerSquareMetrePerYear.tryFromString(text)
+      energyRating <- tryFindMatch(text, "([0-9.]+) kWh/m²/yr".r)
+        .flatMap { str => Try { str.toFloat } }
+        .map { KilowattHourPerSquareMetrePerYear.apply }
+      carbonDioxideEmissionsIndicator <- tryFindMatch(
+        text,
+        "([0-9.]+) kgCO2 /m²/yr".r
+      )
+        .flatMap { str => Try { str.toFloat } }
+        .map { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
     } yield PdfCertificate(
       rating,
       issuedOn,
