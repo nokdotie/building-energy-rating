@@ -98,103 +98,184 @@ class GoogleFirestoreCertificateStore(
   private def fromMap(
       id: CertificateNumber,
       map: java.util.Map[String, Any]
-  ): Certificate =
+  ): Certificate = {
+    val seaiIeHtmlCertificate = for {
+      seaiIeHtmlCertificate <- Try {
+        map
+          .get(seaiIeHtmlCertificateField)
+          .asInstanceOf[java.util.Map[String, Any]]
+      }
+      rating <- Try {
+        seaiIeHtmlCertificate
+          .get("rating")
+          .asInstanceOf[String]
+          .pipe { Rating.valueOf }
+      }
+      typeOfRating <- Try {
+        seaiIeHtmlCertificate
+          .get("type-of-rating")
+          .asInstanceOf[String]
+          .pipe {
+            TypeOfRating.valueOf
+          }
+      }
+      issuedOn <- Try {
+        seaiIeHtmlCertificate.get("issued-on").asInstanceOf[String].pipe {
+          LocalDate.parse
+        }
+      }
+      validUntil <- Try {
+        seaiIeHtmlCertificate.get("valid-until").asInstanceOf[String].pipe {
+          LocalDate.parse
+        }
+      }
+      propertyAddress <- Try {
+        seaiIeHtmlCertificate
+          .get("property-address")
+          .asInstanceOf[String]
+          .pipe { Address.apply }
+      }
+      propertyConstructedOn <- Try {
+        seaiIeHtmlCertificate
+          .get("property-constructed-on")
+          .asInstanceOf[String]
+          .pipe { Year.parse }
+      }
+      propertyType <- Try {
+        seaiIeHtmlCertificate.get("property-type").asInstanceOf[String].pipe {
+          PropertyType.valueOf
+        }
+      }
+      propertyFloorArea <- Try {
+        seaiIeHtmlCertificate
+          .get("property-floor-area-in-m2")
+          .asInstanceOf[String]
+          .pipe { _.toFloat }
+          .pipe { SquareMeter.apply }
+      }
+      domesticEnergyAssessmentProcedureVersion <- Try {
+        seaiIeHtmlCertificate
+          .get("domestic-energy-assessment-procedure-version")
+          .asInstanceOf[String]
+          .pipe { DomesticEnergyAssessmentProcedureVersion.valueOf }
+      }
+      energyRating <- Try {
+        seaiIeHtmlCertificate
+          .get("energy-rating-in-kWh/m2/yr")
+          .asInstanceOf[String]
+          .pipe { _.toFloat }
+          .pipe { KilowattHourPerSquareMetrePerYear.apply }
+      }
+      carbonDioxideEmissionsIndicator <- Try {
+        seaiIeHtmlCertificate
+          .get("carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr")
+          .asInstanceOf[String]
+          .pipe { _.toFloat }
+          .pipe { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
+      }
+    } yield HtmlCertificate(
+      rating = rating,
+      typeOfRating = typeOfRating,
+      issuedOn = issuedOn,
+      validUntil = validUntil,
+      propertyAddress = propertyAddress,
+      propertyConstructedOn = propertyConstructedOn,
+      propertyType = propertyType,
+      propertyFloorArea = propertyFloorArea,
+      domesticEnergyAssessmentProcedureVersion =
+        domesticEnergyAssessmentProcedureVersion,
+      energyRating = energyRating,
+      carbonDioxideEmissionsIndicator = carbonDioxideEmissionsIndicator
+    )
+
+    val seaiIePdfCertificate = for {
+      seaiIePdfCertificate <- Try {
+        map
+          .get(seaiIePdfCertificateField)
+          .asInstanceOf[java.util.Map[String, Any]]
+      }
+      rating <- Try {
+        seaiIePdfCertificate
+          .get("rating")
+          .asInstanceOf[String]
+          .pipe { Rating.valueOf }
+      }
+      issuedOn <- Try {
+        seaiIePdfCertificate.get("issued-on").asInstanceOf[String].pipe {
+          LocalDate.parse
+        }
+      }
+      validUntil <- Try {
+        seaiIePdfCertificate.get("valid-until").asInstanceOf[String].pipe {
+          LocalDate.parse
+        }
+      }
+      propertyAddress <- Try {
+        seaiIePdfCertificate
+          .get("property-address")
+          .asInstanceOf[String]
+          .pipe { Address.apply }
+      }
+      propertyEircode = Try {
+        seaiIePdfCertificate
+          .get("property-eircode")
+          .asInstanceOf[String]
+          .pipe { Eircode.apply }
+      }.toOption
+
+      assessorNumber <- Try {
+        seaiIePdfCertificate
+          .get("assessor-number")
+          .asInstanceOf[Int]
+          .pipe { AssessorNumber.apply }
+      }
+      assessorCompanyNumber <- Try {
+        seaiIePdfCertificate
+          .get("assessor-company-number")
+          .asInstanceOf[Int]
+          .pipe { DomesticEnergyAssessmentProcedureVersion.valueOf }
+      }
+      domesticEnergyAssessmentProcedureVersion <- Try {
+        seaiIePdfCertificate
+          .get("domestic-energy-assessment-procedure-version")
+          .asInstanceOf[String]
+          .pipe { DomesticEnergyAssessmentProcedureVersion.valueOf }
+      }
+      energyRating <- Try {
+        seaiIePdfCertificate
+          .get("energy-rating-in-kWh/m2/yr")
+          .asInstanceOf[String]
+          .pipe { _.toFloat }
+          .pipe { KilowattHourPerSquareMetrePerYear.apply }
+      }
+      carbonDioxideEmissionsIndicator <- Try {
+        seaiIePdfCertificate
+          .get("carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr")
+          .asInstanceOf[String]
+          .pipe { _.toFloat }
+          .pipe { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
+      }
+    } yield PdfCertificate(
+      rating = rating,
+      typeOfRating = typeOfRating,
+      issuedOn = issuedOn,
+      validUntil = validUntil,
+      propertyAddress = propertyAddress,
+      propertyEircode = propertyEircode,
+      assessorNumber = assessorNumber,
+      assessorCompanyNumber = assessorCompanyNumber,
+      domesticEnergyAssessmentProcedureVersion =
+        domesticEnergyAssessmentProcedureVersion,
+      energyRating = energyRating,
+      carbonDioxideEmissionsIndicator = carbonDioxideEmissionsIndicator
+    )
+
     Certificate(
       id,
-      (for {
-        seaiIeHtmlCertificate <- Try {
-          map
-            .get(seaiIeHtmlCertificateField)
-            .asInstanceOf[java.util.Map[String, Any]]
-        }
-        rating <- Try {
-          seaiIeHtmlCertificate
-            .get("rating")
-            .asInstanceOf[String]
-            .pipe { Rating.valueOf }
-        }
-        typeOfRating <- Try {
-          seaiIeHtmlCertificate
-            .get("type-of-rating")
-            .asInstanceOf[String]
-            .pipe {
-              TypeOfRating.valueOf
-            }
-        }
-        issuedOn <- Try {
-          seaiIeHtmlCertificate.get("issued-on").asInstanceOf[String].pipe {
-            LocalDate.parse
-          }
-        }
-        validUntil <- Try {
-          seaiIeHtmlCertificate.get("valid-until").asInstanceOf[String].pipe {
-            LocalDate.parse
-          }
-        }
-        propertyAddress <- Try {
-          seaiIeHtmlCertificate
-            .get("property-address")
-            .asInstanceOf[String]
-            .pipe {
-              Address.apply
-            }
-        }
-        propertyConstructedOn <- Try {
-          seaiIeHtmlCertificate
-            .get("property-constructed-on")
-            .asInstanceOf[String]
-            .pipe {
-              Year.parse
-            }
-        }
-        propertyType <- Try {
-          seaiIeHtmlCertificate.get("property-type").asInstanceOf[String].pipe {
-            PropertyType.valueOf
-          }
-        }
-        propertyFloorArea <- Try {
-          seaiIeHtmlCertificate
-            .get("property-floor-area-in-m2")
-            .asInstanceOf[String]
-            .pipe { _.toFloat }
-            .pipe { SquareMeter(_) }
-        }
-        domesticEnergyAssessmentProcedureVersion <- Try {
-          seaiIeHtmlCertificate
-            .get("domestic-energy-assessment-procedure-version")
-            .asInstanceOf[String]
-            .pipe { DomesticEnergyAssessmentProcedureVersion.valueOf }
-        }
-        energyRating <- Try {
-          seaiIeHtmlCertificate
-            .get("energy-rating-in-kWh/m2/yr")
-            .asInstanceOf[String]
-            .pipe { _.toFloat }
-            .pipe { KilowattHourPerSquareMetrePerYear.apply }
-        }
-        carbonDioxideEmissionsIndicator <- Try {
-          seaiIeHtmlCertificate
-            .get("carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr")
-            .asInstanceOf[String]
-            .pipe { _.toFloat }
-            .pipe { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
-        }
-      } yield HtmlCertificate(
-        rating = rating,
-        typeOfRating = typeOfRating,
-        issuedOn = issuedOn,
-        validUntil = validUntil,
-        propertyAddress = propertyAddress,
-        propertyConstructedOn = propertyConstructedOn,
-        propertyType = propertyType,
-        propertyFloorArea = propertyFloorArea,
-        domesticEnergyAssessmentProcedureVersion =
-          domesticEnergyAssessmentProcedureVersion,
-        energyRating = energyRating,
-        carbonDioxideEmissionsIndicator = carbonDioxideEmissionsIndicator
-      )).toOption,
-      None
+      seaiIeHtmlCertificate.toOption,
+      seaiIePdfCertificate.toOption
     )
+  }
 
   def upsertBatch(
       certificates: Iterable[Certificate]
