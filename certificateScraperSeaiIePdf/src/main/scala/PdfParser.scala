@@ -14,7 +14,7 @@ object PdfParser {
     val regions = List(
       new Rectangle(10, 70, 280, 180), // Information
       new Rectangle(10, 300, 430, 450), // Building Energy Rating
-      new Rectangle(450, 300, 130, 410), // Carbon Dioxide
+      new Rectangle(490, 300, 100, 410), // Carbon Dioxide
       new Rectangle(490, 820, 100, 20) // DEAP Version
     ).zipWithIndex.map { (region, index) => (index.toString, region) }
 
