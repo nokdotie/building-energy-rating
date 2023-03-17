@@ -1,0 +1,414 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+    <head><title>
+	SEAI National BER Register
+</title><link id="ctl00_AdaptersInvariantImportCSS" rel="stylesheet" href="../CSS/Import.css" type="text/css" />
+        <script src="https://www.google.com/recaptcha/api.js?render=6LdhRKYUAAAAAC5BtZPwxoU2Sh31MNnfV48U0U9P"></script>
+    <link href="../App_Themes/Default/Controls.css" type="text/css" rel="stylesheet" /><link href="../App_Themes/Default/DataForms.css" type="text/css" rel="stylesheet" /><link href="../App_Themes/Default/Default.css" type="text/css" rel="stylesheet" /><link href="../App_Themes/Default/FeedbackForm.css" type="text/css" rel="stylesheet" /><link href="../App_Themes/Default/Menu.css" type="text/css" rel="stylesheet" /></head>
+    <body>
+        <script type="text/javascript">
+          var onSubmit = function(response) {
+            document.getElementById("simpleForm").submit(); // send response to your backend service
+          };
+        </script>
+        <form name="aspnetForm" method="post" action="./Search.aspx" id="aspnetForm">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTE2MDEwODU4NjAPFgIeE1ZhbGlkYXRlUmVxdWVzdE1vZGUCARYCZg9kFgQCAQ9kFgICAg8VAVdodHRwczovL3d3dy5nb29nbGUuY29tL3JlY2FwdGNoYS9hcGkuanM/cmVuZGVyPTZMZGhSS1lVQUFBQUFDNUJ0WlB3eG9VMlNoMzFNTm5mVjQ4VTBVOVBkAgMPZBYCAgUPFgIeBWNsYXNzBQttYWlud3JhcHBlchYEAgUPDxYCHgdWaXNpYmxlZ2RkAgkPZBYCAgEPZBYMZg8WAh8CaBYEAgEPFgIfAmgWAgIBDw8WAh8CaGQWAmYPZBYCZg9kFgQCAQ8WAh4JaW5uZXJodG1sZWQCAw9kFgICAg9kFgJmD2QWBAIBD2QWAgIDDw8WCh4EXyFTQgKAAh4MRGVmYXVsdFdpZHRoHB4EVGV4dAUJMTAwMDAwMTgxHgdUb29sVGlwBT5QbGVhc2UgZW50ZXIgYSB2YWx1ZSwgd2l0aCBubyBzcGVjaWFsIGNoYXJhY3RlcnMsIHdpdGggbm8gdGV4dB4FV2lkdGgcFgIeCG9uY2hhbmdlBaMCaWYoZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2N0bDAwX0RlZmF1bHRDb250ZW50X0JFUlNlYXJjaF9kZlNlYXJjaF90eHRCRVJOdW1iZXInKS52YWx1ZS5sZW5ndGggPiAwKXsgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2N0bDAwX0RlZmF1bHRDb250ZW50X0JFUlNlYXJjaF9kZlNlYXJjaF90eHRNUFJOJykuZGlzYWJsZWQ9dHJ1ZTsgfSBlbHNleyBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY3RsMDBfRGVmYXVsdENvbnRlbnRfQkVSU2VhcmNoX2RmU2VhcmNoX3R4dE1QUk4nKS5kaXNhYmxlZD1mYWxzZTt9ZAIDD2QWAgIDDw8WCB8EAoACHwUcHwcFPlBsZWFzZSBlbnRlciBhIHZhbHVlLCB3aXRoIG5vIHNwZWNpYWwgY2hhcmFjdGVycywgd2l0aCBubyB0ZXh0HwgcFgIfCQWpAmlmKGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjdGwwMF9EZWZhdWx0Q29udGVudF9CRVJTZWFyY2hfZGZTZWFyY2hfdHh0TVBSTicpLnZhbHVlLmxlbmd0aCA+IDApeyBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY3RsMDBfRGVmYXVsdENvbnRlbnRfQkVSU2VhcmNoX2RmU2VhcmNoX3R4dEJFUk51bWJlcicpLmRpc2FibGVkPXRydWU7ICB9IGVsc2V7IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdjdGwwMF9EZWZhdWx0Q29udGVudF9CRVJTZWFyY2hfZGZTZWFyY2hfdHh0QkVSTnVtYmVyJykuZGlzYWJsZWQ9ZmFsc2U7fWQCAw8WAh4FdmFsdWUFjgQwM0FGWV9hOFhYZjI0ejQ2ZFZ0UkdOa0xqaFQ0S3ZUS24tb0Y3QkMtRzFtdUczNEtwVWNoNDh3bGd6QmxZTVY3QVFqXzlXRGt0VFhlb01SSVNTMnNKaW1wU21lVVJaVklDQnczSEs2eVNZek5JQi1DZlVOZ19fZUk5Zk0wekh5WFFUTzEzWmxhc3pVbW5QVDFRTnlHZl9nejJzQ2FpR0pVVG5RbjVKaE9FeFhaakF1bExVSDdLbmtzaGx2Y1VQa1VpMmgycVAtMUMtWENKVmR3Z2pVY0dFMXpqSUJ6YjV1Q1JHelpXaGVCZk9WYzU0SHNCX3I1V1BseDBFVTZpU2p3ZDZzTGdVRFpvemtrX2hTZEtqMUV6a2NsV1FFOS1YWGQ1Uy05Z2ZRTmkxZWphS2N1NUE4SXNPNXdibHlMMndwdFNtR2hoY3ZpdUJFS01VazBGM1dTWDNOM3BNNEpnUnRILUE1bUF1QzYwOHI1WXJiZGpGWThhekZ6dVMxVWpub0FVdi1xR1p1X0JfaHlaZThHaVBYMjVYV2tKWTRmcjl1V1VDd3QxdTNqTVZSM2s3Z1UtNGpuWTVqeHE4ZVBFTzFRa3RXNEVKRUdocEtJUFVXODdMMGFVS2szT0pWd3FIajA2WmJwTkZLbDlxRm9UV2VtUGhJcVRmN0tjYTk3VnZVQWJYS2I0RU1BYUdOMTFpZAIBDw8WAh8CZ2QWAmYPZBYCZg9kFgICAw9kFgJmD2QWAmYPZBYCAgEPZBYCZg9kFgJmD2QWAgIBDxYCHwMFFkJFUiBEZXRhaWxzIC0gRHdlbGxpbmdkAgIPFCsAAg8WBh8CaB4SU2VsZWN0ZWRSb3dJbmRleGVzMs0BAAEAAAD/////AQAAAAAAAAAEAQAAAH5TeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5MaXN0YDFbW1N5c3RlbS5JbnQzMiwgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0DAAAABl9pdGVtcwVfc2l6ZQhfdmVyc2lvbgcAAAgICAkCAAAAAAAAAAEAAAAPAgAAAAAAAAAICx4KZWRpdF9zdHlsZQspc1YxLk5FVC5XZWJDb250cm9scy5FZGl0U3R5bGUsIFYxLk5FVC5XZWJDb250cm9scywgVmVyc2lvbj0xLjQuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPTViZjM0NTdkMzA4OTUyMTMCZBAWAQIDFgE8KwAFAQAWAh8CaA8WAQIHFgEFc1YxLk5FVC5XZWJDb250cm9scy5UZXh0RmllbGQsIFYxLk5FVC5XZWJDb250cm9scywgVmVyc2lvbj0xLjQuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPTViZjM0NTdkMzA4OTUyMTMWAmYPZBYCAgIPZBYCZg88KwARAwAPFgQeC18hRGF0YUJvdW5kZx4LXyFJdGVtQ291bnQCAWQBEBYBAgMWATwrAAUBABYCHwJoDxYBAgcWAQVzVjEuTkVULldlYkNvbnRyb2xzLlRleHRGaWVsZCwgVjEuTkVULldlYkNvbnRyb2xzLCBWZXJzaW9uPTEuNC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49NWJmMzQ1N2QzMDg5NTIxMwwUKwAAFgJmD2QWAgIBD2QWCmYPZBYCAgEPDxYEHg9Db21tYW5kQXJndW1lbnQFCzEwMDAwMDE4MSwwHwYFCTEwMDAwMDE4MWRkAgEPZBYCZg8PFgIfBgUDQkVSZGQCAg9kFgICAQ8PFgIfBmVkZAIED2QWAmYPDxYCHwYFCjAzLTA2LTIwMTlkZAIFD2QWAmYPDxYCHwYFKjIgQ1VSUkFHSCBXT09EDUtJTEFORVJJTg1HT1JFWQ1DTy4gV0VYRk9SRGRkAgMPFgIfAmcWBAIBDxYCHwJnZAIDDw8WBB4fZGZCRVJfaWRzX1JhdGluZy5Ed2VsbGluZ0RhdGFJRCgpW1N5c3RlbS5EZWNpbWFsLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkHMTQxNDM0NR8CZ2QWAmYPZBYCZg9kFgICAw9kFgZmD2QWAmYPZBYCAgEPFgIfAmhkAgIPZBYGZg9kFggCAQ9kFgICAQ9kFgICAw9kFgICAQ8WAh8GBT8yIENVUlJBR0ggV09PRDxiciAvPktJTEFORVJJTjxiciAvPkdPUkVZPGJyIC8+Q08uIFdFWEZPUkQ8YnIgLz5kAgMPZBYCAgEPFgIfAmgWAgIDDw8WAh8GZWRkAgUPFgIeBXN0eWxlBRFtYXJnaW4tdG9wOi0xNHB4OxYCAgEPZBYCAgMPFgIfEQUKY29sb3I6cmVkOxYCAgEPFgIfBgU2QjMmbmJzcDsmbmJzcDsmbmJzcDsxMzMuMzMmbmJzcDsoa1doL208c3VwPjI8L3N1cD4veXIpZAIHDxYCHxEFD21hcmdpbi10b3A6NXB4OxYCAgEPZBYCAgMPZBYCAgEPFgIfBgUuMzMuNjUmbmJzcDsoa2dDTzxzdWI+Mjwvc3ViPi9tPHN1cD4yPC9zdXA+L3lyKWQCAQ9kFggCAQ9kFgICAQ9kFgICAw8PFgIfBgUKMDMtMDYtMjAxOWRkAgMPZBYCAgEPZBYCAgMPDxYCHwYFCjAzLTA2LTIwMjlkZAIFD2QWAgIBD2QWAgIDDw8WAh8GBQkxMDAwMDAxODFkZAIHD2QWAgIBD2QWAgIFDw8WAh8GZWRkAgIPZBYIAgEPZBYCAgEPZBYCAgMPDxYCHwYFEUV4aXN0aW5nIER3ZWxsaW5nZGQCAw9kFgICAQ9kFgQCAQ8PFgIfBgUMREVBUCBWZXJzaW9uZGQCAw9kFgICAQ8WAh8GBQUzLjIuMWQCBQ9kFgQCAw8PFgIeC05hdmlnYXRlVXJsBUN+L0Rvd25sb2FkL1Bhc3NEb3dubG9hZEJFUi5hc2h4P3R5cGU9bmFzJmJlcj0xMDAwMDAxODEmZmlsZT1iZXJjZXJ0ZGQCBQ8PFgIfEgVDfi9Eb3dubG9hZC9QYXNzRG93bmxvYWRCRVIuYXNoeD90eXBlPW5hcyZiZXI9MTAwMDAwMTgxJmZpbGU9YmVyY2VydGRkAgcPZBYEAgMPDxYCHgdFbmFibGVkaGRkAgUPDxYCHxNoZGQCAw9kFgJmD2QWBgIBD2QWAgIBD2QWAgIDDw8WAh8GBQ5EZXRhY2hlZCBob3VzZWRkAgMPZBYCAgEPZBYCAgMPDxYCHwYFBDIwMDdkZAIFD2QWAgIBD2QWAgIDD2QWAgIBDxYCHwYFGzMxOC4yNSZuYnNwOyhtPHN1cD4yPC9zdXA+KWQCBA8WAh8CZxYEAgEPFgIfAmdkAgMPDxYEHjBkZk5hc1N0cnVjdHVyYWxEZXRhaWxzX2lkc19SYXRpbmcuRHdlbGxpbmdEYXRhSUQoKwUHMTQxNDM0NR8CZ2QWAmYPZBYCZg9kFgICAw9kFgJmD2QWAmYPZBYCAgEPFgIfAmhkAgUPFgIfAmgWBAIBDxYCHwJoZAIDD2QWAmYPZBYCZg9kFgICAw9kFgJmD2QWAmYPZBYCAgEPFgIfAmhkGAEFM2N0bDAwJERlZmF1bHRDb250ZW50JEJFUlNlYXJjaCRncmlkUmF0aW5ncyRncmlkdmlldw88KwAMAQgCAWRM1fb230Ci/EzJ0VqMFOgWDBeMlF7HTfeCdqEkgYdMuw==" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/PASS/WebResource.axd?d=0vj_XAqE1R9X7lYMNPBfzXkfiiNLRgG00fK6NDg1gQjDkeC_QDf5aVZg1hzOZ8N2C-x2fCwURdB9s3pS__VGsA7rHhguDkQOVWtX3riaaNg1&amp;t=637814660020000000" type="text/javascript"></script>
+
+
+<script src="/PASS/ScriptResource.axd?d=JuJJR_vJNxva2G37WljG0KsQjw1EUCY9j_JbVwwoMYbeihkNuOQzHrMCWqU9XABEEv9bhywJMQHyjfzr7Gzak2CA7OM4gPpSK7e9S3Uw8BrFSlekKOIlFqhSU_ueuHFOpvjmlgkJPE7iyQp0ZxV-hpLogA-sZ8PU_FgGiyhD6_n--nNirbKWMgpxLJPQibzE0&amp;t=49337fe8" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');
+//]]>
+</script>
+
+<script src="/PASS/ScriptResource.axd?d=X918amKdyUexyMpRSDbM18VAusdEdMDOW5Hyeayv7onqbzVLuvvxH0WFuWKRbgb1ovl5JuFzigaarnbVgiuC5EmllXuANxZVCc0YZhsvx0RokwC6ADc_DTA9F49CcyOCtBnwfqnPlY0zpJkqbpgCF6SqQVK8POXC3K66xd_MrMH7EnSHggIAfrgfk3emAYDD0&amp;t=49337fe8" type="text/javascript"></script>
+<div>
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="1F9CCB97" />
+	<input type="hidden" name="__SCROLLPOSITIONX" id="__SCROLLPOSITIONX" value="0" />
+	<input type="hidden" name="__SCROLLPOSITIONY" id="__SCROLLPOSITIONY" value="0" />
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAAT2E/n7EDZEX+gxXBkOWdAb0pNiMzuBxMlBbOZl58cjL3lJ0JsyM6ruIZbfpEg3KzgVgmtHs5ZWYfoxl4ztRAdXcfGfpYgFKg3A+OKxbsNt1hzvKuc6+3dzqeuddtNEoj4=" />
+</div>
+            <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$ScriptManager1', 'aspnetForm', [], [], [], 90, 'ctl00');
+//]]>
+</script>
+
+            <input type="hidden" name="ctl00$forgeryToken" id="ctl00_forgeryToken" value="bb0c2948-6ed5-4346-8003-2a21b00c29d2" />
+            <div id="ctl00_mainwrapper" class="mainwrapper">
+
+                    <div id="ctl00_topcorners" class="panel">
+
+
+
+</div>
+
+                 <div class="banner_top">
+
+
+                         <img id="ctl00_imgBERSearchHeader" class="DefaultHeader" src="../App_Themes/Default/Images/BER_search_banner01.jpg" alt="SEAI BER" align="top" style="border-width:0px;" />
+
+                    </div>
+                    <div id="content">
+
+
+<div id="ctl00_DefaultContent_BERSearch_dfSearchAgain_dataFormContainer" style="width:100%">
+
+  <span id="ctl00_DefaultContent_BERSearch_dfSearchAgain_dataFormMessage" class="dataFormMessage"></span>
+  <table id="ctl00_DefaultContent_BERSearch_dfSearchAgain_dataFormContainerTable" class="dataFormContainer" style="width:100%" cellspacing="0" cellpadding="5">
+		<tr class="dataFormHeaderContainer">
+			<td colspan="0">
+        <table id="ctl00_DefaultContent_BERSearch_dfSearchAgain_captionsTable" cellspacing="0" cellpadding="0" width="100%">
+				<tr>
+					<td>
+              <div id="ctl00_DefaultContent_BERSearch_dfSearchAgain_dataFormHeader" class="dataFormHeader">BER Details - Dwelling</div>
+              <div class="dataFormSmallHeader"></div>
+            </td>
+					<td align="right">
+              <input type="submit" name="ctl00$DefaultContent$BERSearch$dfSearchAgain$Feedback" value="Contact SEAI" id="ctl00_DefaultContent_BERSearch_dfSearchAgain_Feedback" title="Contact SEAI" class="dataFormButton" />
+              <input type="submit" name="ctl00$DefaultContent$BERSearch$dfSearchAgain$Search" value="Search Again" id="ctl00_DefaultContent_BERSearch_dfSearchAgain_Search" title="Search" class="dataFormButton" />
+            </td>
+				</tr>
+			</table>
+
+      </td>
+		</tr>
+		<tr>
+			<td colspan="0">
+        <div id="ctl00_DefaultContent_BERSearch_dfSearchAgain_dataFormValidation" class="dataFormValidation">
+
+			</div>
+      </td>
+		</tr>
+		<tr style="vertical-align: top">
+		</tr>
+	</table>
+
+
+</div>
+<div style="margin-left: 50px;">
+
+</div>
+<fieldset id="ctl00_DefaultContent_BERSearch_fsBER" class="dataFormFieldSet">
+    <legend id="ctl00_DefaultContent_BERSearch_legBER" class="dataFormFieldSetLabel">BER/DEC</legend>
+    <div id="ctl00_DefaultContent_BERSearch_dfBER_dataFormContainer" style="width:">
+
+  <span id="ctl00_DefaultContent_BERSearch_dfBER_dataFormMessage" class="dataFormMessage"></span>
+  <table id="ctl00_DefaultContent_BERSearch_dfBER_dataFormContainerTable" class="dataFormContainer" style="width:100%" cellspacing="0" cellpadding="5">
+		<tr class="dataFormHeaderContainer">
+			<td colspan="3">
+
+      </td>
+		</tr>
+		<tr>
+			<td colspan="3">
+        <div id="ctl00_DefaultContent_BERSearch_dfBER_dataFormValidation" class="dataFormValidation">
+
+			</div>
+      </td>
+		</tr>
+		<tr style="vertical-align: top">
+			<td style="width:29.333333333333335%
+                      ">
+        <div class="column" style="width:100%" id="dataFormColumn">
+          <div class="lineDivider">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_PublishingAddress">
+              <span id="ctl00_DefaultContent_BERSearch_dfBER_label_PublishingAddress" class="formControlReadonlyLabel">Address</span>
+              <div id="ctl00_DefaultContent_BERSearch_dfBER_div_PublishingAddress" class="formControlReadonly">
+                2 CURRAGH WOOD<br />KILANERIN<br />GOREY<br />CO. WEXFORD<br />
+              </div>
+            </span>
+          </div>
+          <div id="ctl00_DefaultContent_BERSearch_dfBER_lineDividerRowAlignEircode" class="lineDividerRowAlignEircode">
+
+          </div>
+          <div id="ctl00_DefaultContent_BERSearch_dfBER_lineDividerRowAlignRating" class="lineDividerRowAlignRating" style="margin-top:-14px;">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_EnergyRating">
+              <span id="ctl00_DefaultContent_BERSearch_dfBER_label_EnergyRating" class="formControlReadonlyLabel">Building Energy Rating</span>
+              <div id="ctl00_DefaultContent_BERSearch_dfBER_div_EnergyRating" class="formControlReadonly" style="color:red;">
+                B3&nbsp;&nbsp;&nbsp;133.33&nbsp;(kWh/m<sup>2</sup>/yr)
+              </div>
+            </span>
+          </div>
+          <div id="ctl00_DefaultContent_BERSearch_dfBER_lineDividerRowAlignCO2" class="lineDividerRowAlignCO2" style="margin-top:5px;">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_CDERValue">
+              <span id="ctl00_DefaultContent_BERSearch_dfBER_label_CDERValue" class="formControlReadonlyLabel">CO2 Emissions Indicator</span>
+              <div id="ctl00_DefaultContent_BERSearch_dfBER_div_CDERValue" class="formControlReadonly">
+                33.65&nbsp;(kgCO<sub>2</sub>/m<sup>2</sup>/yr)
+              </div>
+            </span>
+          </div>
+        </div>
+      </td>
+			<td style="width:29.333333333333335%
+                      ">
+        <div class="column" style="width:100%" id="dataFormColumn">
+          <div class="lineDivider">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_DateOfIssue">
+              <label for="ctl00_DefaultContent_BERSearch_dfBER_DateOfIssue" class="formControlReadonlyLabel">Date Of Issue</label>
+              <div title="Data is Read Only" class="
+              formControlReadonly
+            ">
+				03-06-2019
+			</div>
+            </span>
+          </div>
+          <div class="lineDivider">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_DateValidUntil">
+              <label for="ctl00_DefaultContent_BERSearch_dfBER_DateValidUntil" class="formControlReadonlyLabel">Date Valid Until</label>
+              <div title="Data is Read Only" class="
+              formControlReadonly
+            ">
+				03-06-2029
+			</div>
+            </span>
+          </div>
+          <div id="ctl00_DefaultContent_BERSearch_dfBER_lineDividerRowAlignBERDECNum" class="lineDividerRowAlignBERDECNum">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_BERNumber">
+              <label for="ctl00_DefaultContent_BERSearch_dfBER_BERNumber" class="formControlReadonlyLabel">BER/DEC Number</label>
+              <div title="Data is Read Only" class="
+              formControlReadonly
+            ">
+				100000181
+			</div>
+            </span>
+          </div>
+          <div id="ctl00_DefaultContent_BERSearch_dfBER_lineDividerRowAlignMPRN" class="lineDividerRowAlignMPRN">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_MPRN">
+              <label for="ctl00_DefaultContent_BERSearch_dfBER_MPRN" class="formControlReadonlyLabel">MPRN</label>
+              <a id="ctl00_DefaultContent_BERSearch_dfBER_MPRNImage" title="Field is left blank when you search by BER/DEC number" class="formControlReadonlyLabel"><img title="Field is left blank when you search by BER/DEC number" src="../App_Themes/Default/Images/Information_Icon.svg" alt="" style="border-width:0px;" /></a>
+              <div title="Data is Read Only" class="
+              formControlReadonly
+            ">
+
+			</div>
+            </span>
+          </div>
+        </div>
+      </td>
+			<td style="width:29.333333333333335%
+                      ">
+        <div class="column" style="width:100%" id="dataFormColumn">
+          <div class="lineDivider">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_TypeOfRating">
+              <label for="ctl00_DefaultContent_BERSearch_dfBER_TypeOfRating" class="formControlReadonlyLabel">Type Of Rating</label>
+              <div title="Data is Read Only" class="
+              formControlReadonly
+            ">
+				Existing Dwelling
+			</div>
+            </span>
+          </div>
+          <div class="lineDivider">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_BERTool">
+              <span id="ctl00_DefaultContent_BERSearch_dfBER_label_BERTool" class="formControlReadonlyLabel">DEAP Version</span>
+              <div id="ctl00_DefaultContent_BERSearch_dfBER_div_BERTool" class="formControlReadonly">
+                3.2.1
+              </div>
+            </span>
+          </div>
+          <div class="lineDivider">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_berDownLoad">
+              <label for="ctl00_DefaultContent_BERSearch_dfBER_berDownLoad" class="formControlReadonlyLabel"></label>
+              <br />
+              <a id="ctl00_DefaultContent_BERSearch_dfBER_berDownLoad_image" title="Download BER/DEC Certificate" href="../Download/PassDownloadBER.ashx?type=nas&amp;ber=100000181&amp;file=bercert"><img title="Download BER/DEC Certificate" src="../App_Themes/Default/Images/pdf.gif" alt="" style="border-width:0px;" /></a>
+              <a id="ctl00_DefaultContent_BERSearch_dfBER_berDownLoad_text" title="Download BER/DEC Certificate" class="formImgLinkText" href="../Download/PassDownloadBER.ashx?type=nas&amp;ber=100000181&amp;file=bercert">Download BER/DEC Certificate</a>
+            </span>
+          </div>
+          <div class="lineDivider">
+            <span id="ctl00_DefaultContent_BERSearch_dfBER_container_arDownLoad">
+              <label for="ctl00_DefaultContent_BERSearch_dfBER_arDownLoad" class="formControlReadonlyLabel"></label>
+              <br />
+              <a id="ctl00_DefaultContent_BERSearch_dfBER_arDownLoad_image" disabled="disabled" title="Download Advisory Report"><img title="Download Advisory Report" src="../App_Themes/Default/Images/pdf.gif" alt="" style="border-width:0px;" /></a>
+              <a id="ctl00_DefaultContent_BERSearch_dfBER_arDownLoad_text" disabled="disabled" title="Download Advisory Report" class="formImgLinkText">Download Advisory Report</a>
+              <a id="ctl00_DefaultContent_BERSearch_dfBER_arDownLoadHelp" title="Please note, in order to review an Advisory Report published prior to July 2021, you must search by MPRN. If you are a prospective purchaser or renter and you do not know the MPRN, please contact the building owner or their agent to request a copy of the Advisory Report for the property being offered for sale or let." class="formControlReadonlyLabel"><img title="Please note, in order to review an Advisory Report published prior to July 2021, you must search by MPRN. If you are a prospective purchaser or renter and you do not know the MPRN, please contact the building owner or their agent to request a copy of the Advisory Report for the property being offered for sale or let." src="../App_Themes/Default/Images/Information_Icon.svg" alt="" style="border-width:0px;" /></a>
+            </span>
+          </div>
+        </div>
+      </td>
+		</tr>
+		<tr class="footerRow">
+			<td colspan="3">
+        <table cellspacing="0" cellpadding="10" width="100%">
+          <tr>
+            <td class="footerRowControl" align="left" style="padding-right:8px;width:33.5%">
+              <div class="lineDivider">
+                <span id="ctl00_DefaultContent_BERSearch_dfBER_container_DwellingType">
+                  <label for="ctl00_DefaultContent_BERSearch_dfBER_DwellingType" class="formControlReadonlyLabel">Dwelling Type:</label>
+                  <div title="Data is Read Only" class="
+              formControlReadonly
+            ">
+				Detached house
+			</div>
+                </span>
+              </div>
+            </td>
+            <td class="footerRowControl" align="left" style="padding-left: 2px;padding-right:8px;width:33.5%">
+              <div class="lineDivider">
+                <span id="ctl00_DefaultContent_BERSearch_dfBER_container_DateOfConstruction">
+                  <label for="ctl00_DefaultContent_BERSearch_dfBER_DateOfConstruction" class="formControlReadonlyLabel">Year of Construction:</label>
+                  <div title="Data is Read Only" class="
+              formControlReadonly
+            ">
+				2007
+			</div>
+                </span>
+              </div>
+            </td>
+            <td class="footerRowControl" align="left" style="padding-left:3px;padding-right:0px;width:33.5%">
+              <div class="lineDivider">
+                <span id="ctl00_DefaultContent_BERSearch_dfBER_container_FloorArea">
+                  <span id="ctl00_DefaultContent_BERSearch_dfBER_label_FloorArea" class="formControlReadonlyLabel">Floor Area:</span>
+                  <div id="ctl00_DefaultContent_BERSearch_dfBER_div_FloorArea" class="formControlReadonly">
+                    318.25&nbsp;(m<sup>2</sup>)
+                  </div>
+                </span>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+		</tr>
+	</table>
+
+
+</div>
+    <br />
+</fieldset>
+<br />
+<br />
+<fieldset id="ctl00_DefaultContent_BERSearch_fsStructure" class="dataFormFieldSet">
+    <legend id="ctl00_DefaultContent_BERSearch_legStructure" class="dataFormFieldSetLabel">Documentation used to support the BER calculations</legend>
+    <div id="ctl00_DefaultContent_BERSearch_dfNasStructuralDetails_dataFormContainer" style="width:">
+
+  <span id="ctl00_DefaultContent_BERSearch_dfNasStructuralDetails_dataFormMessage" class="dataFormMessage"></span>
+  <table id="ctl00_DefaultContent_BERSearch_dfNasStructuralDetails_dataFormContainerTable" class="dataFormContainer" style="width:100%" cellspacing="0" cellpadding="5">
+		<tr class="dataFormHeaderContainer">
+			<td colspan="0">
+
+      </td>
+		</tr>
+		<tr>
+			<td colspan="0">
+        <div id="ctl00_DefaultContent_BERSearch_dfNasStructuralDetails_dataFormValidation" class="dataFormValidation">
+
+			</div>
+      </td>
+		</tr>
+		<tr style="vertical-align: top">
+		</tr>
+		<tr>
+			<td colspan="0">
+        <table cellspacing="0" cellpadding="10" width="100%">
+          <tr>
+            <td align="left" style="NASBERDetails">
+              <span id="ctl00_DefaultContent_BERSearch_dfNasStructuralDetails_container_BERDetailsDisclaimer">
+                <br />
+                <label class="formControlLabel">
+        When you purchase a property, we recommend you request, from the seller, a copy of any
+documentation used to support the BER calculations associated with the BER certificate. This
+documentation may provide important information on the construction type, heating and ventilation
+systems and renewables of the property you are purchasing. We recommend that this information
+be retained by the building owner to inform any subsequent BER published for the property. Further
+information on BERs is available
+      </label>
+              </span>
+              <span>
+                <label class="disclaimerLinkText"></label>
+                <a id="ctl00_DefaultContent_BERSearch_dfNasStructuralDetails_disclaimerLink" title="Click to see Homeowners information guide" class="disclaimerLinkText" href="https://www.seai.ie/home-energy/building-energy-rating-ber/" target="_blank">here.</a>
+              </span>
+            </td>
+          </tr>
+        </table>
+      </td>
+		</tr>
+	</table>
+
+
+</div>
+    <br />
+</fieldset>
+
+<br />
+<br />
+<br />
+<br />
+
+
+    <script>
+            document.getElementById('content').style.display = 'none';
+        grecaptcha.ready(function () {
+            grecaptcha.execute('6LdhRKYUAAAAAC5BtZPwxoU2Sh31MNnfV48U0U9P', { action: 'feedback' }).then(function (token) {
+                document.getElementById('content').style.display = 'block';
+                document.getElementById('ctl00_DefaultContent_BERSearch_captcha').value = token;
+        });
+    });
+    </script>
+    <script>
+        grecaptcha.ready(function () {
+        grecaptcha.execute('6LdhRKYUAAAAAC5BtZPwxoU2Sh31MNnfV48U0U9P', { action: 'search' }).then(function (token) {
+            document.getElementById('ctl00_DefaultContent_BERSearch_captcha').value = token;
+        });
+    });
+    </script>
+
+                    </div>
+
+
+                    <div id="ctl00_pnlMPRN11" class="panel">
+
+                     <div id="footer">
+                        <div id="footer_image_left"></div>
+                        <div id="footer_statement_text">The Sustainable Energy Authority of Ireland is financed by Ireland’s EU Structural Funds Programme co-funded by the Irish Government and the European Union</div>
+                        <div id="footer_image_right"></div>
+                        <br />
+                      </div>
+
+</div>
+              </div>
+
+
+<script type="text/javascript">function HandleAjaxTextBoxChange(allowNumbers, allowSpecialCharacters, allowText ){if( event.keyCode == 37 || event.keyCode == 39 || event.keyCode == 38 || event.keyCode == 40 || event.keyCode == 36 )return;var text = event.srcElement.value;var retText = V1.NET.WebControls.AjaxTextBox.HandleTextChange(text,allowNumbers, allowSpecialCharacters, allowText);event.srcElement.value = retText.value;}</script>
+<script type="text/javascript">
+//<![CDATA[
+
+theForm.oldSubmit = theForm.submit;
+theForm.submit = WebForm_SaveScrollPositionSubmit;
+
+theForm.oldOnSubmit = theForm.onsubmit;
+theForm.onsubmit = WebForm_SaveScrollPositionOnSubmit;
+
+theForm.oldOnLoad = window.onload;
+window.onload = WebForm_RestoreScrollPosition;
+//]]>
+</script>
+</form>
+
+    </body>
+</html>
