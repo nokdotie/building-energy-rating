@@ -150,6 +150,21 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
+      "./certificates/100290303.pdf",
+      PdfCertificate(
+        Rating.E2,
+        LocalDate.of(2014, 10, 24),
+        LocalDate.of(2024, 10, 24),
+        Address("17 GALLEN VIEW\nFERBANE\nBIRR\nCO. OFFALY"),
+        None,
+        AssessorNumber(102657),
+        AssessorCompanyNumber(102653),
+        DomesticEnergyAssessmentProcedureVersion.`3.2.1`,
+        KilowattHourPerSquareMetrePerYear(340.28),
+        KilogramOfCarbonDioxidePerSquareMetrePerYear(109.08)
+      )
+    ),
+    (
       "./certificates/106559123.pdf",
       PdfCertificate(
         Rating.F,
