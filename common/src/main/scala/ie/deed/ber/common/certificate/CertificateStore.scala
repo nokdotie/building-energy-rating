@@ -56,6 +56,7 @@ class GoogleFirestoreCertificateStore(
       null
     ) { certificate =>
       Map(
+        "rating" -> certificate.rating.toString,
         "type-of-rating" -> certificate.typeOfRating.toString,
         "issued-on" -> certificate.issuedOn.toString,
         "valid-until" -> certificate.validUntil.toString,
@@ -73,6 +74,7 @@ class GoogleFirestoreCertificateStore(
       null
     ) { certificate =>
       Map(
+        "rating" -> certificate.rating.toString,
         "issued-on" -> certificate.issuedOn.toString,
         "valid-until" -> certificate.validUntil.toString,
         "property-address" -> certificate.propertyAddress.value,
@@ -104,6 +106,12 @@ class GoogleFirestoreCertificateStore(
           map
             .get(seaiIeHtmlCertificateField)
             .asInstanceOf[java.util.Map[String, Any]]
+        }
+        rating <- Try {
+          seaiIeHtmlCertificate
+            .get("rating")
+            .asInstanceOf[String]
+            .pipe { Rating.valueOf }
         }
         typeOfRating <- Try {
           seaiIeHtmlCertificate
@@ -172,6 +180,7 @@ class GoogleFirestoreCertificateStore(
             .pipe { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
         }
       } yield HtmlCertificate(
+        rating = rating,
         typeOfRating = typeOfRating,
         issuedOn = issuedOn,
         validUntil = validUntil,

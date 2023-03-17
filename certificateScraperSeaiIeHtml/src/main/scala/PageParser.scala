@@ -3,11 +3,12 @@ import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, Year}
 import ie.seai.ber.certificate._
 import scala.util.Try
+import scala.util.matching.Regex
 
 object PageParser {
   val dateTimeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
-  def tryParseField(page: Page, fieldName: String): Try[String] = Try {
+  def tryInnerHtml(page: Page, fieldName: String): Try[String] = Try {
     val selector =
       s"#ctl00_DefaultContent_BERSearch_dfBER_container_${fieldName} div"
 
@@ -24,29 +25,45 @@ object PageParser {
       .trim
   }
 
+  def tryFindMatch(innerHtml: String, pattern: Regex): Try[String] =
+    pattern
+      .findFirstMatchIn(innerHtml)
+      .map { _.group(1) }
+      .toRight(new Throwable(s"Missing pattern: $pattern"))
+      .toTry
+
   def tryParse(page: Page): Try[HtmlCertificate] =
     for {
-      typeOfRating <- tryParseField(page, "TypeOfRating")
+      rating <- tryInnerHtml(page, "EnergyRating")
+        .flatMap {
+          tryFindMatch(
+            _,
+            "^([ABC][123]|[DE][12]|[FG]) [0-9.]+ \\(kWh/m2/yr\\)$".r
+          )
+        }
+        .flatMap { Rating.tryFromString }
+      typeOfRating <- tryInnerHtml(page, "TypeOfRating")
         .flatMap { TypeOfRating.tryFromString }
-      issuedOn <- tryParseField(page, "DateOfIssue")
+      issuedOn <- tryInnerHtml(page, "DateOfIssue")
         .map { LocalDate.parse(_, dateTimeFormat) }
-      validUntil <- tryParseField(page, "DateValidUntil")
+      validUntil <- tryInnerHtml(page, "DateValidUntil")
         .map { LocalDate.parse(_, dateTimeFormat) }
-      address <- tryParseField(page, "PublishingAddress")
+      address <- tryInnerHtml(page, "PublishingAddress")
         .map { Address.apply }
-      propertyConstructedOn <- tryParseField(page, "DateOfConstruction")
+      propertyConstructedOn <- tryInnerHtml(page, "DateOfConstruction")
         .map { Year.parse }
-      propertyType <- tryParseField(page, "DwellingType")
+      propertyType <- tryInnerHtml(page, "DwellingType")
         .flatMap { PropertyType.tryFromString }
-      propertyFloorArea <- tryParseField(page, "FloorArea")
+      propertyFloorArea <- tryInnerHtml(page, "FloorArea")
         .flatMap { SquareMeter.tryFromString }
-      domesticEnergyAssessmentProcedureVersion <- tryParseField(page, "BERTool")
+      domesticEnergyAssessmentProcedureVersion <- tryInnerHtml(page, "BERTool")
         .flatMap { DomesticEnergyAssessmentProcedureVersion.tryFromString }
-      energyRating <- tryParseField(page, "EnergyRating")
+      energyRating <- tryInnerHtml(page, "EnergyRating")
         .flatMap { KilowattHourPerSquareMetrePerYear.tryFromString }
-      carbonDioxideEmissionsIndicator <- tryParseField(page, "CDERValue")
+      carbonDioxideEmissionsIndicator <- tryInnerHtml(page, "CDERValue")
         .flatMap { KilogramOfCarbonDioxidePerSquareMetrePerYear.tryFromString }
     } yield HtmlCertificate(
+      rating,
       typeOfRating,
       issuedOn,
       validUntil,
