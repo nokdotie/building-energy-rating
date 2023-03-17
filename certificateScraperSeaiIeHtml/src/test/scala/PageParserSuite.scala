@@ -10,6 +10,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/100000066.html",
       HtmlCertificate(
+        Rating.B3,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2018, 9, 2),
         LocalDate.of(2028, 9, 2),
@@ -27,6 +28,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/100000181.html",
       HtmlCertificate(
+        Rating.B3,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2019, 6, 3),
         LocalDate.of(2029, 6, 3),
@@ -42,6 +44,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/100000280.html",
       HtmlCertificate(
+        Rating.B2,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2016, 4, 25),
         LocalDate.of(2026, 4, 25),
@@ -57,6 +60,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/100000298.html",
       HtmlCertificate(
+        Rating.B3,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2020, 8, 15),
         LocalDate.of(2030, 8, 15),
@@ -72,6 +76,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/100000595.html",
       HtmlCertificate(
+        Rating.B3,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2022, 1, 20),
         LocalDate.of(2032, 1, 20),
@@ -87,6 +92,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/100000652.html",
       HtmlCertificate(
+        Rating.B2,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2021, 10, 18),
         LocalDate.of(2031, 10, 18),
@@ -102,6 +108,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/100000645.html",
       HtmlCertificate(
+        Rating.B3,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2022, 9, 23),
         LocalDate.of(2032, 9, 23),
@@ -117,6 +124,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/100000744.html",
       HtmlCertificate(
+        Rating.B3,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2023, 3, 9),
         LocalDate.of(2033, 3, 9),
@@ -134,6 +142,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/100000967.html",
       HtmlCertificate(
+        Rating.B3,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2022, 5, 25),
         LocalDate.of(2032, 5, 25),
@@ -149,6 +158,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/106559123.html",
       HtmlCertificate(
+        Rating.F,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2014, 6, 28),
         LocalDate.of(2024, 6, 28),
@@ -164,6 +174,7 @@ class PageParserSuite extends munit.FunSuite {
     (
       "./certificates/106559149.html",
       HtmlCertificate(
+        Rating.G,
         TypeOfRating.ExistingDwelling,
         LocalDate.of(2014, 6, 29),
         LocalDate.of(2024, 6, 29),

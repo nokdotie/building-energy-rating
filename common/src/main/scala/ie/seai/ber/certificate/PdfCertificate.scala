@@ -5,6 +5,7 @@ import ie.seai.ber.certificate._
 import ie.deed.ber.common.certificate.CertificateNumber
 
 case class PdfCertificate(
+    rating: Rating,
     issuedOn: LocalDate,
     validUntil: LocalDate,
     propertyAddress: Address,

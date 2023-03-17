@@ -11,6 +11,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/100000066.pdf",
       PdfCertificate(
+        Rating.B3,
         LocalDate.of(2018, 9, 2),
         LocalDate.of(2028, 9, 2),
         Address(
@@ -27,6 +28,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/100000181.pdf",
       PdfCertificate(
+        Rating.B3,
         LocalDate.of(2019, 6, 3),
         LocalDate.of(2029, 6, 3),
         Address("2 CURRAGH WOOD\nKILANERIN\nGOREY\nCO. WEXFORD"),
@@ -41,6 +43,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/100000280.pdf",
       PdfCertificate(
+        Rating.B2,
         LocalDate.of(2016, 4, 25),
         LocalDate.of(2026, 4, 25),
         Address("8 CURRAGH WOOD\nKILANERIN\nGOREY\nCO. WEXFORD"),
@@ -56,6 +59,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/100000298.pdf",
       PdfCertificate(
+        Rating.B3,
         LocalDate.of(2020, 8, 15),
         LocalDate.of(2030, 8, 15),
         Address("9 CURRAGH WOOD\nKILANERIN\nGOREY\nCO. WEXFORD"),
@@ -70,6 +74,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/100000595.pdf",
       PdfCertificate(
+        Rating.B3,
         LocalDate.of(2022, 1, 20),
         LocalDate.of(2032, 1, 20),
         Address("9 MIMOSA HALL\nLEVMOSS PARK\nTHE GALLOPS\nDUBLIN 18"),
@@ -84,6 +89,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/100000652.pdf",
       PdfCertificate(
+        Rating.B2,
         LocalDate.of(2021, 10, 18),
         LocalDate.of(2031, 10, 18),
         Address("APT 13 MINOSA HALL\nTHE GALLOPS\nLEOPARDSTOWN\nDUBLIN 18"),
@@ -99,6 +105,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/100000645.pdf",
       PdfCertificate(
+        Rating.B3,
         LocalDate.of(2022, 9, 23),
         LocalDate.of(2032, 9, 23),
         Address("APT 12 MINOSA HALL\nTHE GALLOPS\nLEOPARDSTOWN\nDUBLIN 18"),
@@ -113,6 +120,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/100000744.pdf",
       PdfCertificate(
+        Rating.B3,
         LocalDate.of(2023, 3, 9),
         LocalDate.of(2033, 3, 9),
         Address(
@@ -129,6 +137,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/100000967.pdf",
       PdfCertificate(
+        Rating.B3,
         LocalDate.of(2022, 5, 25),
         LocalDate.of(2032, 5, 25),
         Address("APT 16 THE GALLOPS\nLEVMOSS HALL\nLEOPARDSTOWN\nDUBLIN 18"),
@@ -143,6 +152,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/106559123.pdf",
       PdfCertificate(
+        Rating.F,
         LocalDate.of(2014, 6, 28),
         LocalDate.of(2024, 6, 28),
         Address("RHINE\nKILLOE\nCO. LONGFORD"),
@@ -157,6 +167,7 @@ class PdfParserSuite extends munit.FunSuite {
     (
       "./certificates/106559149.pdf",
       PdfCertificate(
+        Rating.G,
         LocalDate.of(2014, 6, 29),
         LocalDate.of(2024, 6, 29),
         Address("303 CONNOLLY ROAD\nPORTLAW\nCO. WATERFORD"),

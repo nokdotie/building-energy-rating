@@ -3,6 +3,7 @@ package ie.seai.ber.certificate
 import java.time.{LocalDate, Year}
 
 case class HtmlCertificate(
+    rating: Rating,
     typeOfRating: TypeOfRating,
     issuedOn: LocalDate,
     validUntil: LocalDate,
