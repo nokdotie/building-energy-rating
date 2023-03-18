@@ -1,15 +1,19 @@
 package ie.deed.ber.api.apps
 
+import ie.deed.ber.api.jwt.JwtHelper.jwtDecode
 import ie.deed.ber.common.certificate.{
-  Certificate => InternalCertificate,
   CertificateNumber,
-  CertificateStore
+  CertificateStore,
+  Certificate as InternalCertificate
 }
+import pdi.jwt.JwtClaim
+
 import scala.util.chaining.scalaUtilChainingOps
 import zio.ZIO
-import zio.http._
+import zio.http.*
+import zio.http.HttpAppMiddleware.bearerAuth
 import zio.http.model.{Method, Status}
-import zio.json._
+import zio.json.*
 
 object ApiV1CertificateApp {
 
@@ -71,5 +75,5 @@ object ApiV1CertificateApp {
             },
             certificate => Response.json(certificate.toJson)
           )
-    }
+    } @@ bearerAuth(jwtDecode(_).isDefined)
 }

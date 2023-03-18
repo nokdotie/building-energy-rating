@@ -30,7 +30,8 @@ lazy val api = project
     dockerRepository := Some("gcr.io/deed-ie"),
     dockerExposedPorts ++= Seq(8080),
     libraryDependencies ++= List(
-      "dev.zio" %% "zio-http" % "0.0.5"
+      "dev.zio" %% "zio-http" % "0.0.5",
+      "com.github.jwt-scala" %% "jwt-core" % "9.2.0",
     )
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
