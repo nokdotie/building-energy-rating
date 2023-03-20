@@ -13,11 +13,14 @@ import ie.seai.ber.certificate.PdfCertificate
 
 val certificateNumbers: ZStream[Any, Throwable, CertificateNumber] =
   Random
-    .nextIntBetween(CertificateNumber.MinValue.value, CertificateNumber.MaxValue.value)
+    .nextIntBetween(
+      CertificateNumber.MinValue.value,
+      CertificateNumber.MaxValue.value
+    )
     .pipe { ZStream.fromZIO }
     .flatMap { mid =>
-      val midEnd = ZStream.range(mid, end)
-      val startMid = ZStream.range(start, mid)
+      val midEnd = ZStream.range(mid, CertificateNumber.MaxValue.value)
+      val startMid = ZStream.range(CertificateNumber.MinValue.value, mid)
 
       midEnd.concat(startMid)
     }
