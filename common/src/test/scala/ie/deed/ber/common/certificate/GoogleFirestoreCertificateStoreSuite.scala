@@ -10,7 +10,7 @@ class GoogleFirestoreCertificateStoreSuite extends ScalaCheckSuite {
       val fromMap =
         GoogleFirestoreCertificateStore.fromMap(certificate.number, toMap)
 
-      assertEquals(certificate, fromMap)
+      assertEquals(fromMap, certificate)
     }
   }
 }

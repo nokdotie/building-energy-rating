@@ -186,8 +186,8 @@ object GoogleFirestoreCertificateStore {
         "property-eircode" -> certificate.propertyEircode.fold(null) {
           _.value
         },
-        "assessor-number" -> certificate.assessorNumber.value,
-        "assessor-company-number" -> certificate.assessorCompanyNumber.value,
+        "assessor-number" -> certificate.assessorNumber.value.toLong,
+        "assessor-company-number" -> certificate.assessorCompanyNumber.value.toLong,
         "domestic-energy-assessment-procedure-version" -> certificate.domesticEnergyAssessmentProcedureVersion.toString,
         "energy-rating-in-kWh/m2/yr" -> certificate.energyRating.value.toString,
         "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr" -> certificate.carbonDioxideEmissionsIndicator.value.toString
@@ -300,13 +300,13 @@ object GoogleFirestoreCertificateStore {
       )
         .map { Eircode.apply }
         .fold(_ => None, Some(_))
-      assessorNumber <- get[Int](seaiIePdfCertificateField, "assessor-number")
-        .map { AssessorNumber.apply }
-      assessorCompanyNumber <- get[Int](
+      assessorNumber <- get[Long](seaiIePdfCertificateField, "assessor-number")
+        .flatMap { long => Try { AssessorNumber(long.toInt) } }
+      assessorCompanyNumber <- get[Long](
         seaiIePdfCertificateField,
         "assessor-company-number"
       )
-        .map { AssessorCompanyNumber.apply }
+        .flatMap { long => Try { AssessorCompanyNumber(long.toInt) } }
       domesticEnergyAssessmentProcedureVersion <- get[String](
         seaiIePdfCertificateField,
         "domestic-energy-assessment-procedure-version"
