@@ -21,3 +21,12 @@ With the tool properly configured, you should be able to credentials for local a
 ```sh
 gcloud auth application-default login
 ```
+
+## Production
+This application contains two environments: production and other. To run the application in the production environment, you must set the `ENV` environment variable.
+
+```sh
+ENV=production sbt api/run
+```
+
+Beware, the production environment should be kept for production use.
