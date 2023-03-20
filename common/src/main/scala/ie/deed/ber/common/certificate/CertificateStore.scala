@@ -233,7 +233,7 @@ class GoogleFirestoreCertificateStore(
         seaiIePdfCertificate
           .get("assessor-company-number")
           .asInstanceOf[Int]
-          .pipe { DomesticEnergyAssessmentProcedureVersion.valueOf }
+          .pipe { AssessorCompanyNumber.apply }
       }
       domesticEnergyAssessmentProcedureVersion <- Try {
         seaiIePdfCertificate
@@ -257,7 +257,6 @@ class GoogleFirestoreCertificateStore(
       }
     } yield PdfCertificate(
       rating = rating,
-      typeOfRating = typeOfRating,
       issuedOn = issuedOn,
       validUntil = validUntil,
       propertyAddress = propertyAddress,
