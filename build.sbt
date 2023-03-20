@@ -6,7 +6,13 @@ ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/c
 
 lazy val root = project
   .in(file("."))
-  .aggregate(common, api, certificateNumberScraper, certificateScraper)
+  .aggregate(
+    common,
+    api,
+    certificateNumberScraper,
+    certificateScraperSeaiIeHtml,
+    certificateScraperSeaiIePdf
+  )
 
 lazy val common = project
   .settings(
@@ -24,7 +30,7 @@ lazy val api = project
     dockerRepository := Some("gcr.io/deed-ie"),
     dockerExposedPorts ++= Seq(8080),
     libraryDependencies ++= List(
-      "dev.zio" %% "zio-http" % "0.0.4+42-6f1aa906-SNAPSHOT"
+      "dev.zio" %% "zio-http" % "0.0.5"
     )
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -33,14 +39,23 @@ lazy val certificateNumberScraper = project
   .dependsOn(common)
   .settings(
     libraryDependencies ++= List(
-      "dev.zio" %% "zio-http" % "0.0.4+42-6f1aa906-SNAPSHOT"
+      "dev.zio" %% "zio-http" % "0.0.5"
     )
   )
 
-lazy val certificateScraper = project
-  .dependsOn(common)
+lazy val certificateScraperSeaiIeHtml = project
+  .dependsOn(common % "compile->compile;test->test")
   .settings(
     libraryDependencies ++= List(
       "com.microsoft.playwright" % "playwright" % "1.31.0"
+    )
+  )
+
+lazy val certificateScraperSeaiIePdf = project
+  .dependsOn(common % "compile->compile;test->test")
+  .settings(
+    libraryDependencies ++= List(
+      "org.apache.pdfbox" % "pdfbox" % "2.0.27",
+      "dev.zio" %% "zio-http" % "0.0.4+42-6f1aa906-SNAPSHOT"
     )
   )
