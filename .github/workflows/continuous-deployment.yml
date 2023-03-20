@@ -26,7 +26,7 @@ jobs:
           cache: sbt
 
       - name: Login to GCP
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/setup-gcloud@v0
         with:
           project_id: deed-ie
           service_account_email: ${{ secrets.GCP_EMAIL }}
