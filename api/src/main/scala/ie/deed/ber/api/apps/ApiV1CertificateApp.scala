@@ -14,44 +14,49 @@ import zio.json._
 object ApiV1CertificateApp {
 
   case class Certificate(
-      certificateNumber: Int,
-      certificateIssuedOn: String,
-      certificateValidUntil: String,
-      propertyAddress: String,
-      propertyConstructedOn: Int,
-      propertyType: String,
-      floorAreaInSquareMeter: Float,
+      number: Int,
+      rating: String,
+      issuedOn: String,
+      validUntil: String,
+      address: String,
       energyRatingInKilowattHourPerSquareMetrePerYear: Float,
       carbonDioxideEmissionsIndicatorInKilogramOfCarbonDioxidePerSquareMetrePerYear: Float
   )
 
   object Certificate {
-    def fromInternal(internal: InternalCertificate): Certificate =
+    def fromInternal(internal: InternalCertificate): Certificate = {
+      val html = internal.seaiIeHtmlCertificate
+      val pdf = internal.seaiIePdfCertificate
+
       Certificate(
-        certificateNumber = internal.number.value,
-        certificateIssuedOn = internal.seaiIeHtmlCertificate
-          .fold("")(_.issuedOn.toString),
-        certificateValidUntil = internal.seaiIeHtmlCertificate
-          .fold("")(_.validUntil.toString),
-        propertyAddress = internal.seaiIeHtmlCertificate.fold(
-          ""
-        )(_.propertyAddress.value),
-        propertyConstructedOn = internal.seaiIeHtmlCertificate
-          .fold(0)(_.propertyConstructedOn.getValue),
-        propertyType = internal.seaiIeHtmlCertificate.fold("")(
-          _.propertyType.toString
-        ),
-        floorAreaInSquareMeter = internal.seaiIeHtmlCertificate
-          .fold(0f)(_.propertyFloorArea.value),
-        energyRatingInKilowattHourPerSquareMetrePerYear =
-          internal.seaiIeHtmlCertificate.fold(0f)(
-            _.energyRating.value
-          ),
+        number = internal.number.value,
+        rating = html
+          .map(_.rating)
+          .orElse(pdf.map(_.rating))
+          .fold("") { _.toString },
+        issuedOn = html
+          .map(_.issuedOn)
+          .orElse(pdf.map(_.issuedOn))
+          .fold("") { _.toString },
+        validUntil = html
+          .map(_.validUntil)
+          .orElse(pdf.map(_.validUntil))
+          .fold("") { _.toString },
+        address = html
+          .map(_.propertyAddress)
+          .orElse(pdf.map(_.propertyAddress))
+          .fold("") { _.value },
+        energyRatingInKilowattHourPerSquareMetrePerYear = html
+          .map(_.energyRating)
+          .orElse(pdf.map(_.energyRating))
+          .fold(0f)(_.value),
         carbonDioxideEmissionsIndicatorInKilogramOfCarbonDioxidePerSquareMetrePerYear =
-          internal.seaiIeHtmlCertificate.fold(0f)(
-            _.carbonDioxideEmissionsIndicator.value
-          )
+          html
+            .map(_.carbonDioxideEmissionsIndicator)
+            .orElse(pdf.map(_.carbonDioxideEmissionsIndicator))
+            .fold(0f)(_.value),
       )
+    }
 
     implicit val encoder: JsonEncoder[Certificate] =
       DeriveJsonEncoder.gen[Certificate]
