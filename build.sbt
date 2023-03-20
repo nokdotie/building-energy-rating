@@ -17,9 +17,9 @@ lazy val root = project
 lazy val common = project
   .settings(
     libraryDependencies ++= List(
-      "dev.zio" %% "zio" % "2.0.9",
-      "dev.zio" %% "zio-streams" % "2.0.9",
-      "com.google.cloud" % "google-cloud-firestore" % "3.8.1",
+      "dev.zio" %% "zio" % "2.0.10",
+      "dev.zio" %% "zio-streams" % "2.0.10",
+      "com.google.cloud" % "google-cloud-firestore" % "3.8.2",
       "org.scalameta" %% "munit" % "0.7.29" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test
     )
@@ -48,7 +48,7 @@ lazy val certificateScraperSeaiIeHtml = project
   .dependsOn(common % "compile->compile;test->test")
   .settings(
     libraryDependencies ++= List(
-      "com.microsoft.playwright" % "playwright" % "1.30.0"
+      "com.microsoft.playwright" % "playwright" % "1.31.0"
     )
   )
 
