@@ -1,9 +1,29 @@
-## sbt project compiled with Scala 3
+# Building Energy Rating
 
-### Usage
+## Certificate Number Scraper
+This application queries the Sustainable Energy Authority of Ireland, SEAI, to identify numbers that point to certificates.
 
-This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
+```sh
+sbt certificateNumberScraper/run
+```
 
-For more information on the sbt-dotty plugin, see the
-[scala3-example-project](https://github.com/scala/scala3-example-project/blob/main/README.md).
-# building-energy-rating
+## Certificate Scraper seai.ie HTML
+The application, using identified numbers, queries the SEAI for HTML certificates using their website.
+
+```sh
+sbt certificateScraperSeaiIeHtml/run
+```
+
+## Certificate Scraper seai.ie PDF
+The application, using identified numbers, queries the SEAI for PDF certificates using their file storage.
+
+```sh
+sbt certificateScraperSeaiIePDF/run
+```
+
+## API
+The application returns certificates gathered from the SEAI.
+
+```sh
+sbt api/run
+```
