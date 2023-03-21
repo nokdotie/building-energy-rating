@@ -1,7 +1,6 @@
 package ie.seai.ber.certificate
 
 import java.time.{LocalDate, Year}
-import ie.seai.ber.certificate._
 import ie.deed.ber.common.certificate.CertificateNumber
 
 case class PdfCertificate(
