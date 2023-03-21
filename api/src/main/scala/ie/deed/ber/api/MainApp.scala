@@ -1,6 +1,6 @@
 package ie.deed.ber.api
 
-import ie.deed.ber.api.apps.{ApiV1CertificateApp, HealthApp}
+import ie.deed.ber.api.apps.*
 import ie.deed.ber.common.certificate.GoogleFirestoreCertificateStore
 import zio.*
 import zio.http.*
@@ -22,6 +22,7 @@ object MainApp extends ZIOAppDefault {
 
   private val routes =
     ApiV1CertificateApp.http ++
+      StaticApp.http ++
       HealthApp.http
 
   private val app = (routes
