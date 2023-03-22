@@ -1,5 +1,6 @@
 import zio.{durationInt, Random, Schedule, Scope, ZIO, ZIOAppDefault}
 import zio.http.{Client, ClientConfig}
+import zio.http.model.HeaderValues
 import zio.gcp.firestore.Firestore
 import zio.stream.{ZPipeline, ZStream}
 import ie.deed.ber.common.certificate.{
@@ -52,8 +53,7 @@ def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
     .request(url)
     .timeoutFail(Throwable("Timeout"))(timeoutAfter)
     .retry(Schedule.fixed(retryAfter))
-    .flatMap { _.body.asString }
-    .map { !_.startsWith("File Not found") }
+    .map { _.hasContentType(HeaderValues.applicationOctetStream) }
 }
 
 val upsertLimit = 1_000
