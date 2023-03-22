@@ -48,7 +48,7 @@ val getCertificates: ZPipeline[
   CertificateNumber,
   Certificate
 ] = {
-  val concurrency = 5
+  val concurrency = 10
 
   ZPipeline[CertificateNumber]
     .mapZIOParUnordered(concurrency) { certificateNumber =>
