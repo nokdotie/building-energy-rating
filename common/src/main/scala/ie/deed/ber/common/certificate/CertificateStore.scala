@@ -50,31 +50,44 @@ class GoogleFirestoreCertificateStore(
 ) extends CertificateStore {
   def upsertBatch(
       certificates: Iterable[Certificate]
-  ): ZIO[Any, Throwable, Int] =
-    if (certificates.isEmpty) ZIO.succeed(0)
-    else
-      for {
-        collectionReference <- firestore.collection(collectionPath)
-        documentReferences <- certificates
-          .map { certificate =>
-            firestore
-              .document(
-                collectionReference,
-                DocumentPath(certificate.number.value.toString)
-              )
-              .map { (certificate, _) }
-          }
-          .pipe { ZIO.collectAll }
-        writeBatch <- firestore.batch
-        _ = documentReferences.foreach { (certificate, documentReference) =>
-          writeBatch.set(
-            documentReference,
-            GoogleFirestoreCertificateStore.toMap(certificate),
-            SetOptions.merge
+  ): ZIO[Any, Throwable, Int] = for {
+    certificatesWithPrevious <- certificates
+      .map { current => getById(current.number).map { (current, _) } }
+      .pipe { ZIO.collectAll }
+    certificatesWithState = certificatesWithPrevious.collect {
+      case (certificate, None) => certificate
+      case (certificate, Some(previous)) if certificate != previous =>
+        certificate.copy(
+          seaiIeHtmlCertificate = certificate.seaiIeHtmlCertificate.orElse(
+            previous.seaiIeHtmlCertificate
+          ),
+          seaiIePdfCertificate = certificate.seaiIePdfCertificate.orElse(
+            previous.seaiIePdfCertificate
           )
-        }
-        results <- firestore.commit(writeBatch)
-      } yield results.size
+        )
+    }
+    collectionReference <- firestore.collection(collectionPath)
+    documentReferences <- certificatesWithState
+      .map { certificateWithState =>
+        firestore
+          .document(
+            collectionReference,
+            DocumentPath(certificateWithState.number.value.toString)
+          )
+          .map { (certificateWithState, _) }
+      }
+      .pipe { ZIO.collectAll }
+    writeBatch <- firestore.batch
+    _ = documentReferences.foreach {
+      (certificateWithState, documentReference) =>
+        writeBatch.set(
+          documentReference,
+          GoogleFirestoreCertificateStore.toMap(certificateWithState),
+          SetOptions.merge
+        )
+    }
+    results <- firestore.commit(writeBatch)
+  } yield results.size
 
   val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int] =
     ZPipeline
