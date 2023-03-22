@@ -36,7 +36,9 @@ def getHtmlCertificate(
         Page.ClickOptions().setTimeout(timeoutInMilliseconds)
       )
     }
-    certificate <- ZIO.fromTry { PageParser.tryParse(page) }
+    certificate <- ZIO
+      .fromTry { PageParser.tryParse(page) }
+      .logError("HTML Parser Failed")
   } yield certificate
 }
 
@@ -59,7 +61,9 @@ val getCertificates: ZPipeline[
             None
           )
         }
+        .option
     }
+    .collectSome
 }
 
 val upsertLimit = 1_000

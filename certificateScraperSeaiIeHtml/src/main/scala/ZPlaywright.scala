@@ -14,7 +14,7 @@ object ZPlaywright {
   def live: ZLayer[Any, Throwable, ZPlaywright] = ZLayer.succeed {
     val acquirePlaywright = ZIO.attempt { Playwright.create }
     val acquireBrowser =
-      (playwright: Playwright) => ZIO.attempt { playwright.chromium.launch }
+      (playwright: Playwright) => ZIO.attempt { playwright.firefox.launch }
     val acquireContext =
       (browser: Browser) => ZIO.attempt { browser.newContext }
     val acquirePage =
