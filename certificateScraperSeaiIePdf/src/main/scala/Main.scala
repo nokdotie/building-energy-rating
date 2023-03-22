@@ -9,23 +9,36 @@ import java.io.File
 import scala.util.chaining.scalaUtilChainingOps
 import zio.{Scope, ZIO, ZIOAppDefault}
 import zio.http.{Client, ClientConfig}
+import zio.http.model.HeaderValues.applicationOctetStream
 import zio.gcp.firestore.Firestore
 import zio.stream.{ZPipeline, ZSink}
 
 def getPdfCertificate(
     certificateNumber: CertificateNumber
-): ZIO[Client with ZPdfBox with Scope, Throwable, PdfCertificate] =
+): ZIO[Client with ZPdfBox with Scope, Throwable, PdfCertificate] = {
+  val url = PdfCertificate.url(certificateNumber)
+
+  val createTempPdfFile = ZIO.attemptBlocking {
+    File.createTempFile(certificateNumber.value.toString, ".pdf")
+  }
+  val deleteTempPdfFile = (file: File) =>
+    ZIO.attemptBlocking { file.delete }.orDie
+
   for {
-    file <- ZIO.attemptBlocking {
-      File.createTempFile(certificateNumber.value.toString, ".pdf")
-    }
-    url = PdfCertificate.url(certificateNumber)
-    response <- Client.request(url)
+    response <- Client
+      .request(url)
+      .filterOrFail { _.hasContentType(applicationOctetStream) } {
+        new Throwable("Invalid format")
+      }
+      .retryN(3)
+    file <- ZIO.acquireRelease(createTempPdfFile)(deleteTempPdfFile)
     _ <- response.body.asStream.run(ZSink.fromFile(file))
     document <- ZPdfBox.acquireRelease(file)
-    certificate <- ZIO.fromTry { PdfParser.tryParse(document) }
-    _ <- ZIO.attemptBlocking { file.delete }
+    certificate <- ZIO
+      .fromTry { PdfParser.tryParse(document) }
+      .logError("PDF Parser Failed")
   } yield certificate
+}
 
 val getCertificates: ZPipeline[
   Client with ZPdfBox with Scope,
@@ -37,16 +50,15 @@ val getCertificates: ZPipeline[
 
   ZPipeline[CertificateNumber]
     .mapZIOParUnordered(concurrency) { certificateNumber =>
-      getPdfCertificate(certificateNumber)
-        .retryN(3)
-        .map { pdfCertificate =>
-          Certificate(
-            certificateNumber,
-            None,
-            Some(pdfCertificate)
-          )
-        }
+      getPdfCertificate(certificateNumber).map { pdfCertificate =>
+        Certificate(
+          certificateNumber,
+          None,
+          Some(pdfCertificate)
+        )
+      }.option
     }
+    .collectSome
 }
 
 val upsertLimit = 1_000_000
