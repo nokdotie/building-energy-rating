@@ -56,8 +56,6 @@ def resourceExists(url: String): ZIO[Client, Throwable, Boolean] = {
     .map { _.hasContentType(HeaderValues.applicationOctetStream) }
 }
 
-val upsertLimit = 1_000
-
 val app: ZIO[Client with CertificateStore, Throwable, Unit] =
   certificateNumbers
     .debug("Certificate Number")
@@ -66,7 +64,6 @@ val app: ZIO[Client with CertificateStore, Throwable, Unit] =
     .map { Certificate(_, None, None) }
     .via(CertificateStore.upsertPipeline)
     .debug("Certificate Number Upserted")
-    .takeWhile { _ < upsertLimit }
     .runDrain
 
 object Main extends ZIOAppDefault {
