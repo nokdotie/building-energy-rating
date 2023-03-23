@@ -1,7 +1,7 @@
 package ie.deed.ber.api
 
 import ie.deed.ber.api.apps.*
-import ie.deed.ber.common.certificate.GoogleFirestoreCertificateStore
+import ie.deed.ber.common.certificate.stores.GoogleFirestoreCertificateStore
 import zio.*
 import zio.http.*
 import zio.http.model.Method

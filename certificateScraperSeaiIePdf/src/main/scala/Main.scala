@@ -1,6 +1,5 @@
-import ie.deed.ber.common.certificate.{
-  Certificate,
-  CertificateNumber,
+import ie.deed.ber.common.certificate.{Certificate, CertificateNumber}
+import ie.deed.ber.common.certificate.stores.{
   CertificateStore,
   GoogleFirestoreCertificateStore
 }
@@ -61,8 +60,6 @@ val getCertificates: ZPipeline[
     .collectSome
 }
 
-val upsertLimit = 1_000_000
-
 val app: ZIO[
   CertificateStore with Client with ZPdfBox with Scope,
   Throwable,
@@ -74,7 +71,6 @@ val app: ZIO[
     .debug("Certificate")
     .via(CertificateStore.upsertPipeline)
     .debug("Certificate Upserted")
-    .takeWhile { _ < upsertLimit }
     .runDrain
 
 object Main extends ZIOAppDefault {

@@ -2,9 +2,9 @@ package ie.deed.ber.api.apps
 
 import ie.deed.ber.common.certificate.{
   Certificate => InternalCertificate,
-  CertificateNumber,
-  CertificateStore
+  CertificateNumber
 }
+import ie.deed.ber.common.certificate.stores.CertificateStore
 import ie.seai.ber.certificate.{HtmlCertificate, PdfCertificate}
 import scala.util.chaining.scalaUtilChainingOps
 import zio.ZIO

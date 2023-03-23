@@ -1,7 +1,6 @@
 import com.microsoft.playwright.Page
-import ie.deed.ber.common.certificate.{
-  Certificate,
-  CertificateNumber,
+import ie.deed.ber.common.certificate.{Certificate, CertificateNumber}
+import ie.deed.ber.common.certificate.stores.{
   CertificateStore,
   GoogleFirestoreCertificateStore
 }
@@ -48,7 +47,7 @@ val getCertificates: ZPipeline[
   CertificateNumber,
   Certificate
 ] = {
-  val concurrency = 10
+  val concurrency = 7
 
   ZPipeline[CertificateNumber]
     .mapZIOParUnordered(concurrency) { certificateNumber =>
@@ -66,8 +65,6 @@ val getCertificates: ZPipeline[
     .collectSome
 }
 
-val upsertLimit = 1_000
-
 val app: ZIO[CertificateStore with ZPlaywright with Scope, Throwable, Unit] =
   CertificateStore.streamMissingSeaiIeHtml
     .debug("Certificate Number")
@@ -75,7 +72,6 @@ val app: ZIO[CertificateStore with ZPlaywright with Scope, Throwable, Unit] =
     .debug("Certificate")
     .via(CertificateStore.upsertPipeline)
     .debug("Certificate Number Upserted")
-    .takeWhile { _ < upsertLimit }
     .runDrain
 
 object Main extends ZIOAppDefault {
