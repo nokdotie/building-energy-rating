@@ -1,7 +1,6 @@
 import com.microsoft.playwright.Page
-import ie.deed.ber.common.certificate.{
-  Certificate,
-  CertificateNumber,
+import ie.deed.ber.common.certificate.{Certificate, CertificateNumber}
+import ie.deed.ber.common.certificate.stores.{
   CertificateStore,
   GoogleFirestoreCertificateStore
 }

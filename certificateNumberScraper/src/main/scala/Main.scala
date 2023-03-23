@@ -3,8 +3,8 @@ import zio.http.{Client, ClientConfig}
 import zio.http.model.HeaderValues
 import zio.gcp.firestore.Firestore
 import zio.stream.{ZPipeline, ZStream}
-import ie.deed.ber.common.certificate.{
-  CertificateNumber,
+import ie.deed.ber.common.certificate.CertificateNumber
+import ie.deed.ber.common.certificate.stores.{
   CertificateStore,
   GoogleFirestoreCertificateStore
 }
