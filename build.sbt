@@ -19,7 +19,7 @@ lazy val common = project
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.10",
       "dev.zio" %% "zio-streams" % "2.0.10",
-      "com.google.cloud" % "google-cloud-firestore" % "3.8.2",
+      "com.google.cloud" % "google-cloud-firestore" % "3.9.2",
       "org.scalameta" %% "munit" % "0.7.29" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test
     )
