@@ -1,15 +1,16 @@
 package ie.deed.ber.api.model
 
 import zio.json.{DeriveJsonEncoder, JsonEncoder}
-
 import ie.deed.ber.common.certificate.{
   CertificateNumber,
-  CertificateStore,
   Certificate as InternalCertificate
 }
+import ie.seai.ber.certificate.{HtmlCertificate, PdfCertificate}
+
 case class Certificate(
     number: Int,
     rating: String,
+    ratingImageUrl: String,
     issuedOn: String,
     validUntil: String,
     address: String,
@@ -18,47 +19,52 @@ case class Certificate(
 )
 
 object Certificate {
-  def fromInternal(internal: InternalCertificate): Certificate = {
-    val html = internal.seaiIeHtmlCertificate
-    val pdf = internal.seaiIePdfCertificate
-
-    Certificate(
-      number = internal.number.value,
-      rating = html
-        .map(_.rating)
-        .orElse(pdf.map(_.rating))
-        .fold("") {
-          _.toString
-        },
-      issuedOn = html
-        .map(_.issuedOn)
-        .orElse(pdf.map(_.issuedOn))
-        .fold("") {
-          _.toString
-        },
-      validUntil = html
-        .map(_.validUntil)
-        .orElse(pdf.map(_.validUntil))
-        .fold("") {
-          _.toString
-        },
-      address = html
-        .map(_.propertyAddress)
-        .orElse(pdf.map(_.propertyAddress))
-        .fold("") {
-          _.value
-        },
-      energyRatingInKilowattHourPerSquareMetrePerYear = html
-        .map(_.energyRating)
-        .orElse(pdf.map(_.energyRating))
-        .fold(0f)(_.value),
-      carbonDioxideEmissionsIndicatorInKilogramOfCarbonDioxidePerSquareMetrePerYear =
-        html
-          .map(_.carbonDioxideEmissionsIndicator)
-          .orElse(pdf.map(_.carbonDioxideEmissionsIndicator))
-          .fold(0f)(_.value),
-    )
-  }
+  def fromInternal(internal: InternalCertificate): Option[Certificate] =
+    internal.seaiIeHtmlCertificate
+      .orElse(internal.seaiIePdfCertificate)
+      .collect {
+        case certificate: HtmlCertificate =>
+          (
+            certificate.rating,
+            certificate.issuedOn,
+            certificate.validUntil,
+            certificate.propertyAddress,
+            certificate.energyRating,
+            certificate.carbonDioxideEmissionsIndicator
+          )
+        case certificate: PdfCertificate =>
+          (
+            certificate.rating,
+            certificate.issuedOn,
+            certificate.validUntil,
+            certificate.propertyAddress,
+            certificate.energyRating,
+            certificate.carbonDioxideEmissionsIndicator
+          )
+      }
+      .map {
+        (
+            rating,
+            issuedOn,
+            validUntil,
+            propertyAddress,
+            energyRating,
+            carbonDioxideEmissionsIndicator
+        ) =>
+          Certificate(
+            number = internal.number.value,
+            rating = rating.toString,
+            ratingImageUrl =
+              s"https://ber.deed.ie/static/images/ber/$rating.svg",
+            issuedOn = issuedOn.toString,
+            validUntil = validUntil.toString,
+            address = propertyAddress.value,
+            energyRatingInKilowattHourPerSquareMetrePerYear =
+              energyRating.value,
+            carbonDioxideEmissionsIndicatorInKilogramOfCarbonDioxidePerSquareMetrePerYear =
+              carbonDioxideEmissionsIndicator.value
+          )
+      }
 
   implicit val encoder: JsonEncoder[Certificate] =
     DeriveJsonEncoder.gen[Certificate]
