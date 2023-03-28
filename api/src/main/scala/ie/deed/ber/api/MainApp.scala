@@ -1,6 +1,7 @@
 package ie.deed.ber.api
 
-import ie.deed.ber.api.apps.*
+import ie.deed.ber.api.token.{TokenAuthMiddleware, UserTokenInMemoryStore}
+import ie.deed.ber.api.apps.{ApiV1CertificateApp, StaticApp, HealthApp}
 import ie.deed.ber.common.certificate.stores.GoogleFirestoreCertificateStore
 import zio.*
 import zio.http.*
@@ -21,7 +22,7 @@ object MainApp extends ZIOAppDefault {
   )
 
   private val routes =
-    ApiV1CertificateApp.http ++
+    ApiV1CertificateApp.http @@ TokenAuthMiddleware.tokenAuthMiddleware ++
       StaticApp.http ++
       HealthApp.http
 
@@ -29,7 +30,7 @@ object MainApp extends ZIOAppDefault {
     @@ HttpAppMiddleware.debug
     @@ HttpAppMiddleware.cors(corsConfig)).withDefaultErrorResponse
 
-  override val run = for {
+  override val run: ZIO[Any, Throwable, Unit] = for {
     _ <- Console.printLine(s"Starting server on http://localhost:$port")
     _ <- Server
       .serve(app)
@@ -37,7 +38,8 @@ object MainApp extends ZIOAppDefault {
         Server.defaultWithPort(port),
         Firestore.live,
         GoogleFirestoreCertificateStore.layer,
-        Scope.default
+        Scope.default,
+        UserTokenInMemoryStore.layer
       )
   } yield ()
 }

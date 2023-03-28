@@ -1,40 +1,22 @@
 ### Examples
 
-* http://localhost:8091/ber/100469675
-* http://localhost:8091/eircode/H62XE37/ber
+* http://localhost:8080/api/v1/ber/100105170
+* add `"X-API-Key"` header with valid token (see `UserTokenInMemoryStore`)
+
+
+* example using curl: 
+* `curl --header "X-API-Key: wqerasdffv123fv342rfsd" http://localhost:8080/api/v1/ber/100105170`
+
+Expected response:
 ``` json
 {
-  "number" : 100469675,
-  "dateOfIssue" : "2022-08-20",
-  "dateValidUntil" : "2032-08-20",
-  "ber" : {
-    "berClass" : {
-      "C1" : {}
-    },
-    "primaryEnergyUse" : 160.41
-  },
-  "co2EmissionIndicator" : {
-    "value" : 39.72
-  },
-  "typeOfRating" : {
-    "ExistingDwelling" : {}
-  },
-  "DEAPVersion" : "4.1.0",
-  "address" : {
-    "raw" : "33 HAZELWOOD\nCOSMONA\nLOUGHREA\nCO. GALWAY",
-    "eirCode" : "H62XE37"
-  },
-  "dwellingType" : {
-    "SemiDetachedHouse" : {}
-  },
-  "floorArea" : {
-    "valueSqm" : 116.26
-  },
-  "yearOfConstruction" : 2002,
-  "certificate" : {
-    "certificateUrl" : "https://ndber.seai.ie/pass/Download/PassDownloadBER.ashx?type=nas&ber=100469675&file=bercert",
-    "advisoryReportUrl" : "https://ndber.seai.ie/pass/Download/PassDownloadBER.ashx?type=nas&ber=100469675&file=advisoryreport"
-  }
+  "number": 100105170,
+  "rating": "C1",
+  "issuedOn": "2016-05-20",
+  "validUntil": "2026-05-20",
+  "address": "95 GRATTAN PARK\nSALTHILL\nCO. GALWAY\nGALWAY CITY",
+  "energyRatingInKilowattHourPerSquareMetrePerYear": 168.89,
+  "carbonDioxideEmissionsIndicatorInKilogramOfCarbonDioxidePerSquareMetrePerYear": 41.51
 }
 ```
 
