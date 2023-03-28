@@ -29,7 +29,6 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0
         with:
           project_id: deed-ie
-          service_account_email: ${{ secrets.GCP_EMAIL }}
           service_account_key: ${{ secrets.GCP_CREDENTIALS }}
 
       - name: Login to GCP docker
