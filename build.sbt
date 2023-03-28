@@ -28,7 +28,7 @@ lazy val common = project
 lazy val api = project
   .dependsOn(common)
   .settings(
-    dockerRepository := Some("gcr.io/deed-ie"),
+    dockerRepository := Some("gcr.io/deed-ie/building-energy-rating"),
     dockerExposedPorts ++= Seq(8080),
     libraryDependencies ++= List(
       "dev.zio" %% "zio-http" % "0.0.5"
