@@ -63,6 +63,15 @@ lazy val certificateScraperSeaiIePdf = project
   .settings(
     libraryDependencies ++= List(
       "org.apache.pdfbox" % "pdfbox" % "2.0.27",
-      "dev.zio" %% "zio-http" % "0.0.4+42-6f1aa906-SNAPSHOT"
+      "dev.zio" %% "zio-http" % "0.0.5"
+    )
+  )
+
+lazy val eircodeScraperEircodeIe = project
+  .dependsOn(common % "compile->compile;test->test")
+  .settings(
+    libraryDependencies ++= List(
+      "dev.zio" %% "zio-http" % "0.0.5",
+      "dev.zio" %% "zio-json" % "0.4.2"
     )
   )
