@@ -83,13 +83,32 @@ class GoogleFirestoreCertificateStore(
       .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
   val streamMissingSeaiIeHtml: ZStream[Any, Throwable, CertificateNumber] =
-    streamMissing(GoogleFirestoreCertificateCodec.seaiIeHtmlCertificateField)
+    stream {
+      _.whereEqualTo(
+        GoogleFirestoreCertificateCodec.seaiIeHtmlCertificateField,
+        null
+      )
+    }
 
   val streamMissingSeaiIePdf: ZStream[Any, Throwable, CertificateNumber] =
-    streamMissing(GoogleFirestoreCertificateCodec.seaiIePdfCertificateField)
+    stream {
+      _.whereEqualTo(
+        GoogleFirestoreCertificateCodec.seaiIePdfCertificateField,
+        null
+      )
+    }
 
-  private def streamMissing(
-      missingField: String
+  val streamMissingEircodeIeEcadData
+      : ZStream[CertificateStore, Throwable, Certificate] =
+    stream {
+      _.whereEqualTo(
+        GoogleFirestoreCertificateCodec.eircodeIeEcadDataField,
+        null
+      )
+    }.mapZIO(getById).collectSome
+
+  private def stream(
+      filter: Query => Query
   ): ZStream[Any, Throwable, CertificateNumber] =
     ZStream
       .unfoldZIO(CertificateNumber(0)) { case lastCertificateNumber =>
@@ -101,7 +120,7 @@ class GoogleFirestoreCertificateStore(
                 FieldPath.documentId,
                 lastCertificateNumber.value.toString
               )
-              .whereEqualTo(missingField, null)
+              .pipe { filter }
               .limit(100)
 
             ZIO.fromFutureJava { query.get() }
