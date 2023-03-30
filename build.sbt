@@ -9,7 +9,8 @@ lazy val root = project
     api,
     certificateNumberScraper,
     certificateScraperSeaiIeHtml,
-    certificateScraperSeaiIePdf
+    certificateScraperSeaiIePdf,
+    eircodeScraperEircodeIe
   )
 
 lazy val common = project
