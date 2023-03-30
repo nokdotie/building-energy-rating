@@ -32,18 +32,18 @@ def getFindAddressResponse(propertyAddress: Address): ZIO[Client, Throwable, Fin
     .url(finderEircodeIeApiKey, propertyAddress.value)
     .pipe(getResponse)
 
-def getFindAddressResponseOption(response: FindAddress.Response): ZIO[Any, Throwable, FindAddress.ResponseOption] =
+def getFindAddressResponseOption(response: FindAddress.Response): Option[FindAddress.ResponseOption] =
   response
     .pipe {
-      case FindAddress.Response(Some(addressId), Some(addressType), options) =>
+      case FindAddress.Response(Some(addressId), addressType, options) =>
         FindAddress.ResponseOption(addressId, addressType) +: options
       case FindAddress.Response(_, _, options) => options
     }
-    .filter { _.addressType.text == "ResidentialAddressPoint" }
+    .filter { _.addressType.map(_.text).contains("ResidentialAddressPoint") }
     .pipe {
-      case head :: Nil => ZIO.succeed(head)
-      case Nil => ZIO.fail(Throwable(s"No match found: $response"))
-      case many => ZIO.fail(Throwable(s"Too many matches found: $response"))
+      case head :: Nil => Some(head)
+      case Nil => None
+      case many => None
     }
 
 def getGetEcadDataResponse(option: FindAddress.ResponseOption): ZIO[Client, Throwable, FinderGetEcadData.Response] =
@@ -54,23 +54,28 @@ def getGetEcadDataResponse(option: FindAddress.ResponseOption): ZIO[Client, Thro
 def getEcadData(propertyAddress: Address): ZIO[
   Client,
   Throwable,
-  EcadData
+  Option[EcadData]
 ] =
   getFindAddressResponse(propertyAddress)
-    .flatMap { getFindAddressResponseOption }
-    .flatMap { getGetEcadDataResponse }
-    .map { ecadData =>
-      EcadData(
-        Eircode(ecadData.eircodeInfo.eircode),
-        ecadData.spatialInfo.etrs89.location.pipe { location =>
-          GeographicCoordinate(
-            Latitude(location.latitude),
-            Longitude(location.longitude),
-          )
-        },
-        GeographicAddress(ecadData.geographicAddress.english.mkString("\n")),
-        PostalAddress(ecadData.postalAddress.english.mkString("\n")),
-      )
+    .map { getFindAddressResponseOption }
+    .flatMap {
+      case Some(option) => getGetEcadDataResponse(option).option
+      case None => ZIO.succeed(None)
+    }
+    .map {
+      case None => None
+      case Some(ecadData) =>
+        Some(EcadData(
+          Eircode(ecadData.eircodeInfo.eircode),
+          ecadData.spatialInfo.etrs89.location.pipe { location =>
+            GeographicCoordinate(
+              Latitude(location.latitude),
+              Longitude(location.longitude),
+            )
+          },
+          GeographicAddress(ecadData.geographicAddress.english.mkString("\n")),
+          PostalAddress(ecadData.postalAddress.english.mkString("\n")),
+        ))
     }
 
 val getEcad: ZPipeline[
@@ -94,15 +99,16 @@ val getEcad: ZPipeline[
     .collectSome
     .mapZIOParUnordered(concurrency) { (certificateNumber, propertyAddress) =>
       getEcadData(propertyAddress)
-        .map { ecadData =>
-          Certificate(
-            certificateNumber,
-            None,
-            None,
-            Some(ecadData)
-          )
+        .map {
+          case None => None
+          case Some(ecadData) =>
+            Some(Certificate(
+              certificateNumber,
+              None,
+              None,
+              Some(ecadData)
+            ))
         }
-        .option
     }
     .collectSome
 }

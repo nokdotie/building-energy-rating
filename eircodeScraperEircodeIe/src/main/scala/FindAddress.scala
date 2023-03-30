@@ -20,7 +20,7 @@ object FindAddress {
       DeriveJsonDecoder.gen[ResponseAddressType]
   }
 
-  case class ResponseOption(addressId: String, addressType: ResponseAddressType)
+  case class ResponseOption(addressId: String, addressType: Option[ResponseAddressType])
   object ResponseOption {
     implicit val decoder: JsonDecoder[ResponseOption] =
       DeriveJsonDecoder.gen[ResponseOption]
