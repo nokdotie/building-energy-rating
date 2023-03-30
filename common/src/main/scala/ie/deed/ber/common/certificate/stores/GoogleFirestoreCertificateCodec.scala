@@ -4,6 +4,7 @@ import com.google.cloud.firestore._
 import java.time.{LocalDate, Year}
 import ie.deed.ber.common.certificate._
 import ie.seai.ber.certificate._
+import ie.eircode.ecad._
 import scala.util.Try
 import scala.util.chaining.scalaUtilChainingOps
 import scala.collection.JavaConverters._
@@ -15,6 +16,7 @@ import zio.stream.ZPipeline
 object GoogleFirestoreCertificateCodec {
   val seaiIeHtmlCertificateField = "seai-ie-html-certificate"
   val seaiIePdfCertificateField = "seai-ie-pdf-certificate"
+  val eircodeIeEcadDataField = "eircode-ie-ecad-data"
 
   def encode(certificate: Certificate): java.util.Map[String, Any] = {
     val seaiIeHtmlCertificate = certificate.seaiIeHtmlCertificate.fold(
@@ -54,9 +56,23 @@ object GoogleFirestoreCertificateCodec {
       ).asJava
     }
 
+    val eircodeIeEcadData = certificate.eircodeIeEcadData.fold(null) {
+      ecadData =>
+        Map(
+          "eircode" -> ecadData.eircode.value,
+          "geographic-coordinate" -> Map(
+            "latitude" -> ecadData.geographicCoordinate.latitude.value,
+            "longitude" -> ecadData.geographicCoordinate.longitude.value
+          ).asJava,
+          "geographic-address" -> ecadData.geographicAddress.value,
+          "postal-address" -> ecadData.postalAddress.value
+        ).asJava
+    }
+
     Map(
       seaiIeHtmlCertificateField -> seaiIeHtmlCertificate,
-      seaiIePdfCertificateField -> seaiIePdfCertificate
+      seaiIePdfCertificateField -> seaiIePdfCertificate,
+      eircodeIeEcadDataField -> eircodeIeEcadData
     ).asJava
   }
 
@@ -158,7 +174,7 @@ object GoogleFirestoreCertificateCodec {
         seaiIePdfCertificateField,
         "property-eircode"
       )
-        .map { Eircode.apply }
+        .map { ie.seai.ber.certificate.Eircode.apply }
         .fold(_ => None, Some(_))
       assessorNumber <- get[Long](seaiIePdfCertificateField, "assessor-number")
         .flatMap { long => Try { AssessorNumber(long.toInt) } }
@@ -202,10 +218,41 @@ object GoogleFirestoreCertificateCodec {
       carbonDioxideEmissionsIndicator = carbonDioxideEmissionsIndicator
     )
 
+    val eircodeIeEcadData = for {
+      eircode <- get[String](eircodeIeEcadDataField, "eircode")
+        .map { ie.eircode.ecad.Eircode.apply }
+      latitude <- get[BigDecimal](
+        eircodeIeEcadDataField,
+        "geographic-coordinate",
+        "latitude"
+      )
+        .map { Latitude.apply }
+      longitude <- get[BigDecimal](
+        eircodeIeEcadDataField,
+        "geographic-coordinate",
+        "longitude"
+      )
+        .map { Longitude.apply }
+      geographicCoordinate = GeographicCoordinate(latitude, longitude)
+      geographicAddress <- get[String](
+        eircodeIeEcadDataField,
+        "geographic-address"
+      )
+        .map { GeographicAddress.apply }
+      postalAddress <- get[String](eircodeIeEcadDataField, "postal-address")
+        .map { PostalAddress.apply }
+    } yield EcadData(
+      eircode = eircode,
+      geographicCoordinate = geographicCoordinate,
+      geographicAddress = geographicAddress,
+      postalAddress = postalAddress
+    )
+
     Certificate(
       id,
       seaiIeHtmlCertificate.toOption,
-      seaiIePdfCertificate.toOption
+      seaiIePdfCertificate.toOption,
+      eircodeIeEcadData.toOption
     )
   }
 }
