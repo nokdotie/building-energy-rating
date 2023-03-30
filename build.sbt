@@ -1,8 +1,5 @@
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "3.2.2"
-ThisBuild / resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
-// https://oss.sonatype.org/content/repositories/snapshots/dev/zio/zio-http_3/
 
 lazy val root = project
   .in(file("."))
