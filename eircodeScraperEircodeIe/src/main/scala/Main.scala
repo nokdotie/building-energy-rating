@@ -54,7 +54,7 @@ def getFindAddressResponseOption(
 
 def getGetEcadDataResponse(
     option: FindAddress.ResponseOption
-): ZIO[Client, Throwable, FinderGetEcadData.Response] =
+): ZIO[Client, Throwable, GetEcadData.Response] =
   GetEcadData
     .url(finderEircodeIeApiKey, option.addressId)
     .pipe(getResponse)
