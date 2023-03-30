@@ -4,8 +4,8 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary.arbitrary
 
 val genGeographicCoordinate: Gen[GeographicCoordinate] = for {
-  latitude <- arbitrary[BigDecimal].map { Latitude.apply }
-  longitude <- arbitrary[BigDecimal].map { Longitude.apply }
+  latitude <- Gen.choose[BigDecimal](-90, 90).map { Latitude.apply }
+  longitude <- Gen.choose[BigDecimal](-180, 180).map { Longitude.apply }
 } yield GeographicCoordinate(latitude, longitude)
 
 implicit val arbGeographicCoordinate: Arbitrary[GeographicCoordinate] =

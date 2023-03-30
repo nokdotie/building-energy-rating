@@ -8,6 +8,7 @@ import ie.eircode.ecad._
 import scala.util.Try
 import scala.util.chaining.scalaUtilChainingOps
 import scala.collection.JavaConverters._
+import com.firebase.geofire.core.GeoHash
 import zio._
 import zio.stream.ZStream
 import zio.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
@@ -60,10 +61,19 @@ object GoogleFirestoreCertificateCodec {
       ecadData =>
         Map(
           "eircode" -> ecadData.eircode.value,
-          "geographic-coordinate" -> Map(
-            "latitude" -> ecadData.geographicCoordinate.latitude.value.toString,
-            "longitude" -> ecadData.geographicCoordinate.longitude.value.toString
-          ).asJava,
+          "geographic-coordinate" -> ecadData.geographicCoordinate.pipe {
+            coordinate =>
+              val geohash = GeoHash(
+                coordinate.latitude.value.toDouble,
+                coordinate.longitude.value.toDouble
+              ).getGeoHashString
+
+              Map(
+                "latitude" -> coordinate.latitude.value.toString,
+                "longitude" -> coordinate.longitude.value.toString,
+                "geohash" -> geohash
+              )
+          }.asJava,
           "geographic-address" -> ecadData.geographicAddress.value,
           "postal-address" -> ecadData.postalAddress.value
         ).asJava
