@@ -22,17 +22,23 @@ def getResponse[A: JsonDecoder](url: String): ZIO[Client, Throwable, A] =
     .retryN(3)
     .flatMap { _.body.asString }
     .flatMap { body =>
-      body.fromJson[A].left
+      body
+        .fromJson[A]
+        .left
         .map { err => Throwable(s"$err: $body") }
         .pipe(ZIO.fromEither)
     }
 
-def getFindAddressResponse(propertyAddress: Address): ZIO[Client, Throwable, FindAddress.Response] =
+def getFindAddressResponse(
+    propertyAddress: Address
+): ZIO[Client, Throwable, FindAddress.Response] =
   FindAddress
     .url(finderEircodeIeApiKey, propertyAddress.value)
     .pipe(getResponse)
 
-def getFindAddressResponseOption(response: FindAddress.Response): Option[FindAddress.ResponseOption] =
+def getFindAddressResponseOption(
+    response: FindAddress.Response
+): Option[FindAddress.ResponseOption] =
   response
     .pipe {
       case FindAddress.Response(Some(addressId), addressType, options) =>
@@ -42,11 +48,13 @@ def getFindAddressResponseOption(response: FindAddress.Response): Option[FindAdd
     .filter { _.addressType.map(_.text).contains("ResidentialAddressPoint") }
     .pipe {
       case head :: Nil => Some(head)
-      case Nil => None
-      case many => None
+      case Nil         => None
+      case many        => None
     }
 
-def getGetEcadDataResponse(option: FindAddress.ResponseOption): ZIO[Client, Throwable, FinderGetEcadData.Response] =
+def getGetEcadDataResponse(
+    option: FindAddress.ResponseOption
+): ZIO[Client, Throwable, FinderGetEcadData.Response] =
   GetEcadData
     .url(finderEircodeIeApiKey, option.addressId)
     .pipe(getResponse)
@@ -60,22 +68,26 @@ def getEcadData(propertyAddress: Address): ZIO[
     .map { getFindAddressResponseOption }
     .flatMap {
       case Some(option) => getGetEcadDataResponse(option).option
-      case None => ZIO.succeed(None)
+      case None         => ZIO.succeed(None)
     }
     .map {
       case None => None
       case Some(ecadData) =>
-        Some(EcadData(
-          Eircode(ecadData.eircodeInfo.eircode),
-          ecadData.spatialInfo.etrs89.location.pipe { location =>
-            GeographicCoordinate(
-              Latitude(location.latitude),
-              Longitude(location.longitude),
-            )
-          },
-          GeographicAddress(ecadData.geographicAddress.english.mkString("\n")),
-          PostalAddress(ecadData.postalAddress.english.mkString("\n")),
-        ))
+        Some(
+          EcadData(
+            Eircode(ecadData.eircodeInfo.eircode),
+            ecadData.spatialInfo.etrs89.location.pipe { location =>
+              GeographicCoordinate(
+                Latitude(location.latitude),
+                Longitude(location.longitude)
+              )
+            },
+            GeographicAddress(
+              ecadData.geographicAddress.english.mkString("\n")
+            ),
+            PostalAddress(ecadData.postalAddress.english.mkString("\n"))
+          )
+        )
     }
 
 val getEcad: ZPipeline[
@@ -92,7 +104,7 @@ val getEcad: ZPipeline[
         .orElse(certificate.seaiIePdfCertificate)
         .collect {
           case certificate: HtmlCertificate => certificate.propertyAddress
-          case certificate: PdfCertificate => certificate.propertyAddress
+          case certificate: PdfCertificate  => certificate.propertyAddress
         }
         .map { (certificate.number, _) }
     }
@@ -102,12 +114,14 @@ val getEcad: ZPipeline[
         .map {
           case None => None
           case Some(ecadData) =>
-            Some(Certificate(
-              certificateNumber,
-              None,
-              None,
-              Some(ecadData)
-            ))
+            Some(
+              Certificate(
+                certificateNumber,
+                None,
+                None,
+                Some(ecadData)
+              )
+            )
         }
     }
     .collectSome
@@ -123,7 +137,8 @@ val app: ZIO[Client with CertificateStore with Scope, Throwable, Unit] =
 
 object Main extends ZIOAppDefault {
   def run = app.provide(
-    ClientConfig.default, Client.fromConfig,
+    ClientConfig.default,
+    Client.fromConfig,
     Firestore.live,
     GoogleFirestoreCertificateStore.layer,
     Scope.default

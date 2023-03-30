@@ -3,9 +3,9 @@ import zio.json.{DeriveJsonDecoder, JsonDecoder}
 
 object FindAddress {
   case class Response(
-    addressId: Option[String],
-    addressType: Option[ResponseAddressType],
-    options: List[ResponseOption]
+      addressId: Option[String],
+      addressType: Option[ResponseAddressType],
+      options: List[ResponseOption]
   )
   object Response {
     implicit val decoder: JsonDecoder[Response] =
@@ -13,14 +13,17 @@ object FindAddress {
   }
 
   case class ResponseAddressType(
-    text: String
+      text: String
   )
   object ResponseAddressType {
     implicit val decoder: JsonDecoder[ResponseAddressType] =
       DeriveJsonDecoder.gen[ResponseAddressType]
   }
 
-  case class ResponseOption(addressId: String, addressType: Option[ResponseAddressType])
+  case class ResponseOption(
+      addressId: String,
+      addressType: Option[ResponseAddressType]
+  )
   object ResponseOption {
     implicit val decoder: JsonDecoder[ResponseOption] =
       DeriveJsonDecoder.gen[ResponseOption]

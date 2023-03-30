@@ -3,10 +3,10 @@ import zio.json.{DeriveJsonDecoder, JsonDecoder}
 
 object GetEcadData {
   case class Response(
-    eircodeInfo: ResponseEircodeInfo,
-    postalAddress: ResponseAddress,
-    geographicAddress: ResponseAddress,
-    spatialInfo: ResponseSpatialInfo
+      eircodeInfo: ResponseEircodeInfo,
+      postalAddress: ResponseAddress,
+      geographicAddress: ResponseAddress,
+      spatialInfo: ResponseSpatialInfo
   )
   object Response {
     implicit val decoder: JsonDecoder[Response] =
@@ -14,7 +14,7 @@ object GetEcadData {
   }
 
   case class ResponseEircodeInfo(
-    eircode: String,
+      eircode: String
   )
   object ResponseEircodeInfo {
     implicit val decoder: JsonDecoder[ResponseEircodeInfo] =
@@ -22,7 +22,7 @@ object GetEcadData {
   }
 
   case class ResponseAddress(
-    english: List[String]
+      english: List[String]
   )
   object ResponseAddress {
     implicit val decoder: JsonDecoder[ResponseAddress] =
@@ -30,7 +30,7 @@ object GetEcadData {
   }
 
   case class ResponseSpatialInfo(
-    etrs89: ResponseSpatialInfoEtrs89
+      etrs89: ResponseSpatialInfoEtrs89
   )
   object ResponseSpatialInfo {
     implicit val decoder: JsonDecoder[ResponseSpatialInfo] =
@@ -38,7 +38,7 @@ object GetEcadData {
   }
 
   case class ResponseSpatialInfoEtrs89(
-    location: ResponseSpatialInfoEtrs89Location
+      location: ResponseSpatialInfoEtrs89Location
   )
   object ResponseSpatialInfoEtrs89 {
     implicit val decoder: JsonDecoder[ResponseSpatialInfoEtrs89] =
@@ -46,8 +46,8 @@ object GetEcadData {
   }
 
   case class ResponseSpatialInfoEtrs89Location(
-    longitude: BigDecimal,
-    latitude: BigDecimal,
+      longitude: BigDecimal,
+      latitude: BigDecimal
   )
   object ResponseSpatialInfoEtrs89Location {
     implicit val decoder: JsonDecoder[ResponseSpatialInfoEtrs89Location] =
