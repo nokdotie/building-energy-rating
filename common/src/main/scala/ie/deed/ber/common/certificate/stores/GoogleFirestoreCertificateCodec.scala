@@ -61,8 +61,8 @@ object GoogleFirestoreCertificateCodec {
         Map(
           "eircode" -> ecadData.eircode.value,
           "geographic-coordinate" -> Map(
-            "latitude" -> ecadData.geographicCoordinate.latitude.value,
-            "longitude" -> ecadData.geographicCoordinate.longitude.value
+            "latitude" -> ecadData.geographicCoordinate.latitude.value.toString,
+            "longitude" -> ecadData.geographicCoordinate.longitude.value.toString
           ).asJava,
           "geographic-address" -> ecadData.geographicAddress.value,
           "postal-address" -> ecadData.postalAddress.value
@@ -221,17 +221,19 @@ object GoogleFirestoreCertificateCodec {
     val eircodeIeEcadData = for {
       eircode <- get[String](eircodeIeEcadDataField, "eircode")
         .map { ie.eircode.ecad.Eircode.apply }
-      latitude <- get[BigDecimal](
+      latitude <- get[String](
         eircodeIeEcadDataField,
         "geographic-coordinate",
         "latitude"
       )
+        .flatMap { string => Try { BigDecimal(string) } }
         .map { Latitude.apply }
-      longitude <- get[BigDecimal](
+      longitude <- get[String](
         eircodeIeEcadDataField,
         "geographic-coordinate",
         "longitude"
       )
+        .flatMap { string => Try { BigDecimal(string) } }
         .map { Longitude.apply }
       geographicCoordinate = GeographicCoordinate(latitude, longitude)
       geographicAddress <- get[String](
