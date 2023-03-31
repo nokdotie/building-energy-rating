@@ -58,8 +58,8 @@ object ZyteClient {
       .retry(
         Schedule.fixed(1.second) &&
           Schedule.recurWhile {
-            case ZyteResponseError(429 | 503 | 520, _, _) => true
-            case _                                        => false
+            case ZyteResponseError(429 | 500 | 503 | 520, _, _) => true
+            case _                                              => false
           }
       )
       .map { _.httpResponseBody }
