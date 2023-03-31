@@ -12,15 +12,12 @@ import zio.json._
 import zio.gcp.firestore.Firestore
 import zio.stream.ZPipeline
 import ie.seai.ber.certificate.Address
-import java.net.URLEncoder
 
 val finderEircodeIeApiKey = "_45f9ba10-677a-4ae4-a02f-02d926cae333"
 
 def getResponse[A: JsonDecoder](url: String): ZIO[Client, Throwable, A] =
-  Client
-    .request(url)
-    .retryN(3)
-    .flatMap { _.body.asString }
+  ZyteClient
+    .getBody(url)
     .flatMap { body =>
       body
         .fromJson[A]
@@ -36,16 +33,18 @@ def getFindAddressResponse(
     .url(finderEircodeIeApiKey, propertyAddress.value)
     .pipe(getResponse)
 
-def getFindAddressResponseOption(
+def getFindAddressId(
     response: FindAddress.Response
-): Option[FindAddress.ResponseOption] =
+): Option[String] =
   response
-    .pipe {
-      case FindAddress.Response(Some(addressId), addressType, options) =>
-        FindAddress.ResponseOption(addressId, addressType) +: options
-      case FindAddress.Response(_, _, options) => options
+    .pipe { case FindAddress.Response(addressId, addressType, options) =>
+      FindAddress.ResponseOption(addressId, addressType) +: options
     }
-    .filter { _.addressType.map(_.text).contains("ResidentialAddressPoint") }
+    .collect {
+      case FindAddress.ResponseOption(Some(addressId), Some(addressType))
+          if addressType.text == "ResidentialAddressPoint" =>
+        addressId
+    }
     .pipe {
       case head :: Nil => Some(head)
       case Nil         => None
@@ -53,10 +52,10 @@ def getFindAddressResponseOption(
     }
 
 def getGetEcadDataResponse(
-    option: FindAddress.ResponseOption
+    addressId: String
 ): ZIO[Client, Throwable, GetEcadData.Response] =
   GetEcadData
-    .url(finderEircodeIeApiKey, option.addressId)
+    .url(finderEircodeIeApiKey, addressId)
     .pipe(getResponse)
 
 def getEcadData(propertyAddress: Address): ZIO[
@@ -65,10 +64,10 @@ def getEcadData(propertyAddress: Address): ZIO[
   Option[EcadData]
 ] =
   getFindAddressResponse(propertyAddress)
-    .map { getFindAddressResponseOption }
+    .map { getFindAddressId }
     .flatMap {
-      case Some(option) => getGetEcadDataResponse(option).option
-      case None         => ZIO.succeed(None)
+      case Some(addressId) => getGetEcadDataResponse(addressId).option
+      case None            => ZIO.succeed(None)
     }
     .map {
       case None => None

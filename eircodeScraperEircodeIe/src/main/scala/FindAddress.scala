@@ -21,7 +21,7 @@ object FindAddress {
   }
 
   case class ResponseOption(
-      addressId: String,
+      addressId: Option[String],
       addressType: Option[ResponseAddressType]
   )
   object ResponseOption {
