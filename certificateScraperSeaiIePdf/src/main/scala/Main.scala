@@ -53,7 +53,8 @@ val getCertificates: ZPipeline[
         Certificate(
           certificateNumber,
           None,
-          Some(pdfCertificate)
+          Some(pdfCertificate),
+          None
         )
       }.option
     }

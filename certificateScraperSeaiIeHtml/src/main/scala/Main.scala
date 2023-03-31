@@ -57,6 +57,7 @@ val getCertificates: ZPipeline[
           Certificate(
             certificateNumber,
             Some(htmlCertificate),
+            None,
             None
           )
         }

@@ -10,6 +10,11 @@ trait CertificateStore {
 
   val streamMissingSeaiIeHtml: ZStream[Any, Throwable, CertificateNumber]
   val streamMissingSeaiIePdf: ZStream[Any, Throwable, CertificateNumber]
+  val streamMissingEircodeIeEcadData: ZStream[
+    CertificateStore,
+    Throwable,
+    Certificate
+  ]
 
   def getById(id: CertificateNumber): ZIO[Any, Throwable, Option[Certificate]]
 }
@@ -30,6 +35,12 @@ object CertificateStore {
   val streamMissingSeaiIePdf
       : ZStream[CertificateStore, Throwable, CertificateNumber] =
     ZStream.serviceWithStream[CertificateStore](_.streamMissingSeaiIePdf)
+
+  val streamMissingEircodeIeEcadData
+      : ZStream[CertificateStore, Throwable, Certificate] =
+    ZStream.serviceWithStream[CertificateStore](
+      _.streamMissingEircodeIeEcadData
+    )
 
   def getById(
       id: CertificateNumber
