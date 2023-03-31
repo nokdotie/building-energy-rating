@@ -27,10 +27,10 @@ def getResponse[A: JsonDecoder](url: String): ZIO[Client, Throwable, A] =
     }
 
 def getFindAddressResponse(
-    propertyAddress: Address
+    propertyAddress: String
 ): ZIO[Client, Throwable, FindAddress.Response] =
   FindAddress
-    .url(finderEircodeIeApiKey, propertyAddress.value)
+    .url(finderEircodeIeApiKey, propertyAddress)
     .pipe(getResponse)
 
 def getFindAddressId(
@@ -58,7 +58,7 @@ def getGetEcadDataResponse(
     .url(finderEircodeIeApiKey, addressId)
     .pipe(getResponse)
 
-def getEcadData(propertyAddress: Address): ZIO[
+def getEcadData(propertyAddress: String): ZIO[
   Client,
   Throwable,
   EcadData
@@ -97,11 +97,14 @@ val getEcad: ZPipeline[
 
   ZPipeline[Certificate]
     .map { certificate =>
-      certificate.seaiIeHtmlCertificate
-        .orElse(certificate.seaiIePdfCertificate)
+      certificate.seaiIePdfCertificate
+        .orElse(certificate.seaiIeHtmlCertificate)
         .collect {
-          case certificate: HtmlCertificate => certificate.propertyAddress
-          case certificate: PdfCertificate  => certificate.propertyAddress
+          case certificate: HtmlCertificate => certificate.propertyAddress.value
+          case certificate: PdfCertificate =>
+            certificate.propertyEircode
+              .map(_.value)
+              .getOrElse(certificate.propertyAddress.value)
         }
         .map { (certificate.number, _) }
     }
