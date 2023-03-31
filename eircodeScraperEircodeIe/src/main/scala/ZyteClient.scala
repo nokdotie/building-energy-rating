@@ -42,6 +42,7 @@ object ZyteClient {
         headers,
         content = content
       )
+      .retryN(3)
       .flatMap { _.body.asString }
       .flatMap { body =>
         val success = body.fromJson[ZyteResponseOk]
