@@ -95,7 +95,7 @@ val getEcad: ZPipeline[
   Certificate,
   Certificate
 ] = {
-  val concurrency = 25
+  val concurrency = 10
 
   ZPipeline[Certificate]
     .map { certificate =>
@@ -128,6 +128,7 @@ val getEcad: ZPipeline[
 
 val app: ZIO[Client with CertificateStore with Scope, Throwable, Unit] =
   CertificateStore.streamMissingEircodeIeEcadData
+    .debug("Certificate")
     .via(getEcad)
     .debug("Certificate with ECAD Data")
     .via(CertificateStore.upsertPipeline)
