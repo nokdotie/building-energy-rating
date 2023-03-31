@@ -61,7 +61,7 @@ def getGetEcadDataResponse(
 def getEcadData(propertyAddress: Address): ZIO[
   Client,
   Throwable,
-  Option[EcadData]
+  EcadData
 ] =
   getFindAddressResponse(propertyAddress)
     .map { getFindAddressId }
@@ -70,22 +70,20 @@ def getEcadData(propertyAddress: Address): ZIO[
       case None            => ZIO.succeed(None)
     }
     .map {
-      case None => None
+      case None => EcadData.NotFound
       case Some(ecadData) =>
-        Some(
-          EcadData(
-            Eircode(ecadData.eircodeInfo.eircode),
-            ecadData.spatialInfo.etrs89.location.pipe { location =>
-              GeographicCoordinate(
-                Latitude(location.latitude),
-                Longitude(location.longitude)
-              )
-            },
-            GeographicAddress(
-              ecadData.geographicAddress.english.mkString("\n")
-            ),
-            PostalAddress(ecadData.postalAddress.english.mkString("\n"))
-          )
+        EcadData.Found(
+          Eircode(ecadData.eircodeInfo.eircode),
+          ecadData.spatialInfo.etrs89.location.pipe { location =>
+            GeographicCoordinate(
+              Latitude(location.latitude),
+              Longitude(location.longitude)
+            )
+          },
+          GeographicAddress(
+            ecadData.geographicAddress.english.mkString("\n")
+          ),
+          PostalAddress(ecadData.postalAddress.english.mkString("\n"))
         )
     }
 
@@ -110,20 +108,15 @@ val getEcad: ZPipeline[
     .collectSome
     .mapZIOParUnordered(concurrency) { (certificateNumber, propertyAddress) =>
       getEcadData(propertyAddress)
-        .map {
-          case None => None
-          case Some(ecadData) =>
-            Some(
-              Certificate(
-                certificateNumber,
-                None,
-                None,
-                Some(ecadData)
-              )
-            )
+        .map { ecadData =>
+          Certificate(
+            certificateNumber,
+            None,
+            None,
+            Some(ecadData)
+          )
         }
     }
-    .collectSome
 }
 
 val app: ZIO[Client with CertificateStore with Scope, Throwable, Unit] =

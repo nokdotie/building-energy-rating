@@ -1,8 +1,13 @@
 package ie.eircode.ecad
 
-case class EcadData(
-    eircode: Eircode,
-    geographicCoordinate: GeographicCoordinate,
-    geographicAddress: GeographicAddress,
-    postalAddress: PostalAddress
-)
+sealed trait EcadData
+object EcadData {
+  case class Found(
+      eircode: Eircode,
+      geographicCoordinate: GeographicCoordinate,
+      geographicAddress: GeographicAddress,
+      postalAddress: PostalAddress
+  ) extends EcadData
+
+  case object NotFound extends EcadData
+}

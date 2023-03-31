@@ -58,8 +58,9 @@ object GoogleFirestoreCertificateCodec {
     }
 
     val eircodeIeEcadData = certificate.eircodeIeEcadData.fold(null) {
-      ecadData =>
+      case ecadData: EcadData.Found =>
         Map(
+          "found" -> true,
           "eircode" -> ecadData.eircode.value,
           "geographic-coordinate" -> ecadData.geographicCoordinate.pipe {
             coordinate =>
@@ -77,6 +78,7 @@ object GoogleFirestoreCertificateCodec {
           "geographic-address" -> ecadData.geographicAddress.value,
           "postal-address" -> ecadData.postalAddress.value
         ).asJava
+      case EcadData.NotFound => Map("found" -> false).asJava
     }
 
     Map(
@@ -228,7 +230,7 @@ object GoogleFirestoreCertificateCodec {
       carbonDioxideEmissionsIndicator = carbonDioxideEmissionsIndicator
     )
 
-    val eircodeIeEcadData = for {
+    val eircodeIeEcadDataFound = for {
       eircode <- get[String](eircodeIeEcadDataField, "eircode")
         .map { ie.eircode.ecad.Eircode.apply }
       latitude <- get[String](
@@ -253,18 +255,22 @@ object GoogleFirestoreCertificateCodec {
         .map { GeographicAddress.apply }
       postalAddress <- get[String](eircodeIeEcadDataField, "postal-address")
         .map { PostalAddress.apply }
-    } yield EcadData(
+    } yield EcadData.Found(
       eircode = eircode,
       geographicCoordinate = geographicCoordinate,
       geographicAddress = geographicAddress,
       postalAddress = postalAddress
     )
 
+    val eircodeIeEcadDataNotFound =
+      get[Boolean](eircodeIeEcadDataField, "found")
+        .collect { case false => EcadData.NotFound }
+
     Certificate(
       id,
       seaiIeHtmlCertificate.toOption,
       seaiIePdfCertificate.toOption,
-      eircodeIeEcadData.toOption
+      eircodeIeEcadDataFound.orElse(eircodeIeEcadDataNotFound).toOption
     )
   }
 }
