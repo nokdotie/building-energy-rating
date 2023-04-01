@@ -26,7 +26,7 @@ lazy val common = project
   )
 
 lazy val api = project
-  .dependsOn(common)
+  .dependsOn(common, auth)
   .settings(
     dockerRepository := Some("gcr.io/deed-ie/building-energy-rating"),
     dockerAliases ++= Seq(
@@ -73,5 +73,12 @@ lazy val eircodeScraperEircodeIe = project
     libraryDependencies ++= List(
       "dev.zio" %% "zio-http" % "0.0.5",
       "dev.zio" %% "zio-json" % "0.4.2"
+    )
+  )
+
+lazy val auth = project
+  .settings(
+    libraryDependencies ++= List(
+      "dev.zio" %% "zio-http" % "0.0.5"
     )
   )

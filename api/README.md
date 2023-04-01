@@ -1,11 +1,11 @@
 ### Examples
 
-* http://localhost:8080/api/v1/ber/100105170
+* http://localhost:8080/api/v1/ber/101663292
 * add `"X-API-Key"` header with valid token (see `UserTokenInMemoryStore`)
 
 
 * example using curl: 
-* `curl --header "X-API-Key: wqerasdffv123fv342rfsd" http://localhost:8080/api/v1/ber/100105170`
+* `curl --header "X-API-Key: wqerasdffv123fv342rfsd" http://localhost:8080/api/v1/ber/101663292`
 
 Expected response:
 ``` json

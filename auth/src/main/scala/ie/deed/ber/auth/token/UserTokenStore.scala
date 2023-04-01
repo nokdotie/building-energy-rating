@@ -1,4 +1,4 @@
-package ie.deed.ber.api.token
+package ie.deed.ber.auth.token
 
 import zio.{ZIO, ZLayer}
 
