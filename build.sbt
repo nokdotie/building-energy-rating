@@ -7,6 +7,7 @@ lazy val root = project
   .aggregate(
     common,
     api,
+    auth,
     certificateNumberScraper,
     certificateScraperSeaiIeHtml,
     certificateScraperSeaiIePdf,
