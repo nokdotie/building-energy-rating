@@ -96,49 +96,60 @@ object GoogleFirestoreCertificateCodec {
   ): Certificate = {
 
     val seaiIeHtmlCertificate = for {
-      rating <- map.getTyped[String](seaiIeHtmlCertificateField, "rating")
+      rating <- map
+        .getTyped[String](seaiIeHtmlCertificateField, "rating")
         .flatMap { string => Try { Rating.valueOf(string) } }
-      typeOfRating <- map.getTyped[String](seaiIeHtmlCertificateField, "type-of-rating")
+      typeOfRating <- map
+        .getTyped[String](seaiIeHtmlCertificateField, "type-of-rating")
         .flatMap { string => Try { TypeOfRating.valueOf(string) } }
-      issuedOn <- map.getTyped[String](seaiIeHtmlCertificateField, "issued-on")
+      issuedOn <- map
+        .getTyped[String](seaiIeHtmlCertificateField, "issued-on")
         .flatMap { string => Try { LocalDate.parse(string) } }
-      validUntil <- map.getTyped[String](seaiIeHtmlCertificateField, "valid-until")
+      validUntil <- map
+        .getTyped[String](seaiIeHtmlCertificateField, "valid-until")
         .flatMap { string => Try { LocalDate.parse(string) } }
-      propertyAddress <- map.getTyped[String](
-        seaiIeHtmlCertificateField,
-        "property-address"
-      )
+      propertyAddress <- map
+        .getTyped[String](
+          seaiIeHtmlCertificateField,
+          "property-address"
+        )
         .map { Address.apply }
-      propertyConstructedOn <- map.getTyped[String](
-        seaiIeHtmlCertificateField,
-        "property-constructed-on"
-      )
+      propertyConstructedOn <- map
+        .getTyped[String](
+          seaiIeHtmlCertificateField,
+          "property-constructed-on"
+        )
         .flatMap { string => Try { Year.parse(string) } }
-      propertyType <- map.getTyped[String](seaiIeHtmlCertificateField, "property-type")
+      propertyType <- map
+        .getTyped[String](seaiIeHtmlCertificateField, "property-type")
         .flatMap { string => Try { PropertyType.valueOf(string) } }
-      propertyFloorArea <- map.getTyped[String](
-        seaiIeHtmlCertificateField,
-        "property-floor-area-in-m2"
-      )
+      propertyFloorArea <- map
+        .getTyped[String](
+          seaiIeHtmlCertificateField,
+          "property-floor-area-in-m2"
+        )
         .flatMap { string => Try { SquareMeter(string.toFloat) } }
-      domesticEnergyAssessmentProcedureVersion <- map.getTyped[String](
-        seaiIeHtmlCertificateField,
-        "domestic-energy-assessment-procedure-version"
-      )
+      domesticEnergyAssessmentProcedureVersion <- map
+        .getTyped[String](
+          seaiIeHtmlCertificateField,
+          "domestic-energy-assessment-procedure-version"
+        )
         .flatMap { string =>
           Try { DomesticEnergyAssessmentProcedureVersion.valueOf(string) }
         }
-      energyRating <- map.getTyped[String](
-        seaiIeHtmlCertificateField,
-        "energy-rating-in-kWh/m2/yr"
-      )
+      energyRating <- map
+        .getTyped[String](
+          seaiIeHtmlCertificateField,
+          "energy-rating-in-kWh/m2/yr"
+        )
         .flatMap { string =>
           Try { KilowattHourPerSquareMetrePerYear(string.toFloat) }
         }
-      carbonDioxideEmissionsIndicator <- map.getTyped[String](
-        seaiIeHtmlCertificateField,
-        "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr"
-      )
+      carbonDioxideEmissionsIndicator <- map
+        .getTyped[String](
+          seaiIeHtmlCertificateField,
+          "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr"
+        )
         .flatMap { string =>
           Try { KilogramOfCarbonDioxidePerSquareMetrePerYear(string.toFloat) }
         }
@@ -158,48 +169,58 @@ object GoogleFirestoreCertificateCodec {
     )
 
     val seaiIePdfCertificate = for {
-      rating <- map.getTyped[String](seaiIePdfCertificateField, "rating")
+      rating <- map
+        .getTyped[String](seaiIePdfCertificateField, "rating")
         .flatMap { string => Try { Rating.valueOf(string) } }
-      issuedOn <- map.getTyped[String](seaiIePdfCertificateField, "issued-on")
+      issuedOn <- map
+        .getTyped[String](seaiIePdfCertificateField, "issued-on")
         .flatMap { string => Try { LocalDate.parse(string) } }
-      validUntil <- map.getTyped[String](seaiIePdfCertificateField, "valid-until")
+      validUntil <- map
+        .getTyped[String](seaiIePdfCertificateField, "valid-until")
         .flatMap { string => Try { LocalDate.parse(string) } }
-      propertyAddress <- map.getTyped[String](
-        seaiIePdfCertificateField,
-        "property-address"
-      )
+      propertyAddress <- map
+        .getTyped[String](
+          seaiIePdfCertificateField,
+          "property-address"
+        )
         .map { Address.apply }
-      propertyEircode = map.getTyped[String](
-        seaiIePdfCertificateField,
-        "property-eircode"
-      )
+      propertyEircode = map
+        .getTyped[String](
+          seaiIePdfCertificateField,
+          "property-eircode"
+        )
         .map { ie.seai.ber.certificate.Eircode.apply }
         .fold(_ => None, Some(_))
-      assessorNumber <- map.getTyped[Long](seaiIePdfCertificateField, "assessor-number")
+      assessorNumber <- map
+        .getTyped[Long](seaiIePdfCertificateField, "assessor-number")
         .flatMap { long => Try { AssessorNumber(long.toInt) } }
-      assessorCompanyNumber <- map.getTyped[Long](
-        seaiIePdfCertificateField,
-        "assessor-company-number"
-      )
+      assessorCompanyNumber <- map
+        .getTyped[Long](
+          seaiIePdfCertificateField,
+          "assessor-company-number"
+        )
         .flatMap { long => Try { AssessorCompanyNumber(long.toInt) } }
-      domesticEnergyAssessmentProcedureVersion <- map.getTyped[String](
-        seaiIePdfCertificateField,
-        "domestic-energy-assessment-procedure-version"
-      )
+      domesticEnergyAssessmentProcedureVersion <- map
+        .getTyped[String](
+          seaiIePdfCertificateField,
+          "domestic-energy-assessment-procedure-version"
+        )
         .flatMap { string =>
           Try { DomesticEnergyAssessmentProcedureVersion.valueOf(string) }
         }
-      energyRating <- map.getTyped[String](
-        seaiIePdfCertificateField,
-        "energy-rating-in-kWh/m2/yr"
-      )
+      energyRating <- map
+        .getTyped[String](
+          seaiIePdfCertificateField,
+          "energy-rating-in-kWh/m2/yr"
+        )
         .flatMap { string =>
           Try { KilowattHourPerSquareMetrePerYear(string.toFloat) }
         }
-      carbonDioxideEmissionsIndicator <- map.getTyped[String](
-        seaiIePdfCertificateField,
-        "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr"
-      )
+      carbonDioxideEmissionsIndicator <- map
+        .getTyped[String](
+          seaiIePdfCertificateField,
+          "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr"
+        )
         .flatMap { string =>
           Try { KilogramOfCarbonDioxidePerSquareMetrePerYear(string.toFloat) }
         }
@@ -218,29 +239,34 @@ object GoogleFirestoreCertificateCodec {
     )
 
     val eircodeIeEcadDataFound = for {
-      eircode <- map.getTyped[String](eircodeIeEcadDataField, "eircode")
+      eircode <- map
+        .getTyped[String](eircodeIeEcadDataField, "eircode")
         .map { ie.eircode.ecad.Eircode.apply }
-      latitude <- map.getTyped[String](
-        eircodeIeEcadDataField,
-        "geographic-coordinate",
-        "latitude"
-      )
+      latitude <- map
+        .getTyped[String](
+          eircodeIeEcadDataField,
+          "geographic-coordinate",
+          "latitude"
+        )
         .flatMap { string => Try { BigDecimal(string) } }
         .map { Latitude.apply }
-      longitude <- map.getTyped[String](
-        eircodeIeEcadDataField,
-        "geographic-coordinate",
-        "longitude"
-      )
+      longitude <- map
+        .getTyped[String](
+          eircodeIeEcadDataField,
+          "geographic-coordinate",
+          "longitude"
+        )
         .flatMap { string => Try { BigDecimal(string) } }
         .map { Longitude.apply }
       geographicCoordinate = GeographicCoordinate(latitude, longitude)
-      geographicAddress <- map.getTyped[String](
-        eircodeIeEcadDataField,
-        "geographic-address"
-      )
+      geographicAddress <- map
+        .getTyped[String](
+          eircodeIeEcadDataField,
+          "geographic-address"
+        )
         .map { GeographicAddress.apply }
-      postalAddress <- map.getTyped[String](eircodeIeEcadDataField, "postal-address")
+      postalAddress <- map
+        .getTyped[String](eircodeIeEcadDataField, "postal-address")
         .map { PostalAddress.apply }
     } yield EcadData.Found(
       eircode = eircode,
@@ -250,7 +276,8 @@ object GoogleFirestoreCertificateCodec {
     )
 
     val eircodeIeEcadDataNotFound =
-      map.getTyped[Boolean](eircodeIeEcadDataField, "found")
+      map
+        .getTyped[Boolean](eircodeIeEcadDataField, "found")
         .collect { case false => EcadData.NotFound }
 
     Certificate(
