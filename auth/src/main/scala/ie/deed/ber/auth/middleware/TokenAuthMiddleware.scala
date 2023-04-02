@@ -1,8 +1,8 @@
-package ie.deed.ber.auth.token
+package ie.deed.ber.auth.middleware
 
+import ie.deed.ber.auth.store.UserTokenStore
 import zio.http.HttpAppMiddleware.customAuthZIO
 import zio.http.RequestHandlerMiddleware
-import ie.deed.ber.auth.token.UserTokenStore
 
 object TokenAuthMiddleware {
 
