@@ -2,7 +2,10 @@ package ie.deed.ber.api
 
 import ie.deed.ber.auth.middleware.TokenAuthMiddleware
 import ie.deed.ber.api.apps.{ApiV1CertificateApp, HealthApp, StaticApp}
-import ie.deed.ber.auth.store.{GoogleFirestoreUserTokenStore, UserTokenInMemoryStore}
+import ie.deed.ber.auth.store.{
+  GoogleFirestoreUserTokenStore,
+  UserTokenInMemoryStore
+}
 import ie.deed.ber.common.certificate.stores.GoogleFirestoreCertificateStore
 import zio.*
 import zio.http.*
@@ -40,7 +43,7 @@ object MainApp extends ZIOAppDefault {
         Firestore.live,
         GoogleFirestoreCertificateStore.layer,
         Scope.default,
-        GoogleFirestoreUserTokenStore.layer
+        GoogleFirestoreUserTokenStore.layer // use UserTokenInMemoryStore.layer for local development
       )
   } yield ()
 }

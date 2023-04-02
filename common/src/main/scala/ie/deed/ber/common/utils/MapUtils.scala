@@ -16,7 +16,7 @@ object MapUtils {
         }
         .asInstanceOf[A]
         .pipe {
-          case null => throw NullPointerException()
+          case null  => throw NullPointerException()
           case other => other
         }
     }
