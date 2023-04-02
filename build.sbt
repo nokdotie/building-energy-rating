@@ -73,7 +73,7 @@ lazy val eircodeScraperEircodeIe = project
   .settings(
     libraryDependencies ++= List(
       "dev.zio" %% "zio-http" % "0.0.5",
-      "dev.zio" %% "zio-json" % "0.4.2"
+      "dev.zio" %% "zio-json" % "0.5.0"
     )
   )
 
