@@ -1,43 +1,43 @@
 package ie.deed.ber.auth.store
 
-import ie.deed.ber.auth.model.UserToken
+import ie.deed.ber.auth.model.UserApiKey
 import ie.deed.ber.common.certificate.stores.GoogleFirestoreCertificateStore
 import zio.*
 import zio.gcp.firestore.{CollectionPath, Firestore}
 
 import scala.util.chaining.scalaUtilChainingOps
 
-class GoogleFirestoreUserTokenStore(
+class GoogleFirestoreUserApiKeyStore(
     firestore: Firestore.Service,
     collectionPath: CollectionPath
-) extends UserTokenStore {
+) extends UserApiKeyStore {
 
-  override def getUserTokenByToken(
-      token: String
-  ): ZIO[Any, Throwable, Option[UserToken]] = {
+  override def getUserApiKey(
+      apiKey: String
+  ): ZIO[Any, Throwable, Option[UserApiKey]] = {
     firestore
       .collection(collectionPath)
       .flatMap { collectionReference =>
-        val query = collectionReference.document(token)
+        val query = collectionReference.document(apiKey)
         ZIO.fromFutureJava { query.get() }
       }
       .map { snapshot =>
         Option.when(snapshot.exists) {
           snapshot.getData.pipe { map =>
-            GoogleFirestoreUserTokenCodec.decode(token, map)
+            GoogleFirestoreUserTokenCodec.decode(apiKey, map)
           }
         }
       }
   }
 }
 
-object GoogleFirestoreUserTokenStore {
+object GoogleFirestoreUserApiKeyStore {
   private val collectionPrefix = "user-token"
 
   val layer: ZLayer[
     Firestore.Service,
     SecurityException,
-    GoogleFirestoreUserTokenStore
+    GoogleFirestoreUserApiKeyStore
   ] =
     ZLayer {
       for {
@@ -49,6 +49,6 @@ object GoogleFirestoreUserTokenStore {
             case _                  => s"$collectionPrefix-dev"
           }
           .map { CollectionPath.apply }
-      } yield GoogleFirestoreUserTokenStore(firestore, collectionPath)
+      } yield GoogleFirestoreUserApiKeyStore(firestore, collectionPath)
     }
 }

@@ -14,7 +14,7 @@ import zio._
 import zio.stream.ZStream
 import zio.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
 import zio.stream.ZPipeline
-import ie.deed.ber.common.utils.MapUtils.getTyped
+import ie.deed.ber.common.utils.MapUtils.getNested
 
 object GoogleFirestoreCertificateCodec {
   val seaiIeHtmlCertificateField = "seai-ie-html-certificate"
@@ -97,40 +97,40 @@ object GoogleFirestoreCertificateCodec {
 
     val seaiIeHtmlCertificate = for {
       rating <- map
-        .getTyped[String](seaiIeHtmlCertificateField, "rating")
+        .getNested[String](seaiIeHtmlCertificateField, "rating")
         .flatMap { string => Try { Rating.valueOf(string) } }
       typeOfRating <- map
-        .getTyped[String](seaiIeHtmlCertificateField, "type-of-rating")
+        .getNested[String](seaiIeHtmlCertificateField, "type-of-rating")
         .flatMap { string => Try { TypeOfRating.valueOf(string) } }
       issuedOn <- map
-        .getTyped[String](seaiIeHtmlCertificateField, "issued-on")
+        .getNested[String](seaiIeHtmlCertificateField, "issued-on")
         .flatMap { string => Try { LocalDate.parse(string) } }
       validUntil <- map
-        .getTyped[String](seaiIeHtmlCertificateField, "valid-until")
+        .getNested[String](seaiIeHtmlCertificateField, "valid-until")
         .flatMap { string => Try { LocalDate.parse(string) } }
       propertyAddress <- map
-        .getTyped[String](
+        .getNested[String](
           seaiIeHtmlCertificateField,
           "property-address"
         )
         .map { Address.apply }
       propertyConstructedOn <- map
-        .getTyped[String](
+        .getNested[String](
           seaiIeHtmlCertificateField,
           "property-constructed-on"
         )
         .flatMap { string => Try { Year.parse(string) } }
       propertyType <- map
-        .getTyped[String](seaiIeHtmlCertificateField, "property-type")
+        .getNested[String](seaiIeHtmlCertificateField, "property-type")
         .flatMap { string => Try { PropertyType.valueOf(string) } }
       propertyFloorArea <- map
-        .getTyped[String](
+        .getNested[String](
           seaiIeHtmlCertificateField,
           "property-floor-area-in-m2"
         )
         .flatMap { string => Try { SquareMeter(string.toFloat) } }
       domesticEnergyAssessmentProcedureVersion <- map
-        .getTyped[String](
+        .getNested[String](
           seaiIeHtmlCertificateField,
           "domestic-energy-assessment-procedure-version"
         )
@@ -138,7 +138,7 @@ object GoogleFirestoreCertificateCodec {
           Try { DomesticEnergyAssessmentProcedureVersion.valueOf(string) }
         }
       energyRating <- map
-        .getTyped[String](
+        .getNested[String](
           seaiIeHtmlCertificateField,
           "energy-rating-in-kWh/m2/yr"
         )
@@ -146,7 +146,7 @@ object GoogleFirestoreCertificateCodec {
           Try { KilowattHourPerSquareMetrePerYear(string.toFloat) }
         }
       carbonDioxideEmissionsIndicator <- map
-        .getTyped[String](
+        .getNested[String](
           seaiIeHtmlCertificateField,
           "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr"
         )
@@ -170,38 +170,38 @@ object GoogleFirestoreCertificateCodec {
 
     val seaiIePdfCertificate = for {
       rating <- map
-        .getTyped[String](seaiIePdfCertificateField, "rating")
+        .getNested[String](seaiIePdfCertificateField, "rating")
         .flatMap { string => Try { Rating.valueOf(string) } }
       issuedOn <- map
-        .getTyped[String](seaiIePdfCertificateField, "issued-on")
+        .getNested[String](seaiIePdfCertificateField, "issued-on")
         .flatMap { string => Try { LocalDate.parse(string) } }
       validUntil <- map
-        .getTyped[String](seaiIePdfCertificateField, "valid-until")
+        .getNested[String](seaiIePdfCertificateField, "valid-until")
         .flatMap { string => Try { LocalDate.parse(string) } }
       propertyAddress <- map
-        .getTyped[String](
+        .getNested[String](
           seaiIePdfCertificateField,
           "property-address"
         )
         .map { Address.apply }
       propertyEircode = map
-        .getTyped[String](
+        .getNested[String](
           seaiIePdfCertificateField,
           "property-eircode"
         )
         .map { ie.seai.ber.certificate.Eircode.apply }
         .fold(_ => None, Some(_))
       assessorNumber <- map
-        .getTyped[Long](seaiIePdfCertificateField, "assessor-number")
+        .getNested[Long](seaiIePdfCertificateField, "assessor-number")
         .flatMap { long => Try { AssessorNumber(long.toInt) } }
       assessorCompanyNumber <- map
-        .getTyped[Long](
+        .getNested[Long](
           seaiIePdfCertificateField,
           "assessor-company-number"
         )
         .flatMap { long => Try { AssessorCompanyNumber(long.toInt) } }
       domesticEnergyAssessmentProcedureVersion <- map
-        .getTyped[String](
+        .getNested[String](
           seaiIePdfCertificateField,
           "domestic-energy-assessment-procedure-version"
         )
@@ -209,7 +209,7 @@ object GoogleFirestoreCertificateCodec {
           Try { DomesticEnergyAssessmentProcedureVersion.valueOf(string) }
         }
       energyRating <- map
-        .getTyped[String](
+        .getNested[String](
           seaiIePdfCertificateField,
           "energy-rating-in-kWh/m2/yr"
         )
@@ -217,7 +217,7 @@ object GoogleFirestoreCertificateCodec {
           Try { KilowattHourPerSquareMetrePerYear(string.toFloat) }
         }
       carbonDioxideEmissionsIndicator <- map
-        .getTyped[String](
+        .getNested[String](
           seaiIePdfCertificateField,
           "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr"
         )
@@ -240,10 +240,10 @@ object GoogleFirestoreCertificateCodec {
 
     val eircodeIeEcadDataFound = for {
       eircode <- map
-        .getTyped[String](eircodeIeEcadDataField, "eircode")
+        .getNested[String](eircodeIeEcadDataField, "eircode")
         .map { ie.eircode.ecad.Eircode.apply }
       latitude <- map
-        .getTyped[String](
+        .getNested[String](
           eircodeIeEcadDataField,
           "geographic-coordinate",
           "latitude"
@@ -251,7 +251,7 @@ object GoogleFirestoreCertificateCodec {
         .flatMap { string => Try { BigDecimal(string) } }
         .map { Latitude.apply }
       longitude <- map
-        .getTyped[String](
+        .getNested[String](
           eircodeIeEcadDataField,
           "geographic-coordinate",
           "longitude"
@@ -260,13 +260,13 @@ object GoogleFirestoreCertificateCodec {
         .map { Longitude.apply }
       geographicCoordinate = GeographicCoordinate(latitude, longitude)
       geographicAddress <- map
-        .getTyped[String](
+        .getNested[String](
           eircodeIeEcadDataField,
           "geographic-address"
         )
         .map { GeographicAddress.apply }
       postalAddress <- map
-        .getTyped[String](eircodeIeEcadDataField, "postal-address")
+        .getNested[String](eircodeIeEcadDataField, "postal-address")
         .map { PostalAddress.apply }
     } yield EcadData.Found(
       eircode = eircode,
@@ -277,7 +277,7 @@ object GoogleFirestoreCertificateCodec {
 
     val eircodeIeEcadDataNotFound =
       map
-        .getTyped[Boolean](eircodeIeEcadDataField, "found")
+        .getNested[Boolean](eircodeIeEcadDataField, "found")
         .collect { case false => EcadData.NotFound }
 
     Certificate(

@@ -1,10 +1,10 @@
 package ie.deed.ber.api
 
-import ie.deed.ber.auth.middleware.TokenAuthMiddleware
+import ie.deed.ber.auth.middleware.ApiKeyAuthMiddleware
 import ie.deed.ber.api.apps.{ApiV1CertificateApp, HealthApp, StaticApp}
 import ie.deed.ber.auth.store.{
-  GoogleFirestoreUserTokenStore,
-  UserTokenInMemoryStore
+  GoogleFirestoreUserApiKeyStore,
+  UserApiKeyInMemoryStore$
 }
 import ie.deed.ber.common.certificate.stores.GoogleFirestoreCertificateStore
 import zio.*
@@ -26,7 +26,7 @@ object MainApp extends ZIOAppDefault {
   )
 
   private val routes =
-    ApiV1CertificateApp.http @@ TokenAuthMiddleware.tokenAuthMiddleware ++
+    ApiV1CertificateApp.http @@ ApiKeyAuthMiddleware.apiKeyAuthMiddleware ++
       StaticApp.http ++
       HealthApp.http
 
@@ -43,7 +43,7 @@ object MainApp extends ZIOAppDefault {
         Firestore.live,
         GoogleFirestoreCertificateStore.layer,
         Scope.default,
-        GoogleFirestoreUserTokenStore.layer // use UserTokenInMemoryStore.layer for local development
+        GoogleFirestoreUserApiKeyStore.layer // use UserApiKeyInMemoryStore.layer for local development
       )
   } yield ()
 }
