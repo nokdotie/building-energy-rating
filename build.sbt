@@ -19,7 +19,7 @@ lazy val common = project
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.10",
       "dev.zio" %% "zio-streams" % "2.0.10",
-      "com.google.cloud" % "google-cloud-firestore" % "3.9.2",
+      "com.google.cloud" % "google-cloud-firestore" % "3.9.3",
       "com.firebase" % "geofire-java" % "3.0.0",
       "org.scalameta" %% "munit" % "0.7.29" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test
@@ -73,7 +73,7 @@ lazy val eircodeScraperEircodeIe = project
   .settings(
     libraryDependencies ++= List(
       "dev.zio" %% "zio-http" % "0.0.5",
-      "dev.zio" %% "zio-json" % "0.4.2"
+      "dev.zio" %% "zio-json" % "0.5.0"
     )
   )
 
