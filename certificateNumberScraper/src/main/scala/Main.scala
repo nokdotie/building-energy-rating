@@ -67,7 +67,7 @@ val app: ZIO[Client with CertificateStore, Throwable, Unit] =
     .runDrain
 
 object Main extends ZIOAppDefault {
-  def run = app.provide(
+  def run: ZIO[Any, Throwable, Unit] = app.provide(
     Client.fromConfig,
     ClientConfig.default,
     Firestore.live,

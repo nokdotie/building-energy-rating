@@ -75,7 +75,7 @@ val app: ZIO[
     .runDrain
 
 object Main extends ZIOAppDefault {
-  def run = app.provide(
+  def run: ZIO[Any, Throwable, Unit] = app.provide(
     ZPdfBox.live,
     Firestore.live,
     GoogleFirestoreCertificateStore.layer,
