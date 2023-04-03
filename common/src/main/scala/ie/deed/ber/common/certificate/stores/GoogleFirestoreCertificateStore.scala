@@ -3,7 +3,7 @@ package ie.deed.ber.common.certificate.stores
 import com.google.cloud.firestore._
 import scala.util.chaining.scalaUtilChainingOps
 import ie.deed.ber.common.certificate._
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import zio._
 import zio.stream.ZStream
 import zio.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
@@ -111,7 +111,7 @@ class GoogleFirestoreCertificateStore(
       filter: Query => Query
   ): ZStream[Any, Throwable, CertificateNumber] =
     ZStream
-      .unfoldZIO(CertificateNumber(0)) { case lastCertificateNumber =>
+      .unfoldZIO(CertificateNumber(0)) { lastCertificateNumber =>
         firestore
           .collection(collectionPath)
           .flatMap { collectionReference =>
@@ -120,18 +120,28 @@ class GoogleFirestoreCertificateStore(
                 FieldPath.documentId,
                 lastCertificateNumber.value.toString
               )
-              .pipe { filter }
+              .pipe {
+                filter
+              }
               .limit(100)
 
-            ZIO.fromFutureJava { query.get() }
+            ZIO.fromFutureJava {
+              query.get()
+            }
           }
           .map { querySnapshot =>
             querySnapshot.getDocuments.asScala
-              .flatMap { _.getId.toIntOption }
-              .map { CertificateNumber.apply }
+              .flatMap {
+                _.getId.toIntOption
+              }
+              .map {
+                CertificateNumber.apply
+              }
           }
           .map { certificateNumbers =>
-            certificateNumbers.lastOption.map { (certificateNumbers, _) }
+            certificateNumbers.lastOption.map {
+              (certificateNumbers, _)
+            }
           }
       }
       .takeWhile { _.nonEmpty }
@@ -141,7 +151,7 @@ class GoogleFirestoreCertificateStore(
     firestore
       .collection(collectionPath)
       .flatMap { collectionReference =>
-        val query = collectionReference.document(id.value.toString())
+        val query = collectionReference.document(id.value.toString)
         ZIO.fromFutureJava { query.get() }
       }
       .map { snapshot =>

@@ -21,7 +21,7 @@ object ZPlaywright {
       (context: BrowserContext) => ZIO.attempt { context.newPage }
 
     new ZPlaywright {
-      val acquireRelease = ZIO
+      val acquireRelease: ZIO[Scope, Throwable, Page] = ZIO
         .fromAutoCloseable(acquirePlaywright)
         .flatMap { playwright =>
           ZIO.fromAutoCloseable(acquireBrowser(playwright))

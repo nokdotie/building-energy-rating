@@ -24,7 +24,7 @@ object ZyteResponseError {
 }
 
 object ZyteClient {
-  val headers =
+  val headers: Headers =
     Headers(
       "Authorization",
       "Basic OGUxNTVhYjVjOWMzNDg3YWJkNDkxYWY5ODM3Mjg4MGQ6"
@@ -65,7 +65,7 @@ object ZyteClient {
       )
       .map { _.httpResponseBody }
       .mapAttempt { body =>
-        Base64.getDecoder().decode(body).pipe { String(_) }
+        Base64.getDecoder.decode(body).pipe { String(_) }
       }
   }
 }

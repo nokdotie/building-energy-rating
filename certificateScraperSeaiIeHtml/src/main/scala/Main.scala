@@ -76,7 +76,7 @@ val app: ZIO[CertificateStore with ZPlaywright with Scope, Throwable, Unit] =
     .runDrain
 
 object Main extends ZIOAppDefault {
-  def run = app.provide(
+  def run: ZIO[Any, Throwable, Unit] = app.provide(
     Firestore.live,
     GoogleFirestoreCertificateStore.layer,
     Scope.default,
