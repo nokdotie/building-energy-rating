@@ -78,6 +78,7 @@ lazy val eircodeScraperEircodeIe = project
   )
 
 lazy val auth = project
+  .dependsOn(common % "compile->compile;test->test")
   .settings(
     libraryDependencies ++= List(
       "dev.zio" %% "zio-http" % "0.0.5"

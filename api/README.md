@@ -1,13 +1,17 @@
-### Examples
+## Examples
 
 * http://localhost:8080/api/v1/ber/101663292
-* add `"X-API-Key"` header with valid token (see `UserTokenInMemoryStore`)
+* add `"X-API-Key"` header with valid ApiKey (see `UserApiKeyInMemoryStore` and `GoogleFirestoreUserApiKeyStore`)
 
-
+### Local development using `UserApiKeyInMemoryStore`
 * example using curl: 
 * `curl --header "X-API-Key: wqerasdffv123fv342rfsd" http://localhost:8080/api/v1/ber/101663292`
 
-Expected response:
+### Using `Admin` ApiKey from `GoogleFirestoreUserApiKeyStore`
+* example using curl:
+* `curl --header "X-API-Key: sKIBl1R4VUqIIv1HFMKE" http://localhost:8080/api/v1/ber/101663292`
+
+Exemplary response:
 ``` json
 {
   "number": 100105170,
