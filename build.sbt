@@ -11,6 +11,7 @@ lazy val root = project
     certificateNumberScraper,
     certificateScraperSeaiIeHtml,
     certificateScraperSeaiIePdf,
+    ecad,
     eircodeScraperEircodeIe
   )
 
@@ -84,3 +85,5 @@ lazy val auth = project
       "dev.zio" %% "zio-http" % "0.0.5"
     )
   )
+
+lazy val ecad = project
