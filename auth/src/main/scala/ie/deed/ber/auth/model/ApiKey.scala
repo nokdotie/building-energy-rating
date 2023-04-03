@@ -8,9 +8,9 @@ enum ApiKeyType:
 
 /** apiKey is DocumentId
   */
-case class UserApiKey(
+case class ApiKey(
     email: String,
     apiKey: String,
-    tokenType: ApiKeyType,
+    apiKeyType: ApiKeyType,
     createdAt: Instant
 )

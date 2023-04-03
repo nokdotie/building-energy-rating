@@ -1,12 +1,12 @@
 ### Auth overview
 
-Authentication is based on the UserToken.
-Every request has to send a valid token in the `X-API-Key` header.
+Authentication is based on the ApiKey.
+Every request has to send a valid apiKey in the `X-API-Key` header.
 
 ### Types of implementation:
 
-- local: `UserTokenInMemoryStore`
-- dev/prod: `GoogleFirestoreUserTokenStore`
+- local: `ApiKeyInMemoryStore`
+- dev/prod: `GoogleFirestoreApiKeyStore`
 
-**NOTICE:**  To avoid frequent DB calls please use `UserTokenInMemoryStore` for local development.
+**NOTICE:**  To avoid frequent DB calls please use `ApiKeyInMemoryStore` for local development.
 

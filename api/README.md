@@ -9,7 +9,7 @@
 
 ### Using `Admin` ApiKey from `GoogleFirestoreUserApiKeyStore`
 * example using curl:
-* `curl --header "X-API-Key: G3O98sgVbYCtJVU86Q7f" http://localhost:8080/api/v1/ber/101663292`
+* `curl --header "X-API-Key: sKIBl1R4VUqIIv1HFMKE" http://localhost:8080/api/v1/ber/101663292`
 
 Exemplary response:
 ``` json
