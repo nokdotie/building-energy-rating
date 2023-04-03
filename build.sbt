@@ -55,7 +55,7 @@ lazy val certificateScraperSeaiIeHtml = project
   .dependsOn(common % "compile->compile;test->test")
   .settings(
     libraryDependencies ++= List(
-      "com.microsoft.playwright" % "playwright" % "1.31.0"
+      "com.microsoft.playwright" % "playwright" % "1.32.0"
     )
   )
 
