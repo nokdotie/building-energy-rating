@@ -34,7 +34,10 @@ object GoogleFirestoreApiKeyCodec {
   def encode(apiKey: ApiKey): java.util.Map[String, Any] =
     Map(
       "apiKeyType" -> apiKey.apiKeyType.toString,
-      "createdAt" -> Timestamp.ofTimeSecondsAndNanos(apiKey.createdAt.getEpochSecond, apiKey.createdAt.getNano),
+      "createdAt" -> Timestamp.ofTimeSecondsAndNanos(
+        apiKey.createdAt.getEpochSecond,
+        apiKey.createdAt.getNano
+      ),
       "email" -> apiKey.email
     ).asJava
 }

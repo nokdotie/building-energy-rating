@@ -14,7 +14,10 @@ val genApiKey: Gen[ApiKey] = for {
   email <- Gen.asciiStr
   apiKey <- Gen.asciiStr
   apiKeyType <- genApiKeyType
-  createdAt <- Gen.choose(Instant.now().minus(20, ChronoUnit.DAYS), Instant.now())
+  createdAt <- Gen.choose(
+    Instant.now().minus(20, ChronoUnit.DAYS),
+    Instant.now()
+  )
 } yield {
   ApiKey(
     email = email,
