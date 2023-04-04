@@ -19,6 +19,8 @@ lazy val common = project
   .settings(
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.10",
+      "dev.zio" %% "zio-http" % "0.0.5",
+      "dev.zio" %% "zio-json" % "0.5.0",
       "dev.zio" %% "zio-streams" % "2.0.10",
       "com.google.cloud" % "google-cloud-firestore" % "3.9.3",
       "com.firebase" % "geofire-java" % "3.0.0",
@@ -37,20 +39,12 @@ lazy val api = project
     )
       .map(Option.apply)
       .map(dockerAlias.value.withTag),
-    dockerExposedPorts ++= Seq(8080),
-    libraryDependencies ++= List(
-      "dev.zio" %% "zio-http" % "0.0.5"
-    )
+    dockerExposedPorts ++= Seq(8080)
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
 
 lazy val certificateNumberScraper = project
   .dependsOn(common)
-  .settings(
-    libraryDependencies ++= List(
-      "dev.zio" %% "zio-http" % "0.0.5"
-    )
-  )
 
 lazy val certificateScraperSeaiIeHtml = project
   .dependsOn(common % "compile->compile;test->test")
@@ -64,26 +58,14 @@ lazy val certificateScraperSeaiIePdf = project
   .dependsOn(common % "compile->compile;test->test")
   .settings(
     libraryDependencies ++= List(
-      "org.apache.pdfbox" % "pdfbox" % "2.0.27",
-      "dev.zio" %% "zio-http" % "0.0.5"
+      "org.apache.pdfbox" % "pdfbox" % "2.0.27"
     )
   )
 
 lazy val eircodeScraperEircodeIe = project
   .dependsOn(common % "compile->compile;test->test")
-  .settings(
-    libraryDependencies ++= List(
-      "dev.zio" %% "zio-http" % "0.0.5",
-      "dev.zio" %% "zio-json" % "0.5.0"
-    )
-  )
 
 lazy val auth = project
   .dependsOn(common % "compile->compile;test->test")
-  .settings(
-    libraryDependencies ++= List(
-      "dev.zio" %% "zio-http" % "0.0.5"
-    )
-  )
 
 lazy val ecad = project

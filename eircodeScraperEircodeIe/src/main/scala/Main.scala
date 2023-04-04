@@ -12,12 +12,14 @@ import zio.json._
 import zio.gcp.firestore.Firestore
 import zio.stream.ZPipeline
 import ie.seai.ber.certificate.Address
+import ie.deed.ber.common.utils.ZyteClient
 
 val finderEircodeIeApiKey = "_45f9ba10-677a-4ae4-a02f-02d926cae333"
 
 def getResponse[A: JsonDecoder](url: String): ZIO[Client, Throwable, A] =
   ZyteClient
-    .getBody(url)
+    .request(url)
+    .flatMap { _.body.asString }
     .flatMap { body =>
       body
         .fromJson[A]
