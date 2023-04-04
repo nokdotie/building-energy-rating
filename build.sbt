@@ -63,9 +63,10 @@ lazy val certificateScraperSeaiIePdf = project
   )
 
 lazy val eircodeScraperEircodeIe = project
-  .dependsOn(common % "compile->compile;test->test")
+  .dependsOn(common % "compile->compile;test->test", ecad)
 
 lazy val auth = project
   .dependsOn(common % "compile->compile;test->test")
 
 lazy val ecad = project
+  .dependsOn(common % "compile->compile;test->test")
