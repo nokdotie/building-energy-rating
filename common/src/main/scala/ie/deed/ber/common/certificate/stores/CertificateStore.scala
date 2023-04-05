@@ -8,7 +8,6 @@ trait CertificateStore {
   def upsertBatch(certificates: Iterable[Certificate]): ZIO[Any, Throwable, Int]
   val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int]
 
-  val streamMissingSeaiIePdf: ZStream[Any, Throwable, CertificateNumber]
   val streamMissingEircodeIeEcadData: ZStream[
     CertificateStore,
     Throwable,
@@ -26,10 +25,6 @@ object CertificateStore {
 
   val upsertPipeline: ZPipeline[CertificateStore, Throwable, Certificate, Int] =
     ZPipeline.serviceWithPipeline[CertificateStore] { _.upsertPipeline }
-
-  val streamMissingSeaiIePdf
-      : ZStream[CertificateStore, Throwable, CertificateNumber] =
-    ZStream.serviceWithStream[CertificateStore](_.streamMissingSeaiIePdf)
 
   val streamMissingEircodeIeEcadData
       : ZStream[CertificateStore, Throwable, Certificate] =

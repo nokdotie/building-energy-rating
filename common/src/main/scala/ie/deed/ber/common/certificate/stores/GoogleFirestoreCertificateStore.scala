@@ -79,14 +79,6 @@ class GoogleFirestoreCertificateStore(
       .mapZIO { chunks => upsertBatch(chunks.toList).retryN(3) }
       .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
-  val streamMissingSeaiIePdf: ZStream[Any, Throwable, CertificateNumber] =
-    stream {
-      _.whereEqualTo(
-        GoogleFirestoreCertificateCodec.seaiIePdfCertificateField,
-        null
-      )
-    }
-
   val streamMissingEircodeIeEcadData
       : ZStream[CertificateStore, Throwable, Certificate] =
     stream {

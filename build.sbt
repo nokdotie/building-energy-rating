@@ -8,7 +8,6 @@ lazy val root = project
     common,
     api,
     auth,
-    certificateNumberScraper,
     scraper,
     ecad
   )
@@ -40,9 +39,6 @@ lazy val api = project
     dockerExposedPorts ++= Seq(8080)
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
-
-lazy val certificateNumberScraper = project
-  .dependsOn(common)
 
 lazy val scraper = project
   .dependsOn(common % "compile->compile;test->test")
