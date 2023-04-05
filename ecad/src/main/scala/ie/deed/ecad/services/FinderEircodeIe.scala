@@ -53,6 +53,10 @@ object FinderEircodeIe {
       .pipe(request[GetEcadData.Response])
   } yield EircodeAddressDatabaseData(
     eircode = Eircode(getEcadData.eircodeInfo.eircode),
+    addresses = List(
+      Address(getEcadData.geographicAddress.english.mkString("\n")),
+      Address(getEcadData.postalAddress.english.mkString("\n"))
+    ),
     geographicCoordinate =
       getEcadData.spatialInfo.etrs89.location.pipe { location =>
         GeographicCoordinate(
@@ -60,8 +64,5 @@ object FinderEircodeIe {
           latitude = Latitude(location.latitude)
         )
       },
-    geographicAddress =
-      Address(getEcadData.geographicAddress.english.mkString("\n")),
-    postalAddress = Address(getEcadData.postalAddress.english.mkString("\n"))
   )
 }
