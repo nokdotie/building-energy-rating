@@ -61,7 +61,7 @@ val app: ZIO[Client with CertificateStore, Throwable, Unit] =
     .debug("Certificate Number")
     .via(filterExists)
     .debug("Certificate Number Exists")
-    .map { Certificate(_, None, None, None) }
+    .map { Certificate(_, None, None) }
     .via(CertificateStore.upsertPipeline)
     .debug("Certificate Number Upserted")
     .runDrain

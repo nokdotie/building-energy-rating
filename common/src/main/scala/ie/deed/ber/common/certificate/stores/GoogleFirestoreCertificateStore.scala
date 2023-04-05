@@ -19,9 +19,6 @@ class GoogleFirestoreCertificateStore(
       databaseState: Option[Certificate]
   ): Certificate =
     certificate.copy(
-      seaiIeHtmlCertificate = certificate.seaiIeHtmlCertificate.orElse(
-        databaseState.flatMap(_.seaiIeHtmlCertificate)
-      ),
       seaiIePdfCertificate = certificate.seaiIePdfCertificate.orElse(
         databaseState.flatMap(_.seaiIePdfCertificate)
       )
@@ -81,14 +78,6 @@ class GoogleFirestoreCertificateStore(
       .groupedWithin[Certificate](100, 10.seconds)
       .mapZIO { chunks => upsertBatch(chunks.toList).retryN(3) }
       .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
-
-  val streamMissingSeaiIeHtml: ZStream[Any, Throwable, CertificateNumber] =
-    stream {
-      _.whereEqualTo(
-        GoogleFirestoreCertificateCodec.seaiIeHtmlCertificateField,
-        null
-      )
-    }
 
   val streamMissingSeaiIePdf: ZStream[Any, Throwable, CertificateNumber] =
     stream {

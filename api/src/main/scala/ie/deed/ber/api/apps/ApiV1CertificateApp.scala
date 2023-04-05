@@ -7,7 +7,7 @@ import ie.deed.ber.common.certificate.{
   Certificate as InternalCertificate
 }
 import ie.deed.ber.common.certificate.stores.CertificateStore
-import ie.seai.ber.certificate.{HtmlCertificate, PdfCertificate}
+import ie.seai.ber.certificate.PdfCertificate
 
 import scala.util.chaining.scalaUtilChainingOps
 import zio.ZIO

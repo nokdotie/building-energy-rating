@@ -7,12 +7,10 @@ import ie.eircode.ecad._
 
 implicit val genCertificate: Gen[Certificate] = for {
   number <- arbitrary[CertificateNumber]
-  seaiIeHtmlCertificate <- arbitrary[Option[HtmlCertificate]]
   seaiIePdfCertificate <- arbitrary[Option[PdfCertificate]]
   eircodeIeEcadData <- arbitrary[Option[EcadData]]
 } yield Certificate(
   number,
-  seaiIeHtmlCertificate,
   seaiIePdfCertificate,
   eircodeIeEcadData
 )
