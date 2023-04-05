@@ -1,29 +1,25 @@
+package ie.deed.ber.common.utils
+
 import java.util.Base64
 import scala.util.chaining.scalaUtilChainingOps
-import zio.json._
-import zio.http.{Body, Client}
+import zio.json.{JsonDecoder, DeriveJsonDecoder, DecoderOps}
+import zio.http.{Body, Client, Response}
 import zio.http.model.{Headers, Method}
 import zio.{durationInt, Schedule, ZIO}
 
-case class ZyteResponseOk(
-    httpResponseBody: String
-)
-object ZyteResponseOk {
-  implicit val decoder: JsonDecoder[ZyteResponseOk] =
-    DeriveJsonDecoder.gen[ZyteResponseOk]
-}
-
-case class ZyteResponseError(
-    status: Int,
-    title: String,
-    detail: String
-) extends Throwable(s"Zyte failed: $status, $title, $detail")
-object ZyteResponseError {
-  implicit val decoder: JsonDecoder[ZyteResponseError] =
-    DeriveJsonDecoder.gen[ZyteResponseError]
-}
-
 object ZyteClient {
+
+  case class ZyteResponseOk(httpResponseBody: String)
+  given JsonDecoder[ZyteResponseOk] = DeriveJsonDecoder.gen[ZyteResponseOk]
+
+  case class ZyteResponseError(
+      status: Int,
+      title: String,
+      detail: String
+  ) extends Throwable(s"Zyte failed: $status, $title, $detail")
+  given JsonDecoder[ZyteResponseError] =
+    DeriveJsonDecoder.gen[ZyteResponseError]
+
   val headers: Headers =
     Headers(
       "Authorization",
@@ -31,7 +27,18 @@ object ZyteClient {
     ) ++
       Headers("Content-Type", "application/json")
 
-  def getBody(url: String): ZIO[Client, Throwable, String] = {
+  private def zyteResponseOkToResponse(
+      zyteResponseOk: ZyteResponseOk
+  ): ZIO[Any, Throwable, Response] =
+    ZIO
+      .attempt {
+        zyteResponseOk.httpResponseBody
+          .pipe { Base64.getDecoder.decode }
+          .pipe { String(_) }
+      }
+      .map { body => Response(body = Body.fromString(body)) }
+
+  def request(url: String): ZIO[Client, Throwable, Response] = {
     val content =
       Body.fromString(s"""{"url": "$url", "httpResponseBody": true}""")
 
@@ -54,6 +61,7 @@ object ZyteClient {
           case _ => ZIO.fail(Throwable(s"Failed to parse response: $body"))
         }
       }
+      .flatMap(zyteResponseOkToResponse)
 
     requestAndParse
       .retry(
@@ -63,9 +71,5 @@ object ZyteClient {
             case _                                              => false
           }
       )
-      .map { _.httpResponseBody }
-      .mapAttempt { body =>
-        Base64.getDecoder.decode(body).pipe { String(_) }
-      }
   }
 }

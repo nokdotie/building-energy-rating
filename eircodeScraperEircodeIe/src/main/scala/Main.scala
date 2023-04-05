@@ -12,79 +12,28 @@ import zio.json._
 import zio.gcp.firestore.Firestore
 import zio.stream.ZPipeline
 import ie.seai.ber.certificate.Address
-
-val finderEircodeIeApiKey = "_45f9ba10-677a-4ae4-a02f-02d926cae333"
-
-def getResponse[A: JsonDecoder](url: String): ZIO[Client, Throwable, A] =
-  ZyteClient
-    .getBody(url)
-    .flatMap { body =>
-      body
-        .fromJson[A]
-        .left
-        .map { err => Throwable(s"$err: $body") }
-        .pipe(ZIO.fromEither)
-    }
-
-def getFindAddressResponse(
-    propertyAddress: String
-): ZIO[Client, Throwable, FindAddress.Response] =
-  FindAddress
-    .url(finderEircodeIeApiKey, propertyAddress)
-    .pipe(getResponse)
-
-def getFindAddressId(
-    response: FindAddress.Response
-): Option[String] =
-  response
-    .pipe { case FindAddress.Response(addressId, addressType, options) =>
-      FindAddress.ResponseOption(addressId, addressType) +: options
-    }
-    .collect {
-      case FindAddress.ResponseOption(Some(addressId), Some(addressType))
-          if addressType.text == "ResidentialAddressPoint" =>
-        addressId
-    }
-    .pipe {
-      case head :: Nil => Some(head)
-      case Nil         => None
-      case many        => None
-    }
-
-def getGetEcadDataResponse(
-    addressId: String
-): ZIO[Client, Throwable, GetEcadData.Response] =
-  GetEcadData
-    .url(finderEircodeIeApiKey, addressId)
-    .pipe(getResponse)
+import ie.deed.ber.common.utils.ZyteClient
+import ie.deed.ecad.services.FinderEircodeIe
 
 def getEcadData(propertyAddress: String): ZIO[
   Client,
   Throwable,
   EcadData
 ] =
-  getFindAddressResponse(propertyAddress)
-    .map { getFindAddressId }
-    .flatMap {
-      case Some(addressId) => getGetEcadDataResponse(addressId).option
-      case None            => ZIO.succeed(None)
-    }
-    .map {
-      case None => EcadData.NotFound
-      case Some(ecadData) =>
-        EcadData.Found(
-          Eircode(ecadData.eircodeInfo.eircode),
-          ecadData.spatialInfo.etrs89.location.pipe { location =>
-            GeographicCoordinate(
-              Latitude(location.latitude),
-              Longitude(location.longitude)
-            )
-          },
-          GeographicAddress(
-            ecadData.geographicAddress.english.mkString("\n")
-          ),
-          PostalAddress(ecadData.postalAddress.english.mkString("\n"))
-        )
+  FinderEircodeIe
+    .getEircodeAddressDatabaseData(propertyAddress)
+    .map { ecadData =>
+      EcadData.Found(
+        Eircode(ecadData.eircode.value),
+        GeographicCoordinate(
+          Latitude(ecadData.geographicCoordinate.latitude.value),
+          Longitude(ecadData.geographicCoordinate.longitude.value)
+        ),
+        GeographicAddress(
+          ecadData.geographicAddress.value
+        ),
+        PostalAddress(ecadData.postalAddress.value)
+      )
     }
 
 val getEcad: ZPipeline[
