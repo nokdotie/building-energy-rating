@@ -9,7 +9,6 @@ lazy val root = project
     api,
     auth,
     certificateNumberScraper,
-    certificateScraperSeaiIeHtml,
     certificateScraperSeaiIePdf,
     ecad,
     eircodeScraperEircodeIe
@@ -45,14 +44,6 @@ lazy val api = project
 
 lazy val certificateNumberScraper = project
   .dependsOn(common)
-
-lazy val certificateScraperSeaiIeHtml = project
-  .dependsOn(common % "compile->compile;test->test")
-  .settings(
-    libraryDependencies ++= List(
-      "com.microsoft.playwright" % "playwright" % "1.32.0"
-    )
-  )
 
 lazy val certificateScraperSeaiIePdf = project
   .dependsOn(common % "compile->compile;test->test")

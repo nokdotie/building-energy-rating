@@ -3,7 +3,7 @@ import ie.deed.ber.common.certificate.stores.{
   CertificateStore,
   GoogleFirestoreCertificateStore
 }
-import ie.seai.ber.certificate.{HtmlCertificate, PdfCertificate}
+import ie.seai.ber.certificate.PdfCertificate
 import ie.eircode.ecad._
 import scala.util.chaining.scalaUtilChainingOps
 import zio.{Scope, ZIO, ZIOAppDefault}
@@ -47,13 +47,10 @@ val getEcad: ZPipeline[
   ZPipeline[Certificate]
     .map { certificate =>
       certificate.seaiIePdfCertificate
-        .orElse(certificate.seaiIeHtmlCertificate)
-        .collect {
-          case certificate: HtmlCertificate => certificate.propertyAddress.value
-          case certificate: PdfCertificate =>
-            certificate.propertyEircode
-              .map(_.value)
-              .getOrElse(certificate.propertyAddress.value)
+        .map { pdf =>
+          pdf.propertyEircode
+            .map(_.value)
+            .getOrElse(pdf.propertyAddress.value)
         }
         .map { (certificate.number, _) }
     }
@@ -63,7 +60,6 @@ val getEcad: ZPipeline[
         .map { ecadData =>
           Certificate(
             certificateNumber,
-            None,
             None,
             Some(ecadData)
           )

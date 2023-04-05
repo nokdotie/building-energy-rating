@@ -52,7 +52,6 @@ val getCertificates: ZPipeline[
       getPdfCertificate(certificateNumber).map { pdfCertificate =>
         Certificate(
           certificateNumber,
-          None,
           Some(pdfCertificate),
           None
         )

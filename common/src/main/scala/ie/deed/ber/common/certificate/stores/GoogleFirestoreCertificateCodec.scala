@@ -17,29 +17,10 @@ import zio.stream.ZPipeline
 import ie.deed.ber.common.utils.MapUtils.getNested
 
 object GoogleFirestoreCertificateCodec {
-  val seaiIeHtmlCertificateField = "seai-ie-html-certificate"
   val seaiIePdfCertificateField = "seai-ie-pdf-certificate"
   val eircodeIeEcadDataField = "eircode-ie-ecad-data"
 
   def encode(certificate: Certificate): java.util.Map[String, Any] = {
-    val seaiIeHtmlCertificate = certificate.seaiIeHtmlCertificate.fold(
-      null
-    ) { certificate =>
-      Map(
-        "rating" -> certificate.rating.toString,
-        "type-of-rating" -> certificate.typeOfRating.toString,
-        "issued-on" -> certificate.issuedOn.toString,
-        "valid-until" -> certificate.validUntil.toString,
-        "property-address" -> certificate.propertyAddress.value,
-        "property-constructed-on" -> certificate.propertyConstructedOn.toString,
-        "property-type" -> certificate.propertyType.toString,
-        "property-floor-area-in-m2" -> certificate.propertyFloorArea.value.toString,
-        "domestic-energy-assessment-procedure-version" -> certificate.domesticEnergyAssessmentProcedureVersion.toString,
-        "energy-rating-in-kWh/m2/yr" -> certificate.energyRating.value.toString,
-        "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr" -> certificate.carbonDioxideEmissionsIndicator.value.toString
-      ).asJava
-    }
-
     val seaiIePdfCertificate = certificate.seaiIePdfCertificate.fold(
       null
     ) { certificate =>
@@ -84,7 +65,6 @@ object GoogleFirestoreCertificateCodec {
     }
 
     Map(
-      seaiIeHtmlCertificateField -> seaiIeHtmlCertificate,
       seaiIePdfCertificateField -> seaiIePdfCertificate,
       eircodeIeEcadDataField -> eircodeIeEcadData
     ).asJava
@@ -94,80 +74,6 @@ object GoogleFirestoreCertificateCodec {
       id: CertificateNumber,
       map: java.util.Map[String, Any]
   ): Certificate = {
-
-    val seaiIeHtmlCertificate = for {
-      rating <- map
-        .getNested[String](seaiIeHtmlCertificateField, "rating")
-        .flatMap { string => Try { Rating.valueOf(string) } }
-      typeOfRating <- map
-        .getNested[String](seaiIeHtmlCertificateField, "type-of-rating")
-        .flatMap { string => Try { TypeOfRating.valueOf(string) } }
-      issuedOn <- map
-        .getNested[String](seaiIeHtmlCertificateField, "issued-on")
-        .flatMap { string => Try { LocalDate.parse(string) } }
-      validUntil <- map
-        .getNested[String](seaiIeHtmlCertificateField, "valid-until")
-        .flatMap { string => Try { LocalDate.parse(string) } }
-      propertyAddress <- map
-        .getNested[String](
-          seaiIeHtmlCertificateField,
-          "property-address"
-        )
-        .map { Address.apply }
-      propertyConstructedOn <- map
-        .getNested[String](
-          seaiIeHtmlCertificateField,
-          "property-constructed-on"
-        )
-        .flatMap { string => Try { Year.parse(string) } }
-      propertyType <- map
-        .getNested[String](seaiIeHtmlCertificateField, "property-type")
-        .flatMap { string => Try { PropertyType.valueOf(string) } }
-      propertyFloorArea <- map
-        .getNested[String](
-          seaiIeHtmlCertificateField,
-          "property-floor-area-in-m2"
-        )
-        .flatMap { string => Try { SquareMeter(string.toFloat) } }
-      domesticEnergyAssessmentProcedureVersion <- map
-        .getNested[String](
-          seaiIeHtmlCertificateField,
-          "domestic-energy-assessment-procedure-version"
-        )
-        .flatMap { string =>
-          Try { DomesticEnergyAssessmentProcedureVersion.valueOf(string) }
-        }
-      energyRating <- map
-        .getNested[String](
-          seaiIeHtmlCertificateField,
-          "energy-rating-in-kWh/m2/yr"
-        )
-        .flatMap { string =>
-          Try { KilowattHourPerSquareMetrePerYear(string.toFloat) }
-        }
-      carbonDioxideEmissionsIndicator <- map
-        .getNested[String](
-          seaiIeHtmlCertificateField,
-          "carbon-dioxide-emissions-indicator-in-kgCO2/m2/yr"
-        )
-        .flatMap { string =>
-          Try { KilogramOfCarbonDioxidePerSquareMetrePerYear(string.toFloat) }
-        }
-    } yield HtmlCertificate(
-      rating = rating,
-      typeOfRating = typeOfRating,
-      issuedOn = issuedOn,
-      validUntil = validUntil,
-      propertyAddress = propertyAddress,
-      propertyConstructedOn = propertyConstructedOn,
-      propertyType = propertyType,
-      propertyFloorArea = propertyFloorArea,
-      domesticEnergyAssessmentProcedureVersion =
-        domesticEnergyAssessmentProcedureVersion,
-      energyRating = energyRating,
-      carbonDioxideEmissionsIndicator = carbonDioxideEmissionsIndicator
-    )
-
     val seaiIePdfCertificate = for {
       rating <- map
         .getNested[String](seaiIePdfCertificateField, "rating")
@@ -282,7 +188,6 @@ object GoogleFirestoreCertificateCodec {
 
     Certificate(
       id,
-      seaiIeHtmlCertificate.toOption,
       seaiIePdfCertificate.toOption,
       eircodeIeEcadDataFound.orElse(eircodeIeEcadDataNotFound).toOption
     )
