@@ -9,7 +9,7 @@ lazy val root = project
     api,
     auth,
     certificateNumberScraper,
-    certificateScraperSeaiIePdf,
+    scraper,
     ecad
   )
 
@@ -44,7 +44,7 @@ lazy val api = project
 lazy val certificateNumberScraper = project
   .dependsOn(common)
 
-lazy val certificateScraperSeaiIePdf = project
+lazy val scraper = project
   .dependsOn(common % "compile->compile;test->test")
   .settings(
     libraryDependencies ++= List(
