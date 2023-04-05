@@ -65,7 +65,7 @@ val app: ZIO[
   Throwable,
   Unit
 ] =
-  CertificateStore.streamMissingSeaiIePdf
+  CertificateNumber.streamAllWithRandomStart
     .debug("Certificate Number")
     .via(getCertificates)
     .debug("Certificate")
