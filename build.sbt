@@ -10,8 +10,7 @@ lazy val root = project
     auth,
     certificateNumberScraper,
     certificateScraperSeaiIePdf,
-    ecad,
-    eircodeScraperEircodeIe
+    ecad
   )
 
 lazy val common = project
@@ -52,9 +51,6 @@ lazy val certificateScraperSeaiIePdf = project
       "org.apache.pdfbox" % "pdfbox" % "2.0.27"
     )
   )
-
-lazy val eircodeScraperEircodeIe = project
-  .dependsOn(common % "compile->compile;test->test", ecad)
 
 lazy val auth = project
   .dependsOn(common % "compile->compile;test->test")
