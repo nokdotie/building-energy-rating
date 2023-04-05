@@ -8,8 +8,7 @@ lazy val root = project
     common,
     api,
     auth,
-    certificateNumberScraper,
-    certificateScraperSeaiIePdf,
+    scraper,
     ecad
   )
 
@@ -41,10 +40,7 @@ lazy val api = project
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
 
-lazy val certificateNumberScraper = project
-  .dependsOn(common)
-
-lazy val certificateScraperSeaiIePdf = project
+lazy val scraper = project
   .dependsOn(common % "compile->compile;test->test")
   .settings(
     libraryDependencies ++= List(
