@@ -1,20 +1,16 @@
 package ie.deed.ber.common.certificate.stores
 
-import ie.deed.ber.common.certificate._
-import zio._
+import ie.deed.ber.common.certificate.{Certificate, CertificateNumber}
+import zio.ZIO
 import zio.stream.{ZStream, ZPipeline}
 
 trait CertificateStore {
   def upsertBatch(certificates: Iterable[Certificate]): ZIO[Any, Throwable, Int]
   val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int]
 
-  val streamMissingEircodeIeEcadData: ZStream[
-    CertificateStore,
-    Throwable,
-    Certificate
-  ]
-
-  def getById(id: CertificateNumber): ZIO[Any, Throwable, Option[Certificate]]
+  def getByNumber(
+      id: CertificateNumber
+  ): ZIO[Any, Throwable, Option[Certificate]]
 }
 
 object CertificateStore {
@@ -26,14 +22,8 @@ object CertificateStore {
   val upsertPipeline: ZPipeline[CertificateStore, Throwable, Certificate, Int] =
     ZPipeline.serviceWithPipeline[CertificateStore] { _.upsertPipeline }
 
-  val streamMissingEircodeIeEcadData
-      : ZStream[CertificateStore, Throwable, Certificate] =
-    ZStream.serviceWithStream[CertificateStore](
-      _.streamMissingEircodeIeEcadData
-    )
-
-  def getById(
+  def getByNumber(
       id: CertificateNumber
   ): ZIO[CertificateStore, Throwable, Option[Certificate]] =
-    ZIO.serviceWithZIO[CertificateStore] { _.getById(id) }
+    ZIO.serviceWithZIO[CertificateStore] { _.getByNumber(id) }
 }

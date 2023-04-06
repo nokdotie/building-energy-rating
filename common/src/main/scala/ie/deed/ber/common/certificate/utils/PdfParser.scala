@@ -1,10 +1,13 @@
+package ie.deed.ber.common.certificate.utils
+
+import ie.deed.ber.common.certificate._
+import java.io.File
 import java.time.LocalDate
 import java.awt.Rectangle
 import java.time.format.DateTimeFormatter
-import ie.seai.ber.certificate._
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripperByArea
-import scala.util.Try
+import scala.util.{Try, Using}
 import scala.util.matching.Regex
 
 object PdfParser {
@@ -35,10 +38,13 @@ object PdfParser {
       .toRight(new Throwable(s"Missing pattern: $pattern"))
       .toTry
 
-  def tryParse(document: PDDocument): Try[PdfCertificate] = {
+  def tryParse(document: PDDocument): Try[Certificate] = {
     val text = getTextForRegions(document)
 
     for {
+      number <- tryFindMatch(text, "BER Number ([0-9]{9})".r)
+        .flatMap { str => Try { str.toInt } }
+        .map { CertificateNumber.apply }
       rating <- tryFindMatch(
         text,
         "BER for the building detailed below is: ([ABC][123]|[DE][12]|[FG])".r
@@ -82,7 +88,8 @@ object PdfParser {
       )
         .flatMap { str => Try { str.toFloat } }
         .map { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
-    } yield PdfCertificate(
+    } yield Certificate(
+      number,
       rating,
       issuedOn,
       validUntil,
@@ -95,4 +102,8 @@ object PdfParser {
       carbonDioxideEmissionsIndicator
     )
   }
+
+  def tryParse(file: File): Try[Certificate] =
+    Using.resource(PDDocument.load(file))(tryParse)
+
 }

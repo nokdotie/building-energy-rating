@@ -1,16 +1,19 @@
+package ie.deed.ber.common.certificate.utils
+
+import ie.deed.ber.common.certificate._
 import java.io.File
 import java.time.LocalDate
-import ie.seai.ber.certificate._
 import org.apache.pdfbox.pdmodel.PDDocument
 import scala.util.Using
 import scala.util.chaining.scalaUtilChainingOps
 
 class PdfParserSuite extends munit.FunSuite {
-  val pdfPathAndExpectedPdfCertificate = List(
+  val pdfPathAndExpectedCertificate = List(
     // 3.2.1
     (
       "./certificates/100000066.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(100000066),
         Rating.B3,
         LocalDate.of(2018, 9, 2),
         LocalDate.of(2028, 9, 2),
@@ -27,7 +30,8 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     (
       "./certificates/100000181.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(100000181),
         Rating.B3,
         LocalDate.of(2019, 6, 3),
         LocalDate.of(2029, 6, 3),
@@ -42,7 +46,8 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     (
       "./certificates/100000280.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(100000280),
         Rating.B2,
         LocalDate.of(2016, 4, 25),
         LocalDate.of(2026, 4, 25),
@@ -58,7 +63,8 @@ class PdfParserSuite extends munit.FunSuite {
     // 4.0.0
     (
       "./certificates/100000298.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(100000298),
         Rating.B3,
         LocalDate.of(2020, 8, 15),
         LocalDate.of(2030, 8, 15),
@@ -73,7 +79,8 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     (
       "./certificates/100000595.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(100000595),
         Rating.B3,
         LocalDate.of(2022, 1, 20),
         LocalDate.of(2032, 1, 20),
@@ -88,7 +95,8 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     (
       "./certificates/100000652.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(100000652),
         Rating.B2,
         LocalDate.of(2021, 10, 18),
         LocalDate.of(2031, 10, 18),
@@ -104,7 +112,8 @@ class PdfParserSuite extends munit.FunSuite {
     // 4.1.0
     (
       "./certificates/100000645.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(100000645),
         Rating.B3,
         LocalDate.of(2022, 9, 23),
         LocalDate.of(2032, 9, 23),
@@ -119,7 +128,8 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     (
       "./certificates/100000744.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(100000744),
         Rating.B3,
         LocalDate.of(2023, 3, 9),
         LocalDate.of(2033, 3, 9),
@@ -136,7 +146,8 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     (
       "./certificates/100000967.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(100000967),
         Rating.B3,
         LocalDate.of(2022, 5, 25),
         LocalDate.of(2032, 5, 25),
@@ -151,7 +162,8 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     (
       "./certificates/100290303.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(100290303),
         Rating.E2,
         LocalDate.of(2014, 10, 24),
         LocalDate.of(2024, 10, 24),
@@ -166,7 +178,8 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     (
       "./certificates/106559123.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(106559123),
         Rating.F,
         LocalDate.of(2014, 6, 28),
         LocalDate.of(2024, 6, 28),
@@ -181,7 +194,8 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     (
       "./certificates/106559149.pdf",
-      PdfCertificate(
+      Certificate(
+        CertificateNumber(106559149),
         Rating.G,
         LocalDate.of(2014, 6, 29),
         LocalDate.of(2024, 6, 29),
@@ -197,19 +211,16 @@ class PdfParserSuite extends munit.FunSuite {
   )
 
   test("should parse all certificates correctly") {
-    pdfPathAndExpectedPdfCertificate.foreach {
-      (pdfPath, expectedPdfCertificate) =>
-        val file = getClass()
-          .getClassLoader()
-          .getResource(pdfPath)
-          .getFile()
-          .pipe { File(_) }
+    pdfPathAndExpectedCertificate.foreach { (pdfPath, expectedCertificate) =>
+      val file = getClass()
+        .getClassLoader()
+        .getResource(pdfPath)
+        .getFile()
+        .pipe { File(_) }
 
-        val pdfCertificate = Using(PDDocument.load(file)) {
-          PdfParser.tryParse
-        }.flatten.get
+      val Certificate = PdfParser.tryParse(file).get
 
-        assertEquals(pdfCertificate, expectedPdfCertificate)
+      assertEquals(Certificate, expectedCertificate)
     }
   }
 }

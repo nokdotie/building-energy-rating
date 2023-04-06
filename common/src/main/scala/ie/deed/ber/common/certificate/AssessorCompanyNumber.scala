@@ -1,3 +1,3 @@
-package ie.seai.ber.certificate
+package ie.deed.ber.common.certificate
 
 final case class AssessorCompanyNumber(value: Int) extends AnyVal
