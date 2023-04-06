@@ -1,74 +1,54 @@
 package ie.deed.ber.common.certificate.stores
 
 import com.google.cloud.firestore._
+import ie.deed.ber.common.certificate.{Certificate, CertificateNumber}
+import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.chaining.scalaUtilChainingOps
-import ie.deed.ber.common.certificate._
-import scala.jdk.CollectionConverters._
-import zio._
-import zio.stream.ZStream
+import zio.{durationInt, System, ZIO, ZLayer}
+import zio.stream.{ZPipeline, ZStream}
 import zio.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
-import zio.stream.ZPipeline
 
 class GoogleFirestoreCertificateStore(
     firestore: Firestore.Service,
     collectionPath: CollectionPath
 ) extends CertificateStore {
 
-  private def copyWithDatabaseState(
-      certificate: Certificate,
-      databaseState: Option[Certificate]
-  ): Certificate =
-    certificate.copy(
-      seaiIePdfCertificate = certificate.seaiIePdfCertificate.orElse(
-        databaseState.flatMap(_.seaiIePdfCertificate)
-      )
-    )
-
-  private def filterNewOrUpdated(
+  private def filterNew(
       certificates: Iterable[Certificate]
   ): ZIO[Any, Throwable, Iterable[Certificate]] =
     certificates
       .map { certificate =>
-        getById(certificate.number).map { (certificate, _) }
+        getByNumber(certificate.number).map { (certificate, _) }
       }
       .pipe { ZIO.collectAll }
-      .map { tupleCertificateAndDatabaseState =>
-        tupleCertificateAndDatabaseState
-          .map { (certificate, databaseState) =>
-            (copyWithDatabaseState(certificate, databaseState), databaseState)
-          }
-          .collect {
-            case (certificateWithDatabaseState, databaseState)
-                if !databaseState.contains(certificateWithDatabaseState) =>
-              certificateWithDatabaseState
-          }
+      .map { tupleCertificates =>
+        tupleCertificates
+          .collect { case (certificate, None) => certificate }
       }
 
   def upsertBatch(
       certificates: Iterable[Certificate]
   ): ZIO[Any, Throwable, Int] =
     for {
-      newOrUpdatedCertificates <- filterNewOrUpdated(certificates)
+      newCertificates <- filterNew(certificates)
 
       collectionReference <- firestore.collection(collectionPath)
-      documentReferences <- newOrUpdatedCertificates
-        .map { newOrUpdatedCertificate =>
+      documentReferences <- newCertificates
+        .map { newCertificate =>
           firestore
             .document(
               collectionReference,
-              DocumentPath(newOrUpdatedCertificate.number.value.toString)
+              DocumentPath(newCertificate.number.value.toString)
             )
-            .map { (newOrUpdatedCertificate, _) }
+            .map { (newCertificate, _) }
         }
         .pipe { ZIO.collectAll }
       writeBatch <- firestore.batch
-      _ = documentReferences.foreach {
-        (newOrUpdatedCertificate, documentReference) =>
-          writeBatch.set(
-            documentReference,
-            GoogleFirestoreCertificateCodec.encode(newOrUpdatedCertificate),
-            SetOptions.merge
-          )
+      _ = documentReferences.foreach { (newCertificate, documentReference) =>
+        writeBatch.set(
+          documentReference,
+          GoogleFirestoreCertificateCodec.encode(newCertificate)
+        )
       }
       results <- firestore.commit(writeBatch)
     } yield results.size
@@ -81,16 +61,6 @@ class GoogleFirestoreCertificateStore(
 
   val streamMissingEircodeIeEcadData
       : ZStream[CertificateStore, Throwable, Certificate] =
-    stream {
-      _.whereEqualTo(
-        GoogleFirestoreCertificateCodec.eircodeIeEcadDataField,
-        null
-      )
-    }.mapZIO(getById).collectSome
-
-  private def stream(
-      filter: Query => Query
-  ): ZStream[Any, Throwable, CertificateNumber] =
     ZStream
       .unfoldZIO(CertificateNumber(0)) { lastCertificateNumber =>
         firestore
@@ -101,9 +71,6 @@ class GoogleFirestoreCertificateStore(
                 FieldPath.documentId,
                 lastCertificateNumber.value.toString
               )
-              .pipe {
-                filter
-              }
               .limit(100)
 
             ZIO.fromFutureJava {
@@ -112,23 +79,27 @@ class GoogleFirestoreCertificateStore(
           }
           .map { querySnapshot =>
             querySnapshot.getDocuments.asScala
-              .flatMap {
-                _.getId.toIntOption
-              }
-              .map {
-                CertificateNumber.apply
+              .flatMap { snapshot =>
+                val id = snapshot.getId.toInt.pipe { CertificateNumber.apply }
+                scala.util
+                  .Try(
+                    GoogleFirestoreCertificateCodec.decode(id, snapshot.getData)
+                  )
+                  .toOption
               }
           }
-          .map { certificateNumbers =>
-            certificateNumbers.lastOption.map {
-              (certificateNumbers, _)
+          .map { certificates =>
+            certificates.lastOption.map { lastCertificate =>
+              (certificates, lastCertificate.number)
             }
           }
       }
       .takeWhile { _.nonEmpty }
       .flattenIterables
 
-  def getById(id: CertificateNumber): ZIO[Any, Throwable, Option[Certificate]] =
+  def getByNumber(
+      id: CertificateNumber
+  ): ZIO[Any, Throwable, Option[Certificate]] =
     firestore
       .collection(collectionPath)
       .flatMap { collectionReference =>

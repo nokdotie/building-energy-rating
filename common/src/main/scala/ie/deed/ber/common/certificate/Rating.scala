@@ -1,4 +1,4 @@
-package ie.seai.ber.certificate
+package ie.deed.ber.common.certificate
 
 import scala.util.{Try, Failure, Success}
 

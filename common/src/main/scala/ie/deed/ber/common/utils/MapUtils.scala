@@ -20,5 +20,9 @@ object MapUtils {
           case other => other
         }
     }
+
+    def getTyped[A](key: String): Try[A] = Try {
+      map.get(key).asInstanceOf[A]
+    }
   }
 }

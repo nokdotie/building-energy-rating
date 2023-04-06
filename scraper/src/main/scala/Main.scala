@@ -1,9 +1,9 @@
 import ie.deed.ber.common.certificate.{Certificate, CertificateNumber}
+import ie.deed.ber.common.certificate.pdf.NdberSeaiIe
 import ie.deed.ber.common.certificate.stores.{
   CertificateStore,
   GoogleFirestoreCertificateStore
 }
-import ie.seai.ber.certificate._
 import java.io.File
 import scala.util.chaining.scalaUtilChainingOps
 import zio.{Scope, ZIO, ZIOAppDefault}
@@ -14,8 +14,8 @@ import zio.stream.{ZPipeline, ZSink}
 
 def getPdfCertificate(
     certificateNumber: CertificateNumber
-): ZIO[Client with ZPdfBox with Scope, Throwable, PdfCertificate] = {
-  val url = PdfCertificate.url(certificateNumber)
+): ZIO[Client with ZPdfBox with Scope, Throwable, Certificate] = {
+  val url = NdberSeaiIe.url(certificateNumber)
 
   val createTempPdfFile = ZIO.attemptBlocking {
     File.createTempFile(certificateNumber.value.toString, ".pdf")
@@ -49,13 +49,7 @@ val getCertificates: ZPipeline[
 
   ZPipeline[CertificateNumber]
     .mapZIOParUnordered(concurrency) { certificateNumber =>
-      getPdfCertificate(certificateNumber).map { pdfCertificate =>
-        Certificate(
-          certificateNumber,
-          Some(pdfCertificate),
-          None
-        )
-      }.option
+      getPdfCertificate(certificateNumber).option
     }
     .collectSome
 }
