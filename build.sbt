@@ -21,6 +21,7 @@ lazy val common = project
       "dev.zio" %% "zio-streams" % "2.0.10",
       "com.google.cloud" % "google-cloud-firestore" % "3.9.3",
       "com.firebase" % "geofire-java" % "3.0.0",
+      "org.apache.pdfbox" % "pdfbox" % "2.0.27",
       "org.scalameta" %% "munit" % "0.7.29" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test
     )
@@ -42,11 +43,6 @@ lazy val api = project
 
 lazy val scraper = project
   .dependsOn(common % "compile->compile;test->test")
-  .settings(
-    libraryDependencies ++= List(
-      "org.apache.pdfbox" % "pdfbox" % "2.0.27"
-    )
-  )
 
 lazy val auth = project
   .dependsOn(common % "compile->compile;test->test")

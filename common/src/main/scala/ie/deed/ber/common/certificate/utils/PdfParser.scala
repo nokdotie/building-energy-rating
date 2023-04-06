@@ -1,10 +1,13 @@
+package ie.deed.ber.common.certificate.utils
+
 import ie.deed.ber.common.certificate._
+import java.io.File
 import java.time.LocalDate
 import java.awt.Rectangle
 import java.time.format.DateTimeFormatter
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripperByArea
-import scala.util.Try
+import scala.util.{Try, Using}
 import scala.util.matching.Regex
 
 object PdfParser {
@@ -99,4 +102,8 @@ object PdfParser {
       carbonDioxideEmissionsIndicator
     )
   }
+
+  def tryParse(file: File): Try[Certificate] =
+    Using.resource(PDDocument.load(file))(tryParse)
+
 }

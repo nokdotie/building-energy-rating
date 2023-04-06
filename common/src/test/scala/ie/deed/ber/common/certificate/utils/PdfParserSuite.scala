@@ -1,3 +1,5 @@
+package ie.deed.ber.common.certificate.utils
+
 import ie.deed.ber.common.certificate._
 import java.io.File
 import java.time.LocalDate
@@ -216,9 +218,7 @@ class PdfParserSuite extends munit.FunSuite {
         .getFile()
         .pipe { File(_) }
 
-      val Certificate = Using(PDDocument.load(file)) {
-        PdfParser.tryParse
-      }.flatten.get
+      val Certificate = PdfParser.tryParse(file).get
 
       assertEquals(Certificate, expectedCertificate)
     }
