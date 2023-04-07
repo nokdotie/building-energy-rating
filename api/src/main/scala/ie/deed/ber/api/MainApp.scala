@@ -40,6 +40,7 @@ object MainApp extends ZIOAppDefault {
         Firestore.live,
         GoogleFirestoreCertificateStore.layer,
         Scope.default,
+        Client.default,
         GoogleFirestoreApiKeyStore.layer // use UserApiKeyInMemoryStore.layer for local development
       )
   } yield ()

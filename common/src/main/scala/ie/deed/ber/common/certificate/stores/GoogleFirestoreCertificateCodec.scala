@@ -9,7 +9,7 @@ import scala.util.Try
 object GoogleFirestoreCertificateCodec {
   def encode(certificate: Certificate): java.util.Map[String, Any] =
     Map(
-      "number" -> certificate.number.value,
+      "number" -> certificate.number.value.toLong,
       "rating" -> certificate.rating.toString,
       "issued-on" -> certificate.issuedOn.toString,
       "valid-until" -> certificate.validUntil.toString,
@@ -22,12 +22,10 @@ object GoogleFirestoreCertificateCodec {
       "carbon-dioxide-emissions-indicator" -> certificate.carbonDioxideEmissionsIndicator.value.toString
     ).asJava
 
-  def decode(
-      id: CertificateNumber,
-      map: java.util.Map[String, Any]
-  ): Certificate = (for {
+  def decode(map: java.util.Map[String, Any]): Certificate = (for {
     number <- map
-      .getTyped[Int]("number")
+      .getTyped[Long]("number")
+      .map { _.toInt }
       .map { CertificateNumber.apply }
     rating <- map
       .getTyped[String]("rating")
@@ -41,10 +39,10 @@ object GoogleFirestoreCertificateCodec {
     propertyAddress <- map
       .getTyped[String]("address")
       .map { Address.apply }
-    propertyEircode = map
+    propertyEircode <- map
       .getTyped[String]("eircode")
-      .map { Eircode.apply }
-      .fold(_ => None, Some(_))
+      .map { Option.apply }
+      .map { _.map { Eircode.apply } }
     assessorNumber <- map
       .getTyped[Long]("assessor-number")
       .flatMap { long => Try { AssessorNumber(long.toInt) } }

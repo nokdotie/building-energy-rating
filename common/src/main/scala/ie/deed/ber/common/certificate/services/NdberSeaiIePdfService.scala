@@ -14,20 +14,23 @@ object NdberSeaiIePdfService {
 
   def getFile(
       certificateNumber: CertificateNumber
-  ): ZIO[Client, Throwable, File] =
+  ): ZIO[Client, Throwable, Option[File]] =
     Client
       .request(url(certificateNumber))
-      .filterOrFail { _.hasContentType(applicationOctetStream) } {
-        new Throwable(s"Invalid content type")
-      }
       .retryN(3)
-      .flatMap { responseToFile }
+      .flatMap {
+        case response if response.hasContentType(applicationOctetStream) =>
+          responseToFile(response).asSome
+        case _ => ZIO.none
+      }
 
   def getCertificate(
       certificateNumber: CertificateNumber
-  ): ZIO[Client, Throwable, Certificate] =
+  ): ZIO[Client, Throwable, Option[Certificate]] =
     for {
       file <- getFile(certificateNumber)
-      certificate <- ZIO.fromTry { PdfParser.tryParse(file) }
+      certificate <- file.fold(ZIO.none) { file =>
+        ZIO.fromTry { PdfParser.tryParse(file) }.asSome
+      }
     } yield certificate
 }

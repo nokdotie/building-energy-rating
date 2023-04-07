@@ -5,7 +5,7 @@ import ie.deed.ber.common.certificate.{Certificate, CertificateNumber}
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.chaining.scalaUtilChainingOps
 import zio.{durationInt, System, ZIO, ZLayer}
-import zio.stream.{ZPipeline, ZStream}
+import zio.stream.ZPipeline
 import zio.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
 
 class GoogleFirestoreCertificateStore(
@@ -59,44 +59,6 @@ class GoogleFirestoreCertificateStore(
       .mapZIO { chunks => upsertBatch(chunks.toList).retryN(3) }
       .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
-  val streamMissingEircodeIeEcadData
-      : ZStream[CertificateStore, Throwable, Certificate] =
-    ZStream
-      .unfoldZIO(CertificateNumber(0)) { lastCertificateNumber =>
-        firestore
-          .collection(collectionPath)
-          .flatMap { collectionReference =>
-            val query = collectionReference
-              .whereGreaterThan(
-                FieldPath.documentId,
-                lastCertificateNumber.value.toString
-              )
-              .limit(100)
-
-            ZIO.fromFutureJava {
-              query.get()
-            }
-          }
-          .map { querySnapshot =>
-            querySnapshot.getDocuments.asScala
-              .flatMap { snapshot =>
-                val id = snapshot.getId.toInt.pipe { CertificateNumber.apply }
-                scala.util
-                  .Try(
-                    GoogleFirestoreCertificateCodec.decode(id, snapshot.getData)
-                  )
-                  .toOption
-              }
-          }
-          .map { certificates =>
-            certificates.lastOption.map { lastCertificate =>
-              (certificates, lastCertificate.number)
-            }
-          }
-      }
-      .takeWhile { _.nonEmpty }
-      .flattenIterables
-
   def getByNumber(
       id: CertificateNumber
   ): ZIO[Any, Throwable, Option[Certificate]] =
@@ -107,11 +69,8 @@ class GoogleFirestoreCertificateStore(
         ZIO.fromFutureJava { query.get() }
       }
       .map { snapshot =>
-        Option.when(snapshot.exists) {
-          snapshot.getData.pipe {
-            GoogleFirestoreCertificateCodec.decode(id, _)
-          }
-        }
+        Option(snapshot.getData)
+          .map { GoogleFirestoreCertificateCodec.decode }
       }
 }
 
