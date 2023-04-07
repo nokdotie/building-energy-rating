@@ -69,11 +69,8 @@ class GoogleFirestoreCertificateStore(
         ZIO.fromFutureJava { query.get() }
       }
       .map { snapshot =>
-        Option.when(snapshot.exists) {
-          snapshot.getData.pipe {
-            GoogleFirestoreCertificateCodec.decode(id, _)
-          }
-        }
+        Option(snapshot.getData)
+          .map { GoogleFirestoreCertificateCodec.decode }
       }
 }
 

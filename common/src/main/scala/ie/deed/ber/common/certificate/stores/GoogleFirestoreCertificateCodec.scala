@@ -22,10 +22,7 @@ object GoogleFirestoreCertificateCodec {
       "carbon-dioxide-emissions-indicator" -> certificate.carbonDioxideEmissionsIndicator.value.toString
     ).asJava
 
-  def decode(
-      id: CertificateNumber,
-      map: java.util.Map[String, Any]
-  ): Certificate = (for {
+  def decode(map: java.util.Map[String, Any]): Certificate = (for {
     number <- map
       .getTyped[Long]("number")
       .map { _.toInt }

@@ -8,8 +8,7 @@ class GoogleFirestoreCertificateCodecSuite extends ScalaCheckSuite {
   property("certificate encode and decode") {
     forAll { (certificate: Certificate) =>
       val encoded = GoogleFirestoreCertificateCodec.encode(certificate)
-      val decoded =
-        GoogleFirestoreCertificateCodec.decode(certificate.number, encoded)
+      val decoded = GoogleFirestoreCertificateCodec.decode(encoded)
 
       assertEquals(decoded, certificate)
     }
