@@ -19,7 +19,7 @@ val getCertificates: ZPipeline[
 
   ZPipeline[CertificateNumber]
     .mapZIOParUnordered(concurrency) { certificateNumber =>
-      NdberSeaiIePdfService.getCertificate(certificateNumber).option
+      NdberSeaiIePdfService.getCertificate(certificateNumber)
     }
     .collectSome
 }
