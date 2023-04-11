@@ -50,7 +50,7 @@ class GoogleFirestoreCertificateStore(
           GoogleFirestoreCertificateCodec.encode(newCertificate)
         )
       }
-      results <- firestore.commit(writeBatch)
+      results <- firestore.commit(writeBatch).retryN(3)
     } yield results.size
 
   val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int] =
@@ -68,6 +68,7 @@ class GoogleFirestoreCertificateStore(
         val query = collectionReference.document(id.value.toString)
         ZIO.fromFutureJava { query.get() }
       }
+      .retryN(3)
       .map { snapshot =>
         Option(snapshot.getData)
           .map { GoogleFirestoreCertificateCodec.decode }
