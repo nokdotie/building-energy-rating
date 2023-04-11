@@ -4,7 +4,7 @@ import ie.deed.ber.common.certificate.stores.{
   CertificateStore,
   GoogleFirestoreCertificateStore
 }
-import zio.{Scope, ZIO, ZIOAppDefault}
+import zio.{Console, Scope, ZIO, ZIOAppDefault}
 import zio.http.{Client, ClientConfig}
 import zio.gcp.firestore.Firestore
 import zio.stream.ZPipeline
@@ -30,11 +30,12 @@ val app: ZIO[
   Unit
 ] =
   CertificateNumber.streamAllWithRandomStart
-    .debug("Certificate Number")
     .via(getCertificates)
-    .debug("Certificate")
+    .tap { certificate =>
+      Console.printLine(s"Found: ${certificate.number.value}")
+    }
     .via(CertificateStore.upsertPipeline)
-    .debug("Certificate Upserted")
+    .debug("Upserted")
     .runDrain
 
 object Main extends ZIOAppDefault {
