@@ -5,7 +5,8 @@ import ie.deed.ber.common.utils.ZioHttpResponseUtils.responseToFile
 import ie.deed.ber.common.certificate.utils.PdfParser
 import java.io.File
 import scala.util.Failure
-import zio.ZIO
+import zio.{durationInt, ZIO}
+import zio.Schedule.{recurs, exponential}
 import zio.http.Client
 import zio.http.model.HeaderValues.applicationOctetStream
 
@@ -18,7 +19,7 @@ object NdberSeaiIePdfService {
   ): ZIO[Client, Throwable, Option[File]] =
     Client
       .request(url(certificateNumber))
-      .retryN(3)
+      .retry(recurs(3) && exponential(10.milliseconds))
       .flatMap {
         case response if response.hasContentType(applicationOctetStream) =>
           responseToFile(response).asSome

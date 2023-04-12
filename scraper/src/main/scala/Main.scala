@@ -30,6 +30,7 @@ val app: ZIO[
   Unit
 ] =
   CertificateNumber.streamAllWithRandomStart
+    // CertificateNumber.streamAllFrom(0)
     .via(getCertificates)
     .tap { certificate =>
       Console.printLine(s"Found: ${certificate.number.value}")
