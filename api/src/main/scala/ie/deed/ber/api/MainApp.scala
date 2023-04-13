@@ -14,22 +14,16 @@ object MainApp extends ZIOAppDefault {
 
   private val port = 8080
 
-  // CORS
-  private val corsConfig: CorsConfig = CorsConfig(
-    anyOrigin = false,
-    anyMethod = false,
-    allowedOrigins = s => s.equals("localhost"),
-    allowedMethods = Some(Set(Method.GET, Method.POST))
-  )
-
   private val routes =
     v1.apps ++
       StaticApp.http ++
       HealthApp.http
 
-  private val app = (routes
-    @@ HttpAppMiddleware.debug
-    @@ HttpAppMiddleware.cors(corsConfig)).withDefaultErrorResponse
+  private val app = (
+    routes
+      @@ HttpAppMiddleware.debug
+      @@ HttpAppMiddleware.cors()
+  ).withDefaultErrorResponse
 
   override val run: ZIO[Any, Throwable, Unit] = for {
     _ <- Console.printLine(s"Starting server on http://localhost:$port")
