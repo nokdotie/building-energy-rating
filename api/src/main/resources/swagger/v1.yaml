@@ -5,7 +5,7 @@ info:
   version: v1
 
 servers:
-  - url: http://ber.deed.ie/v1
+  - url: https://ber.deed.ie/v1
 
 components:
   securitySchemes:
@@ -39,7 +39,11 @@ components:
       description: A BER certificate.
       properties:
         number:
-          $ref: "#/components/parameters/CertificateNumber"
+          description: A BER number
+          type: integer
+          format: int32
+          minimum: 100000000
+          maximum: 110000000
 
         rating:
           description: The BER rating.
@@ -135,6 +139,12 @@ components:
           type: integer
           format: int32
 
+tags:
+  - name: ber
+    description: Access to BER certificates
+    externalDocs:
+      url: https://ber.deed.ie
+
 paths:
   /ber/{number}:
     get:
@@ -156,6 +166,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         '500':
           $ref: "#/components/responses/InternalServerError"
+      tags:
+        - ber
 
 security:
   - ApiKey: []
