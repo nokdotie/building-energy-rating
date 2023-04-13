@@ -10,8 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  cd:
-    uses: deed-ie/github-workflows/.github/workflows/continuous-deployment.yml@main
+  scala:
+    uses: deed-ie/github-workflows/.github/workflows/scala-deploy-gcp.yml@main
     with:
       SBT_PROJECT_ID: api
       GCP_CLOUD_RUN_SERVICE: building-energy-rating
