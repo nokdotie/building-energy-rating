@@ -1,15 +1,15 @@
 ## Examples
 
-* http://localhost:8080/api/v1/ber/101663292
+* http://localhost:8080/v1/ber/101663292
 * add `"X-API-Key"` header with valid ApiKey (see `UserApiKeyInMemoryStore` and `GoogleFirestoreUserApiKeyStore`)
 
 ### Local development using `UserApiKeyInMemoryStore`
-* example using curl: 
-* `curl --header "X-API-Key: wqerasdffv123fv342rfsd" http://localhost:8080/api/v1/ber/101663292`
+* example using curl:
+* `curl --header "X-API-Key: wqerasdffv123fv342rfsd" http://localhost:8080/v1/ber/101663292`
 
 ### Using `Admin` ApiKey from `GoogleFirestoreUserApiKeyStore`
 * example using curl:
-* `curl --header "X-API-Key: sKIBl1R4VUqIIv1HFMKE" http://localhost:8080/api/v1/ber/101663292`
+* `curl --header "X-API-Key: sKIBl1R4VUqIIv1HFMKE" http://localhost:8080/v1/ber/101663292`
 
 Exemplary response:
 ``` json
@@ -23,4 +23,3 @@ Exemplary response:
   "carbonDioxideEmissionsIndicatorInKilogramOfCarbonDioxidePerSquareMetrePerYear": 41.51
 }
 ```
-
