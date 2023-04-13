@@ -8,5 +8,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
+  scala:
     uses: deed-ie/github-workflows/.github/workflows/continuous-integration.yml@main
+
+  swagger:
+    uses: deed-ie/github-workflows/.github/workflows/swagger-definition-validation.yml@main
+    with:
+      SWAGGER_DEFINITION_FILE: api/src/main/resources/swagger/v1.yaml
