@@ -1,7 +1,7 @@
 package ie.deed.ber.api
 
 import ie.deed.ber.auth.middleware.ApiKeyAuthMiddleware
-import ie.deed.ber.api.apps.{ApiV1CertificateApp, HealthApp, StaticApp}
+import ie.deed.ber.api.apps._
 import ie.deed.ber.auth.store.{GoogleFirestoreApiKeyStore, ApiKeyInMemoryStore}
 import ie.deed.ber.common.certificate.stores.GoogleFirestoreCertificateStore
 import zio.*
@@ -23,7 +23,7 @@ object MainApp extends ZIOAppDefault {
   )
 
   private val routes =
-    ApiV1CertificateApp.http @@ ApiKeyAuthMiddleware.apiKeyAuthMiddleware ++
+    v1.apps ++
       StaticApp.http ++
       HealthApp.http
 
