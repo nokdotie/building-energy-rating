@@ -11,5 +11,5 @@ sbt scraper/run
 The application returns certificates gathered from the SEAI.
 
 ```sh
-sbt api/run
+sbt "~api/reStart"
 ```
