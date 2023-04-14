@@ -45,5 +45,8 @@ object NdberSeaiIePdfService {
             }
         }.asSome
       }
+      _ <- file.fold(ZIO.unit) { file =>
+        ZIO.attempt { file.delete() }
+      }
     } yield certificate
 }
