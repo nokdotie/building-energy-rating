@@ -1,6 +1,6 @@
 package ie.deed.ber.common.certificate.stores
 
-import ie.deed.ber.common.certificate.{Certificate, CertificateNumber}
+import ie.deed.ber.common.certificate.{Certificate, CertificateNumber, Eircode}
 import zio.ZIO
 import zio.stream.{ZStream, ZPipeline}
 
@@ -11,6 +11,10 @@ trait CertificateStore {
   def getByNumber(
       id: CertificateNumber
   ): ZIO[Any, Throwable, Option[Certificate]]
+
+  def getAllByEircode(
+      eircode: Eircode
+  ): ZIO[Any, Throwable, List[Certificate]]
 }
 
 object CertificateStore {
@@ -26,4 +30,9 @@ object CertificateStore {
       id: CertificateNumber
   ): ZIO[CertificateStore, Throwable, Option[Certificate]] =
     ZIO.serviceWithZIO[CertificateStore] { _.getByNumber(id) }
+
+  def getAllByEircode(
+      eircode: Eircode
+  ): ZIO[CertificateStore, Throwable, List[Certificate]] =
+    ZIO.serviceWithZIO[CertificateStore] { _.getAllByEircode(eircode) }
 }

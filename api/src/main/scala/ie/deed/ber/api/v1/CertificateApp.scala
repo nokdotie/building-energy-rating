@@ -2,7 +2,8 @@ package ie.deed.ber.api.v1
 
 import ie.deed.ber.common.certificate.{
   CertificateNumber,
-  Certificate as InternalCertificate
+  Certificate as InternalCertificate,
+  Eircode
 }
 import ie.deed.ber.common.certificate.services.NdberSeaiIePdfService
 import ie.deed.ber.common.certificate.stores.CertificateStore
@@ -89,6 +90,18 @@ object CertificateApp {
               case _    => Response(Status.InternalServerError)
             },
             certificate => Response.json(certificate.toJson)
+          )
+
+      case Method.GET -> !! / "v1" / "eircode" / eircode / "ber" =>
+        Eircode(eircode)
+          .pipe { CertificateStore.getAllByEircode }
+          .map { _.map { fromInternal } }
+          .fold(
+            _ => Response(Status.InternalServerError),
+            {
+              case Nil         => Response(Status.NotFound)
+              case certificate => Response.json(certificate.toJson)
+            }
           )
     }
 }
