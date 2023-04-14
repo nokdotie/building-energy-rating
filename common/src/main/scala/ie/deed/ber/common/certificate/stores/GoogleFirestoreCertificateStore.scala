@@ -1,7 +1,7 @@
 package ie.deed.ber.common.certificate.stores
 
 import com.google.cloud.firestore._
-import ie.deed.ber.common.certificate.{Certificate, CertificateNumber}
+import ie.deed.ber.common.certificate.{Certificate, CertificateNumber, Eircode}
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.chaining.scalaUtilChainingOps
 import zio.{durationInt, System, ZIO, ZLayer}
@@ -77,6 +77,25 @@ class GoogleFirestoreCertificateStore(
       .retry(recurs(3) && exponential(10.milliseconds))
       .map { snapshot =>
         Option(snapshot.getData)
+          .map { GoogleFirestoreCertificateCodec.decode }
+      }
+
+  def getAllByEircode(
+      eircode: Eircode
+  ): ZIO[Any, Throwable, List[Certificate]] =
+    firestore
+      .collection(collectionPath)
+      .flatMap { collectionReference =>
+        val query = collectionReference.whereEqualTo("eircode", eircode.value)
+        ZIO.fromFutureJava { query.get() }
+      }
+      .retry(recurs(3) && exponential(10.milliseconds))
+      .map { snapshot =>
+        snapshot
+          .getDocuments()
+          .asScala
+          .toList
+          .map { _.getData }
           .map { GoogleFirestoreCertificateCodec.decode }
       }
 }
