@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Building Energy Rating
-  description: This API makes it easy to access BER certificates by BER number.
+  description: This API makes it easy to access BER certificates by BER number or Eircode.
   version: v1
 
 servers:
@@ -32,6 +32,15 @@ components:
         format: int32
         minimum: 100000000
         maximum: 110000000
+
+    Eircode:
+      name: eircode
+      in: path
+      description: An Eircode
+      required: true
+      schema:
+        type: string
+        pattern: ^[A-Z0-9]{7}$
 
   schemas:
     Certificate:
@@ -121,9 +130,8 @@ components:
         eircode:
           description: The Eircode of the property.
           type: string
+          pattern: ^[A-Z0-9]{7}$
           nullable: true
-          minLength: 7
-          maxLength: 7
 
     Assessor:
       type: object
@@ -160,10 +168,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Certificate'
-        '404':
-          description: No BER certificate found
         '401':
           $ref: "#/components/responses/Unauthorized"
+        '404':
+          description: No BER certificate found
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+      tags:
+        - ber
+
+  /eircode/{eircode}/ber:
+    get:
+      description: Returns BER certificates by Eircode
+      parameters:
+        - $ref: '#/components/parameters/Eircode'
+      security:
+        - ApiKey: []
+      responses:
+        '200':
+          description: BER certificates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Certificate'
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          description: No BER certificates found
         '500':
           $ref: "#/components/responses/InternalServerError"
       tags:
