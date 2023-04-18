@@ -16,6 +16,7 @@ object MainApp extends ZIOAppDefault {
 
   private val routes =
     v1.apps ++
+      IndexApp.http ++
       StaticApp.http ++
       HealthApp.http
 
