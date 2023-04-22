@@ -13,11 +13,15 @@ trait UserRequestStore {
 }
 
 object UserRequestStore {
-  def saveUserRequest(userRequest: UserRequest): ZIO[UserRequestStore, Throwable, Boolean] =
+  def saveUserRequest(
+      userRequest: UserRequest
+  ): ZIO[UserRequestStore, Throwable, Boolean] =
     ZIO.serviceWithZIO[UserRequestStore] { _.saveUserRequest(userRequest) }
 
-  def getUserRequests(email: String): ZIO[UserRequestStore, Throwable, List[UserRequest]] =
-    ZIO.serviceWithZIO[UserRequestStore] { _.getUserRequests(email)}
+  def getUserRequests(
+      email: String
+  ): ZIO[UserRequestStore, Throwable, List[UserRequest]] =
+    ZIO.serviceWithZIO[UserRequestStore] { _.getUserRequests(email) }
 
   def countUserRequests(email: String): ZIO[UserRequestStore, Throwable, Long] =
     ZIO.serviceWithZIO[UserRequestStore] { _.countUserRequests(email) }
@@ -28,7 +32,8 @@ object UserRequestInMemoryStore extends UserRequestStore {
   val layer: ZLayer[Any, Throwable, UserRequestStore] =
     ZLayer.succeed(UserRequestInMemoryStore)
 
-  private val userRequestsSet: scala.collection.mutable.HashSet[UserRequest] = scala.collection.mutable.HashSet.empty
+  private val userRequestsSet: scala.collection.mutable.HashSet[UserRequest] =
+    scala.collection.mutable.HashSet.empty
 
   def saveUserRequest(userRequest: UserRequest): ZIO[Any, Throwable, Boolean] =
     ZIO.succeed(userRequestsSet.add(userRequest))
@@ -36,6 +41,6 @@ object UserRequestInMemoryStore extends UserRequestStore {
   def getUserRequests(email: String): ZIO[Any, Throwable, List[UserRequest]] =
     ZIO.succeed(userRequestsSet.filter(_._1 == email).toList)
 
-  def countUserRequests(email: String):  ZIO[Any, Throwable, Long] =
+  def countUserRequests(email: String): ZIO[Any, Throwable, Long] =
     ZIO.succeed(userRequestsSet.count(_._1 == email))
 }
