@@ -1,6 +1,6 @@
 package ie.deed.ber.api
 
-import ie.deed.ber.auth.middleware.{ApiKeyAuthMiddleware, UserRequestAuthMiddleware}
+import ie.deed.ber.auth.middleware.{ApiKeyAuthMiddleware, UserRequestStoreAuthMiddleware}
 import ie.deed.ber.api.apps._
 import ie.deed.ber.auth.store.{ApiKeyInMemoryStore, GoogleFirestoreApiKeyStore, UserRequestInMemoryStore}
 import ie.deed.ber.auth.middleware.ApiKeyAuthMiddleware
