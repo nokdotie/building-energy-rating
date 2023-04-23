@@ -30,14 +30,14 @@ lazy val common = project
 lazy val api = project
   .dependsOn(common, auth)
   .settings(
-//    dockerRepository := Some("gcr.io/deed-ie/building-energy-rating"),
-//    dockerAliases ++= Seq(
-//      s"time-${Environment.instant}",
-//      s"sha-${Environment.gitShortSha1}"
-//    )
-//      .map(Option.apply)
-//      .map(dockerAlias.value.withTag),
-//    dockerExposedPorts ++= Seq(8080)
+    dockerRepository := Some("gcr.io/deed-ie/building-energy-rating"),
+    dockerAliases ++= Seq(
+      s"time-${Environment.instant}",
+      s"sha-${Environment.gitShortSha1}"
+    )
+      .map(Option.apply)
+      .map(dockerAlias.value.withTag),
+    dockerExposedPorts ++= Seq(8080)
   )
   .enablePlugins(JavaAppPackaging, DockerPlugin)
 
