@@ -15,10 +15,10 @@ lazy val root = project
 lazy val common = project
   .settings(
     libraryDependencies ++= List(
-      "dev.zio" %% "zio" % "2.0.12",
+      "dev.zio" %% "zio" % "2.0.13",
       "dev.zio" %% "zio-http" % "0.0.5",
       "dev.zio" %% "zio-json" % "0.5.0",
-      "dev.zio" %% "zio-streams" % "2.0.12",
+      "dev.zio" %% "zio-streams" % "2.0.13",
       "com.google.cloud" % "google-cloud-firestore" % "3.9.4",
       "com.firebase" % "geofire-java" % "3.0.0",
       "org.apache.pdfbox" % "pdfbox" % "2.0.28",
