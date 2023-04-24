@@ -12,6 +12,8 @@ import java.time.Instant
 
 object UserRequestStoreAuthMiddleware {
 
+  private val defaultNumberOfCredits = 100
+
   val userRequestStoreAuthMiddleware: RequestHandlerMiddleware[
     Nothing,
     ApiKeyStore with UserRequestStore,
@@ -31,7 +33,7 @@ object UserRequestStoreAuthMiddleware {
         Handler
           .fromFunctionZIO[Request] { request =>
             val maybeHeader =
-              request.headers.header(Utils.apiKeyHeader).map(_.value.toString)
+              request.headers.header(Headers.ApiKey).map(_.value.toString)
             ApiKeyStore.getApiKey(maybeHeader.getOrElse("")).flatMap {
               // we reject requests without ApiKey
               case None => ZIO.succeed(Handler.status(Status.Unauthorized))
@@ -47,9 +49,7 @@ object UserRequestStoreAuthMiddleware {
                         numberOfRequests <- UserRequestStore.countUserRequests(
                           email
                         ) // check how many requests user did
-                        numberOfCredits <- ZIO.succeed(
-                          Utils.defaultNumberOfCredits
-                        ) // check number of available credits for user by email
+                        numberOfCredits <- ZIO.succeed(defaultNumberOfCredits) // check number of available credits for user by email
                       } yield {
                         if (numberOfRequests <= numberOfCredits) handler
                         else Handler.status(Status.PaymentRequired)

@@ -15,7 +15,7 @@ object ApiKeyAuthMiddleware {
   val apiKeyAuthMiddleware
       : RequestHandlerMiddleware[Nothing, ApiKeyStore, Throwable, Any] =
     customAuthZIO(headers => {
-      val maybeHeader = headers.header(Utils.apiKeyHeader).map(_.value.toString)
+      val maybeHeader = headers.header(Headers.ApiKey).map(_.value.toString)
       ApiKeyStore.isValidApiKey(maybeHeader.getOrElse(""))
     })
 }
