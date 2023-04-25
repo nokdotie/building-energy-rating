@@ -6,7 +6,7 @@ import zio.json.{JsonDecoder, DeriveJsonDecoder, DecoderOps}
 import zio.http.{Body, Client, Response}
 import zio.http.model.{Headers, Method}
 import zio.{durationInt, Schedule, ZIO}
-import zio.Schedule.{recurs, exponential}
+import zio.Schedule.{recurs, fixed}
 
 object ZyteClient {
 
@@ -50,7 +50,7 @@ object ZyteClient {
         headers,
         content = content
       )
-      .retry(recurs(3) && exponential(10.milliseconds))
+      .retry(recurs(3) && fixed(1.second))
       .flatMap { _.body.asString }
       .flatMap { body =>
         val success = body.fromJson[ZyteResponseOk]
