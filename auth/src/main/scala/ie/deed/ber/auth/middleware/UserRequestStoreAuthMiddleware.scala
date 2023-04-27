@@ -43,19 +43,19 @@ object UserRequestStoreAuthMiddleware {
                   .saveUserRequest(
                     UserRequest(email, Instant.now(), request.toString)
                   )
-                  .flatMap {
-                    case true => // UserRequest was successfully saved
-                      for {
-                        numberOfRequests <- UserRequestStore.countUserRequests(
-                          email
-                        ) // check how many requests user did
-                        numberOfCredits <- ZIO.succeed(defaultNumberOfCredits) // check number of available credits for user by email
-                      } yield {
-                        if (numberOfRequests <= numberOfCredits) handler
-                        else Handler.status(Status.PaymentRequired)
-                      }
-                    case false => // failed to save UserRequest, we cannot provide the data
-                      ZIO.succeed(Handler.status(Status.InternalServerError))
+                  .flatMap { _ =>
+                    // UserRequest was successfully saved
+                    for {
+                      numberOfRequests <- UserRequestStore.countUserRequests(
+                        email
+                      ) // check how many requests user did
+                      numberOfCredits <- ZIO.succeed(
+                        defaultNumberOfCredits
+                      ) // check number of available credits for user by email
+                    } yield {
+                      if (numberOfRequests <= numberOfCredits) handler
+                      else Handler.status(Status.PaymentRequired)
+                    }
                   }
               // we pass the request if the ApiKey was valid
               case _ => ZIO.succeed(handler)

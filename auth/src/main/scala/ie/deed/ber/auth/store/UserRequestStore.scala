@@ -5,7 +5,7 @@ import zio.{ZIO, ZLayer}
 
 trait UserRequestStore {
 
-  def saveUserRequest(userRequest: UserRequest): ZIO[Any, Throwable, Boolean]
+  def saveUserRequest(userRequest: UserRequest): ZIO[Any, Throwable, String]
 
   def getUserRequests(email: String): ZIO[Any, Throwable, List[UserRequest]]
 
@@ -15,7 +15,7 @@ trait UserRequestStore {
 object UserRequestStore {
   def saveUserRequest(
       userRequest: UserRequest
-  ): ZIO[UserRequestStore, Throwable, Boolean] =
+  ): ZIO[UserRequestStore, Throwable, String] =
     ZIO.serviceWithZIO[UserRequestStore] { _.saveUserRequest(userRequest) }
 
   def getUserRequests(
@@ -35,8 +35,8 @@ object UserRequestInMemoryStore extends UserRequestStore {
   private val userRequestsSet: scala.collection.mutable.HashSet[UserRequest] =
     scala.collection.mutable.HashSet.empty
 
-  def saveUserRequest(userRequest: UserRequest): ZIO[Any, Throwable, Boolean] =
-    ZIO.succeed(userRequestsSet.add(userRequest))
+  def saveUserRequest(userRequest: UserRequest): ZIO[Any, Throwable, String] =
+    ZIO.succeed(userRequestsSet.add(userRequest).toString)
 
   def getUserRequests(email: String): ZIO[Any, Throwable, List[UserRequest]] =
     ZIO.succeed(userRequestsSet.filter(_._1 == email).toList)

@@ -4,17 +4,17 @@ import ie.deed.ber.auth.middleware.{
   ApiKeyAuthMiddleware,
   UserRequestStoreAuthMiddleware
 }
-import ie.deed.ber.api.apps._
+import ie.deed.ber.api.apps.{HealthApp, IndexApp, StaticApp}
 import ie.deed.ber.auth.store.{
   ApiKeyInMemoryStore,
   GoogleFirestoreApiKeyStore,
+  GoogleFirestoreUserRequestStore,
   UserRequestInMemoryStore
 }
 import ie.deed.ber.auth.middleware.ApiKeyAuthMiddleware
-import ie.deed.ber.auth.store.{GoogleFirestoreApiKeyStore, ApiKeyInMemoryStore}
 import ie.deed.ber.common.certificate.stores.GoogleFirestoreCertificateStore
-import zio.*
-import zio.http.*
+import zio.{Console, Scope, ZIO, ZIOAppDefault}
+import zio.http.{Client, HttpAppMiddleware, Server}
 import zio.http.model.Method
 import zio.http.middleware.Cors.CorsConfig
 import zio.gcp.firestore.Firestore
@@ -48,7 +48,7 @@ object MainApp extends ZIOAppDefault {
         Scope.default,
         Client.default,
         GoogleFirestoreApiKeyStore.layer, // use UserApiKeyInMemoryStore.layer for local development
-        UserRequestInMemoryStore.layer
+        GoogleFirestoreUserRequestStore.layer // use UserRequestInMemoryStore.layer for local development
       )
   } yield ()
 }
