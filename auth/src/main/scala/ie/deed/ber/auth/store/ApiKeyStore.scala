@@ -22,6 +22,10 @@ object ApiKeyStore {
   def isValidApiKey(apiKey: String): ZIO[ApiKeyStore, Throwable, Boolean] = {
     ZIO.serviceWithZIO[ApiKeyStore] { _.isValidApiKey(apiKey) }
   }
+
+  def getApiKey(apiKey: String): ZIO[ApiKeyStore, Throwable, Option[ApiKey]] = {
+    ZIO.serviceWithZIO[ApiKeyStore] { _.getApiKey(apiKey) }
+  }
 }
 
 // use it locally for tests to avoid calling DB

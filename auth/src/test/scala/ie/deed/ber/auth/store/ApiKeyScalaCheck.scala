@@ -11,8 +11,8 @@ import java.util.Date
 val genApiKeyType = Gen.oneOf(ApiKeyType.values.toSeq)
 
 val genApiKey: Gen[ApiKey] = for {
-  email <- Gen.asciiStr
-  apiKey <- Gen.asciiStr
+  email <- Gen.asciiPrintableStr
+  apiKey <- Gen.asciiPrintableStr
   apiKeyType <- genApiKeyType
   createdAt <- Gen.choose(
     Instant.now().minus(20, ChronoUnit.DAYS),
