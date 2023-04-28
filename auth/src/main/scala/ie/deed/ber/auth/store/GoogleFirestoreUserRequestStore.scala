@@ -25,7 +25,8 @@ class GoogleFirestoreUserRequestStore(
       email: String
   ): ZIO[Any, Throwable, List[UserRequest]] = ZIO.succeed(List.empty) // TODO
 
-  override def countUserRequests(email: String): ZIO[Any, Throwable, Long] = ZIO.succeed(0) // TODO
+  override def countUserRequests(email: String): ZIO[Any, Throwable, Long] =
+    ZIO.succeed(0) // TODO
 }
 
 object GoogleFirestoreUserRequestStore {

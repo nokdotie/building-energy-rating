@@ -9,7 +9,8 @@ class GoogleFirestoreUserRequestCodecSuite extends ScalaCheckSuite {
 
   property("UserRequest encode and decode") {
     forAll { (userRequest: UserRequest) =>
-      val encoded: util.Map[String, Any] = GoogleFirestoreUserRequestCodec.encode(userRequest)
+      val encoded: util.Map[String, Any] =
+        GoogleFirestoreUserRequestCodec.encode(userRequest)
       val decoded: UserRequest = GoogleFirestoreUserRequestCodec.decode(encoded)
       assertEquals(decoded, userRequest)
     }
