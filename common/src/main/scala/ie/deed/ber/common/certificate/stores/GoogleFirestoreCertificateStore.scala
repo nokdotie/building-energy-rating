@@ -5,7 +5,7 @@ import ie.deed.ber.common.certificate.{Certificate, CertificateNumber, Eircode}
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.chaining.scalaUtilChainingOps
 import zio.{durationInt, System, ZIO, ZLayer}
-import zio.Schedule.{recurs, exponential}
+import zio.Schedule.{recurs, fixed}
 import zio.stream.ZPipeline
 import zio.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
 
@@ -53,7 +53,7 @@ class GoogleFirestoreCertificateStore(
       }
       results <- firestore
         .commit(writeBatch)
-        .retry(recurs(3) && exponential(10.milliseconds))
+        .retry(recurs(3) && fixed(1.second))
     } yield results.size
 
   val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int] =
@@ -61,7 +61,7 @@ class GoogleFirestoreCertificateStore(
       .groupedWithin[Certificate](100, 10.seconds)
       .mapZIO { chunks =>
         upsertBatch(chunks.toList)
-          .retry(recurs(3) && exponential(10.milliseconds))
+          .retry(recurs(3) && fixed(1.second))
       }
       .andThen { ZPipeline.fromFunction { _.scan(0) { _ + _ } } }
 
@@ -74,7 +74,7 @@ class GoogleFirestoreCertificateStore(
         val query = collectionReference.document(id.value.toString)
         ZIO.fromFutureJava { query.get() }
       }
-      .retry(recurs(3) && exponential(10.milliseconds))
+      .retry(recurs(3) && fixed(1.second))
       .map { snapshot =>
         Option(snapshot.getData)
           .map { GoogleFirestoreCertificateCodec.decode }
@@ -89,7 +89,7 @@ class GoogleFirestoreCertificateStore(
         val query = collectionReference.whereEqualTo("eircode", eircode.value)
         ZIO.fromFutureJava { query.get() }
       }
-      .retry(recurs(3) && exponential(10.milliseconds))
+      .retry(recurs(3) && fixed(1.second))
       .map { snapshot =>
         snapshot
           .getDocuments()
