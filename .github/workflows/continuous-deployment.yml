@@ -16,4 +16,5 @@ jobs:
       SBT_PROJECT_ID: api
       GCP_CLOUD_RUN_SERVICE: building-energy-rating
     secrets:
+      GH_TOKEN_READ_PACKAGES: ${{ secrets.GH_TOKEN_READ_PACKAGES }}
       GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
