@@ -1,10 +1,8 @@
 package ie.nok.ber.auth.store
 
 import ie.nok.ber.auth.model.UserRequest
-import zio.ZIO
-import zio.ZLayer
-import zio.System
-import zio.gcp.firestore.{CollectionPath, Firestore}
+import ie.nok.gcp.firestore.{CollectionPath, Firestore}
+import zio.{ZIO, ZLayer, System}
 
 class GoogleFirestoreUserRequestStore(
     firestore: Firestore.Service,

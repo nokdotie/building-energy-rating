@@ -2,10 +2,8 @@ package ie.nok.ber.auth.store
 
 import ie.nok.ber.auth.model.ApiKey
 import ie.nok.ber.common.certificate.stores.GoogleFirestoreCertificateStore
-import zio.ZIO
-import zio.ZLayer
-import zio.System
-import zio.gcp.firestore.{CollectionPath, Firestore}
+import ie.nok.gcp.firestore.{CollectionPath, Firestore}
+import zio.{ZIO, ZLayer, System}
 
 import scala.util.chaining.scalaUtilChainingOps
 

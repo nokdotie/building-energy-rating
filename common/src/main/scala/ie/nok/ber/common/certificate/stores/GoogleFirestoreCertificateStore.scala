@@ -7,7 +7,7 @@ import scala.util.chaining.scalaUtilChainingOps
 import zio.{durationInt, System, ZIO, ZLayer}
 import zio.Schedule.{recurs, fixed}
 import zio.stream.ZPipeline
-import zio.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
+import ie.nok.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
 
 class GoogleFirestoreCertificateStore(
     firestore: Firestore.Service,

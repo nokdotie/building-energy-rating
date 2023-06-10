@@ -10,13 +10,12 @@ import ie.nok.ber.auth.store.{
 }
 import ie.nok.ber.auth.middleware.ApiKeyAuthMiddleware
 import ie.nok.ber.common.certificate.stores.GoogleFirestoreCertificateStore
+import ie.nok.gcp.firestore.Firestore
+import scala.language.postfixOps
 import zio.{Console, Scope, ZIO, ZIOAppDefault}
 import zio.http.{Client, HttpAppMiddleware, Server}
 import zio.http.model.Method
 import zio.http.middleware.Cors.CorsConfig
-import zio.gcp.firestore.Firestore
-
-import scala.language.postfixOps
 
 object MainApp extends ZIOAppDefault {
 

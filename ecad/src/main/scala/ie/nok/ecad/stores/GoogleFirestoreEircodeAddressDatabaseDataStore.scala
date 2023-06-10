@@ -1,15 +1,14 @@
 package ie.nok.ecad.stores
 
 import com.google.cloud.firestore._
-import scala.util.chaining.scalaUtilChainingOps
 import ie.nok.ecad._
-import scala.jdk.CollectionConverters._
-import zio._
-import zio.stream.ZStream
-import zio.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
-import zio.stream.ZPipeline
-import java.util.Base64
 import ie.nok.ecad.store.GoogleFirestoreEircodeAddressDatabaseDataCodec
+import ie.nok.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
+import java.util.Base64
+import scala.jdk.CollectionConverters._
+import scala.util.chaining.scalaUtilChainingOps
+import zio._
+import zio.stream.{ZPipeline, ZStream}
 
 class GoogleFirestoreEircodeAddressDatabaseDataStore(
     firestore: Firestore.Service,
