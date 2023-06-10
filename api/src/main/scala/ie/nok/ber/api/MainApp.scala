@@ -1,14 +1,6 @@
 package ie.nok.ber.api
 
-import ie.nok.ber.auth.middleware.ApiKeyAuthMiddleware
-import ie.nok.ber.api.apps.{HealthApp, IndexApp, StaticApp}
-import ie.nok.ber.auth.store.{
-  ApiKeyInMemoryStore,
-  GoogleFirestoreApiKeyStore,
-  GoogleFirestoreUserRequestStore,
-  UserRequestInMemoryStore
-}
-import ie.nok.ber.auth.middleware.ApiKeyAuthMiddleware
+import ie.nok.ber.api.apps.{CertificateApp, HealthApp}
 import ie.nok.ber.common.certificate.stores.GoogleFirestoreCertificateStore
 import ie.nok.gcp.firestore.Firestore
 import scala.language.postfixOps
@@ -22,9 +14,7 @@ object MainApp extends ZIOAppDefault {
   private val port = 8080
 
   private val routes =
-    v1.apps ++
-      IndexApp.http ++
-      StaticApp.http ++
+    CertificateApp.http ++
       HealthApp.http
 
   private val app = (
@@ -42,9 +32,7 @@ object MainApp extends ZIOAppDefault {
         Firestore.live,
         GoogleFirestoreCertificateStore.layer,
         Scope.default,
-        Client.default,
-        GoogleFirestoreApiKeyStore.layer, // use UserApiKeyInMemoryStore.layer for local development
-        GoogleFirestoreUserRequestStore.layer // use UserRequestInMemoryStore.layer for local development
+        Client.default
       )
   } yield ()
 }

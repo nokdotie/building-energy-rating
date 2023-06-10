@@ -7,7 +7,6 @@ lazy val root = project
   .aggregate(
     common,
     api,
-    auth,
     scraper,
     ecad
   )
@@ -29,7 +28,7 @@ lazy val common = project
   )
 
 lazy val api = project
-  .dependsOn(common, auth)
+  .dependsOn(common % "compile->compile;test->test")
   .settings(
     dockerRepository := Some("gcr.io/deed-ie/building-energy-rating"),
     dockerAliases ++= Seq(
@@ -43,9 +42,6 @@ lazy val api = project
   .enablePlugins(JavaAppPackaging, DockerPlugin)
 
 lazy val scraper = project
-  .dependsOn(common % "compile->compile;test->test")
-
-lazy val auth = project
   .dependsOn(common % "compile->compile;test->test")
 
 lazy val ecad = project

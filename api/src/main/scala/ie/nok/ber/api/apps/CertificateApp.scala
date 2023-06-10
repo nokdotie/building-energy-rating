@@ -1,4 +1,4 @@
-package ie.nok.ber.api.v1
+package ie.nok.ber.api.apps
 
 import ie.nok.ber.common.certificate.{
   CertificateNumber,
@@ -18,7 +18,6 @@ object CertificateApp {
   case class Certificate(
       number: Int,
       rating: String,
-      ratingImageUrl: String,
       issuedOn: String,
       validUntil: String,
       property: Property,
@@ -45,8 +44,6 @@ object CertificateApp {
     Certificate(
       number = internal.number.value,
       rating = internal.rating.toString,
-      ratingImageUrl =
-        s"https://ber.nok.ie/static/images/ber/${internal.rating}.svg",
       issuedOn = internal.issuedOn.toString,
       validUntil = internal.validUntil.toString,
       property = Property(
