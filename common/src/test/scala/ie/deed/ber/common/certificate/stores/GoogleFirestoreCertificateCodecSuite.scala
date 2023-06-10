@@ -1,6 +1,6 @@
-package ie.deed.ber.common.certificate.stores
+package ie.nok.ber.common.certificate.stores
 
-import ie.deed.ber.common.certificate._
+import ie.nok.ber.common.certificate._
 import munit.ScalaCheckSuite
 import org.scalacheck.Prop._
 

@@ -1,6 +1,6 @@
-package ie.deed.ber.common.certificate.utils
+package ie.nok.ber.common.certificate.utils
 
-import ie.deed.ber.common.certificate._
+import ie.nok.ber.common.certificate._
 import java.io.File
 import java.time.LocalDate
 import org.apache.pdfbox.pdmodel.PDDocument

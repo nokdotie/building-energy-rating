@@ -20,7 +20,7 @@ Exemplary response:
 {
   "number": 100000066,
   "rating": "B3",
-  "ratingImageUrl": "https://ber.deed.ie/static/images/ber/B3.svg",
+  "ratingImageUrl": "https://ber.nok.ie/static/images/ber/B3.svg",
   "issuedOn": "2018-09-02",
   "validUntil": "2028-09-02",
   "property": {

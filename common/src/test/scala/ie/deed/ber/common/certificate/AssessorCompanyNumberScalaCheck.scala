@@ -1,8 +1,8 @@
-package ie.deed.ber.common.certificate
+package ie.nok.ber.common.certificate
 
 import org.scalacheck.{Arbitrary, Gen}
 
-import ie.deed.ber.common.certificate.AssessorCompanyNumber
+import ie.nok.ber.common.certificate.AssessorCompanyNumber
 val genAssessorCompanyNumber: Gen[AssessorCompanyNumber] =
   Gen.posNum[Int].map { AssessorCompanyNumber.apply }
 

@@ -1,4 +1,4 @@
-package ie.deed.ber.common.java.time
+package ie.nok.ber.common.java.time
 
 import java.time.Year
 import org.scalacheck.{Arbitrary, Gen}

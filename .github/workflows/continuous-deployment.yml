@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   scala:
-    uses: deed-ie/github-workflows/.github/workflows/scala-deploy-gcp.yml@main
+    uses: nok-ie/github-workflows/.github/workflows/scala-deploy-gcp.yml@main
     with:
       SBT_PROJECT_ID: api
       GCP_CLOUD_RUN_SERVICE: building-energy-rating

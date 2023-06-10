@@ -1,8 +1,8 @@
-package ie.deed.ber.common.certificate
+package ie.nok.ber.common.certificate
 
 import org.scalacheck.{Arbitrary, Gen}
 
-import ie.deed.ber.common.certificate.DomesticEnergyAssessmentProcedureVersion
+import ie.nok.ber.common.certificate.DomesticEnergyAssessmentProcedureVersion
 val genDomesticEnergyAssessmentProcedureVersion
     : Gen[DomesticEnergyAssessmentProcedureVersion] =
   Gen.oneOf(DomesticEnergyAssessmentProcedureVersion.values.toSeq)

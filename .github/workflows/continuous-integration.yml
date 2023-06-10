@@ -9,9 +9,9 @@ concurrency:
 
 jobs:
   scala:
-    uses: deed-ie/github-workflows/.github/workflows/scala-test.yml@main
+    uses: nok-ie/github-workflows/.github/workflows/scala-test.yml@main
 
   swagger:
-    uses: deed-ie/github-workflows/.github/workflows/swagger-definition-validation.yml@main
+    uses: nok-ie/github-workflows/.github/workflows/swagger-definition-validation.yml@main
     with:
       SWAGGER_DEFINITION_FILE: api/src/main/resources/swagger/v1.yaml

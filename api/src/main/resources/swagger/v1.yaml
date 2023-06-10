@@ -5,7 +5,7 @@ info:
   version: v1
 
 servers:
-  - url: https://ber.deed.ie/v1
+  - url: https://ber.nok.ie/v1
 
 components:
   securitySchemes:
@@ -151,7 +151,7 @@ tags:
   - name: ber
     description: Access to BER certificates
     externalDocs:
-      url: https://ber.deed.ie
+      url: https://ber.nok.ie
 
 paths:
   /ber/{number}:
