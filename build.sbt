@@ -21,7 +21,7 @@ lazy val common = project
       "dev.zio" %% "zio-streams" % "2.0.15",
       "com.firebase" % "geofire-java" % "3.0.0",
       "org.apache.pdfbox" % "pdfbox" % "2.0.28",
-      "ie.nok" %% "scala-libraries" % "20230610.102516.252288962",
+      "ie.nok" %% "scala-libraries" % "20230613.165955.872066093",
       "org.scalameta" %% "munit" % "0.7.29" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test
     )
