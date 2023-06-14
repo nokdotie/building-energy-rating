@@ -1,8 +1,8 @@
-package ie.deed.ber.common.certificate
+package ie.nok.ber.common.certificate
 
 import org.scalacheck.{Arbitrary, Gen}
 
-import ie.deed.ber.common.certificate.KilowattHourPerSquareMetrePerYear
+import ie.nok.ber.common.certificate.KilowattHourPerSquareMetrePerYear
 val genKilowattHourPerSquareMetrePerYear
     : Gen[KilowattHourPerSquareMetrePerYear] =
   Gen.posNum[Float].map { KilowattHourPerSquareMetrePerYear.apply }

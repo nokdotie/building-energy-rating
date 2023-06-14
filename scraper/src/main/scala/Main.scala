@@ -1,12 +1,12 @@
-import ie.deed.ber.common.certificate.{Certificate, CertificateNumber}
-import ie.deed.ber.common.certificate.services.NdberSeaiIePdfService
-import ie.deed.ber.common.certificate.stores.{
+import ie.nok.ber.common.certificate.{Certificate, CertificateNumber}
+import ie.nok.ber.common.certificate.services.NdberSeaiIePdfService
+import ie.nok.ber.common.certificate.stores.{
   CertificateStore,
   GoogleFirestoreCertificateStore
 }
+import ie.nok.gcp.firestore.Firestore
 import zio.{Console, Scope, ZIO, ZIOAppDefault}
 import zio.http.{Client, ClientConfig}
-import zio.gcp.firestore.Firestore
 import zio.stream.ZPipeline
 
 val getCertificates: ZPipeline[

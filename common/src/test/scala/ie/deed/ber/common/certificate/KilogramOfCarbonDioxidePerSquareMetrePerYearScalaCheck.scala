@@ -1,8 +1,8 @@
-package ie.deed.ber.common.certificate
+package ie.nok.ber.common.certificate
 
 import org.scalacheck.{Arbitrary, Gen}
 
-import ie.deed.ber.common.certificate.KilogramOfCarbonDioxidePerSquareMetrePerYear
+import ie.nok.ber.common.certificate.KilogramOfCarbonDioxidePerSquareMetrePerYear
 val genKilogramOfCarbonDioxidePerSquareMetrePerYear
     : Gen[KilogramOfCarbonDioxidePerSquareMetrePerYear] =
   Gen.posNum[Float].map { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
