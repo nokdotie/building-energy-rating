@@ -1,4 +1,4 @@
-package ie.deed.ber.common.certificate
+package ie.nok.ber.common.certificate
 
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary.arbitrary
