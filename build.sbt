@@ -22,7 +22,7 @@ lazy val common = project
       "com.google.cloud" % "google-cloud-firestore" % "3.13.2",
       "com.firebase" % "geofire-java" % "3.0.0",
       "org.apache.pdfbox" % "pdfbox" % "2.0.28",
-      "ie.nok" %% "scala-libraries" % "20230627.094902.569934137",
+      "ie.nok" %% "scala-libraries" % "20230626.202745.858342324",
       "org.scalameta" %% "munit" % "0.7.29" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test
     )
