@@ -17,7 +17,7 @@ lazy val common = project
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.15",
       "dev.zio" %% "zio-http" % "0.0.5",
-      "dev.zio" %% "zio-json" % "0.5.0",
+      "dev.zio" %% "zio-json" % "0.6.0",
       "dev.zio" %% "zio-streams" % "2.0.15",
       "com.google.cloud" % "google-cloud-firestore" % "3.13.2",
       "com.firebase" % "geofire-java" % "3.0.0",
