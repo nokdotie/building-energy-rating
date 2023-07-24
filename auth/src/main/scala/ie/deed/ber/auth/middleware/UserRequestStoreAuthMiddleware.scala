@@ -1,7 +1,7 @@
 package ie.deed.ber.auth.middleware
 
 import ie.deed.ber.auth.model.{ApiKey, ApiKeyType, UserRequest}
-import ie.deed.ber.auth.store.{ApiKeyStore, UserRequestStore}
+import ie.deed.ber.auth.store.{ApiKeyStore, CreditStore, UserRequestStore}
 import zio.{Trace, ZIO}
 import zio.http.HttpAppMiddleware.customAuthZIO
 import zio.http.middleware.RequestHandlerMiddlewares.interceptPatchZIO
@@ -12,20 +12,18 @@ import java.time.Instant
 
 object UserRequestStoreAuthMiddleware {
 
-  private val defaultNumberOfCredits = 100
-
   val userRequestStoreAuthMiddleware: RequestHandlerMiddleware[
     Nothing,
-    ApiKeyStore with UserRequestStore,
+    ApiKeyStore with UserRequestStore with CreditStore,
     Throwable,
     Any
   ] =
     new RequestHandlerMiddleware.Simple[
-      ApiKeyStore with UserRequestStore,
+      ApiKeyStore with UserRequestStore with CreditStore,
       Throwable
     ] {
       override def apply[
-          Env <: ApiKeyStore with UserRequestStore,
+          Env <: ApiKeyStore with UserRequestStore with CreditStore,
           Err >: Throwable
       ](
           handler: Handler[Env, Err, Request, Response]
@@ -49,8 +47,8 @@ object UserRequestStoreAuthMiddleware {
                       numberOfRequests <- UserRequestStore.countUserRequests(
                         email
                       ) // check how many requests user did
-                      numberOfCredits <- ZIO.succeed(
-                        defaultNumberOfCredits
+                      numberOfCredits <- CreditStore.getNumberOfCredits(
+                        email
                       ) // check number of available credits for user by email
                     } yield {
                       if (numberOfRequests <= numberOfCredits) handler
