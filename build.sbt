@@ -19,7 +19,7 @@ lazy val common = project
       "dev.zio" %% "zio-http" % "0.0.5",
       "dev.zio" %% "zio-json" % "0.6.0",
       "dev.zio" %% "zio-streams" % "2.0.15",
-      "com.google.cloud" % "google-cloud-firestore" % "3.13.3",
+      "com.google.cloud" % "google-cloud-firestore" % "3.13.8",
       "com.firebase" % "geofire-java" % "3.0.0",
       "org.apache.pdfbox" % "pdfbox" % "2.0.29",
       "ie.nok" %% "scala-libraries" % "20230711.132642.684556505",
