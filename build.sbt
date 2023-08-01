@@ -7,8 +7,7 @@ lazy val root = project
   .aggregate(
     common,
     api,
-    scraper,
-    ecad
+    scraper
   )
 
 lazy val common = project
@@ -43,7 +42,4 @@ lazy val api = project
   .enablePlugins(JavaAppPackaging, DockerPlugin)
 
 lazy val scraper = project
-  .dependsOn(common % "compile->compile;test->test")
-
-lazy val ecad = project
   .dependsOn(common % "compile->compile;test->test")
