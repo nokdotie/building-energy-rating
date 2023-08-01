@@ -1,0 +1,18 @@
+name: Continuous Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  scala:
+    uses: nok-ie/github-workflows/.github/workflows/scala-publish.yml@main
+    with:
+      SBT_PROJECT_ID: building-energy-rating
+    secrets:
+      GH_TOKEN_WRITE_PACKAGES: ${{ secrets.GH_TOKEN_WRITE_PACKAGES }}
