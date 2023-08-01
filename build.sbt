@@ -1,18 +1,26 @@
-ThisBuild / version := "0.1.0-SNAPSHOT"
+import java.time.format.DateTimeFormatter
+import java.time.{Instant, ZoneOffset}
+
 ThisBuild / scalaVersion := "3.3.0"
-ThisBuild / resolvers += "jcenter" at "https://jcenter.bintray.com"
+ThisBuild / organization := "ie.nok"
+ThisBuild / version := DateTimeFormatter
+  .ofPattern("yyyyMMdd.HHmmss.n")
+  .withZone(ZoneOffset.UTC)
+  .format(Instant.now())
 
 lazy val root = project
   .in(file("."))
   .aggregate(
-    common,
-    api,
+    `building-energy-rating`,
     scraper
   )
 
-lazy val common = project
+lazy val `building-energy-rating` = project
   .settings(
+    githubOwner := "nok-ie",
+    githubRepository := "building-energy-rating",
     resolvers += Resolver.githubPackages("nok-ie"),
+    resolvers += "jcenter" at "https://jcenter.bintray.com",
     libraryDependencies ++= List(
       "dev.zio" %% "zio" % "2.0.15",
       "dev.zio" %% "zio-http" % "0.0.5",
@@ -27,19 +35,5 @@ lazy val common = project
     )
   )
 
-lazy val api = project
-  .dependsOn(common % "compile->compile;test->test")
-  .settings(
-    dockerRepository := Some("gcr.io/deed-ie/building-energy-rating"),
-    dockerAliases ++= Seq(
-      s"time-${Environment.instant}",
-      s"sha-${Environment.gitShortSha1}"
-    )
-      .map(Option.apply)
-      .map(dockerAlias.value.withTag),
-    dockerExposedPorts ++= Seq(8080)
-  )
-  .enablePlugins(JavaAppPackaging, DockerPlugin)
-
 lazy val scraper = project
-  .dependsOn(common % "compile->compile;test->test")
+  .dependsOn(`building-energy-rating` % "compile->compile;test->test")
