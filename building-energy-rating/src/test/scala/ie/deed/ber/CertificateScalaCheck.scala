@@ -1,10 +1,10 @@
-package ie.nok.ber.common.certificate
+package ie.nok.ber
 
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary.arbitrary
 import java.time.LocalDate
 
-implicit val genCertificate: Gen[Certificate] = for {
+private val genCertificate: Gen[Certificate] = for {
   number <- arbitrary[CertificateNumber]
   rating <- arbitrary[Rating]
   issuedOn <- arbitrary[LocalDate]
@@ -34,4 +34,4 @@ implicit val genCertificate: Gen[Certificate] = for {
   carbonDioxideEmissionsIndicator
 )
 
-implicit val arbCertificate: Arbitrary[Certificate] = Arbitrary(genCertificate)
+given Arbitrary[Certificate] = Arbitrary(genCertificate)

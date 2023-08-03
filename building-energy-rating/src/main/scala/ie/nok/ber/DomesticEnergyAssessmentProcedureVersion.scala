@@ -1,4 +1,4 @@
-package ie.nok.ber.common.certificate
+package ie.nok.ber
 
 import scala.util.{Try, Success, Failure}
 

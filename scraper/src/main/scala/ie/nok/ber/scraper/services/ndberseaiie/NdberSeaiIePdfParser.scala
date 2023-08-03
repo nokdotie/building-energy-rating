@@ -1,6 +1,6 @@
 package ie.nok.ber.scraper.services.ndberseaiie
 
-import ie.nok.ber.common.certificate._
+import ie.nok.ber._
 import java.io.File
 import java.time.LocalDate
 import java.awt.Rectangle

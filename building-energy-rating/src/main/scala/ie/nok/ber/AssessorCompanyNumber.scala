@@ -1,3 +1,3 @@
-package ie.nok.ber.common.certificate
+package ie.nok.ber
 
 final case class AssessorCompanyNumber(value: Int) extends AnyVal

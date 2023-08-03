@@ -1,13 +1,13 @@
 package ie.nok.ber.stores
 
 import com.google.cloud.firestore._
-import ie.nok.ber.common.certificate.{Certificate, CertificateNumber, Eircode}
+import ie.nok.ber.{Certificate, CertificateNumber, Eircode}
+import ie.nok.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
 import scala.collection.JavaConverters.asScalaBufferConverter
 import scala.util.chaining.scalaUtilChainingOps
 import zio.{durationInt, System, ZIO, ZLayer}
 import zio.Schedule.{recurs, fixed}
 import zio.stream.ZPipeline
-import ie.nok.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
 
 class GoogleFirestoreCertificateStore(
     firestore: Firestore.Service,

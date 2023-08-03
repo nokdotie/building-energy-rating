@@ -1,6 +1,6 @@
 package ie.nok.ber.stores
 
-import ie.nok.ber.common.certificate._
+import ie.nok.ber.{Certificate, given}
 import munit.ScalaCheckSuite
 import org.scalacheck.Prop._
 

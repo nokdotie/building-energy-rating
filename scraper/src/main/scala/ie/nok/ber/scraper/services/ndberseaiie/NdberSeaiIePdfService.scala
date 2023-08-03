@@ -1,6 +1,6 @@
 package ie.nok.ber.scraper.services.ndberseaiie
 
-import ie.nok.ber.common.certificate.{Certificate, CertificateNumber}
+import ie.nok.ber.{Certificate, CertificateNumber}
 import ie.nok.http.Client.requestBodyAsTempFile
 import java.io.File
 import scala.util.Failure

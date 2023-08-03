@@ -1,6 +1,6 @@
 package ie.nok.ber.stores
 
-import ie.nok.ber.common.certificate.{Certificate, CertificateNumber, Eircode}
+import ie.nok.ber.{Certificate, CertificateNumber, Eircode}
 import zio.ZIO
 import zio.stream.{ZStream, ZPipeline}
 

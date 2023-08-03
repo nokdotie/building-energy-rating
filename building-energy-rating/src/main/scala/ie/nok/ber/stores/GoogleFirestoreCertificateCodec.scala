@@ -1,7 +1,7 @@
 package ie.nok.ber.stores
 
+import ie.nok.ber._
 import java.time.{LocalDate, Year}
-import ie.nok.ber.common.certificate._
 import java.util.{Map => JMap}
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.util.Try
