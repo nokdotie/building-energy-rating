@@ -1,12 +1,14 @@
-package ie.nok.ber.common.certificate.stores
+package ie.nok.ber.stores
 
 import ie.nok.ber.common.certificate.{Certificate, CertificateNumber, Eircode}
 import zio.ZIO
 import zio.stream.{ZStream, ZPipeline}
 
 trait CertificateStore {
-  def upsertBatch(certificates: Iterable[Certificate]): ZIO[Any, Throwable, Int]
-  val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int]
+  protected[ber] def upsertBatch(
+      certificates: Iterable[Certificate]
+  ): ZIO[Any, Throwable, Int]
+  protected[ber] val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int]
 
   def getByNumber(
       id: CertificateNumber
@@ -18,12 +20,13 @@ trait CertificateStore {
 }
 
 object CertificateStore {
-  def upsertBatch(
+  protected[ber] def upsertBatch(
       certificates: Iterable[Certificate]
   ): ZIO[CertificateStore, Throwable, Int] =
     ZIO.serviceWithZIO[CertificateStore] { _.upsertBatch(certificates) }
 
-  val upsertPipeline: ZPipeline[CertificateStore, Throwable, Certificate, Int] =
+  protected[ber] val upsertPipeline
+      : ZPipeline[CertificateStore, Throwable, Certificate, Int] =
     ZPipeline.serviceWithPipeline[CertificateStore] { _.upsertPipeline }
 
   def getByNumber(

@@ -1,4 +1,4 @@
-package ie.nok.ber.common.certificate.stores
+package ie.nok.ber.stores
 
 import com.google.cloud.firestore._
 import ie.nok.ber.common.certificate.{Certificate, CertificateNumber, Eircode}
@@ -27,7 +27,7 @@ class GoogleFirestoreCertificateStore(
           .collect { case (certificate, None) => certificate }
       }
 
-  def upsertBatch(
+  protected[ber] def upsertBatch(
       certificates: Iterable[Certificate]
   ): ZIO[Any, Throwable, Int] =
     for {
@@ -56,7 +56,8 @@ class GoogleFirestoreCertificateStore(
         .retry(recurs(3) && fixed(1.second))
     } yield results.size
 
-  val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int] =
+  protected[ber] val upsertPipeline
+      : ZPipeline[Any, Throwable, Certificate, Int] =
     ZPipeline
       .groupedWithin[Certificate](100, 10.seconds)
       .mapZIO { chunks =>

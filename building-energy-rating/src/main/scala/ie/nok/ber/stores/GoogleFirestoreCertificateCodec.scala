@@ -1,13 +1,17 @@
-package ie.nok.ber.common.certificate.stores
+package ie.nok.ber.stores
 
 import java.time.{LocalDate, Year}
 import ie.nok.ber.common.certificate._
-import ie.nok.ber.common.utils.MapUtils.getTyped
+import java.util.{Map => JMap}
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.util.Try
 
-object GoogleFirestoreCertificateCodec {
-  def encode(certificate: Certificate): java.util.Map[String, Any] =
+protected[stores] object GoogleFirestoreCertificateCodec {
+  private def getTyped[A](map: JMap[String, Any], key: String): Try[A] = Try {
+    map.get(key).asInstanceOf[A]
+  }
+
+  def encode(certificate: Certificate): JMap[String, Any] =
     Map(
       "number" -> certificate.number.value.toLong,
       "rating" -> certificate.rating.toString,
@@ -22,45 +26,40 @@ object GoogleFirestoreCertificateCodec {
       "carbon-dioxide-emissions-indicator" -> certificate.carbonDioxideEmissionsIndicator.value.toString
     ).asJava
 
-  def decode(map: java.util.Map[String, Any]): Certificate = (for {
-    number <- map
-      .getTyped[Long]("number")
+  def decode(map: JMap[String, Any]): Certificate = (for {
+    number <- getTyped[Long](map, "number")
       .map { _.toInt }
       .map { CertificateNumber.apply }
-    rating <- map
-      .getTyped[String]("rating")
+    rating <- getTyped[String](map, "rating")
       .flatMap { string => Try { Rating.valueOf(string) } }
-    issuedOn <- map
-      .getTyped[String]("issued-on")
+    issuedOn <- getTyped[String](map, "issued-on")
       .flatMap { string => Try { LocalDate.parse(string) } }
-    validUntil <- map
-      .getTyped[String]("valid-until")
+    validUntil <- getTyped[String](map, "valid-until")
       .flatMap { string => Try { LocalDate.parse(string) } }
-    propertyAddress <- map
-      .getTyped[String]("address")
+    propertyAddress <- getTyped[String](map, "address")
       .map { Address.apply }
-    propertyEircode <- map
-      .getTyped[String]("eircode")
+    propertyEircode <- getTyped[String](map, "eircode")
       .map { Option.apply }
       .map { _.map { Eircode.apply } }
-    assessorNumber <- map
-      .getTyped[Long]("assessor-number")
+    assessorNumber <- getTyped[Long](map, "assessor-number")
       .flatMap { long => Try { AssessorNumber(long.toInt) } }
-    assessorCompanyNumber <- map
-      .getTyped[Long]("assessor-company-number")
+    assessorCompanyNumber <- getTyped[Long](map, "assessor-company-number")
       .flatMap { long => Try { AssessorCompanyNumber(long.toInt) } }
-    domesticEnergyAssessmentProcedureVersion <- map
-      .getTyped[String]("domestic-energy-assessment-procedure-version")
+    domesticEnergyAssessmentProcedureVersion <- getTyped[String](
+      map,
+      "domestic-energy-assessment-procedure-version"
+    )
       .flatMap { string =>
         Try { DomesticEnergyAssessmentProcedureVersion.valueOf(string) }
       }
-    energyRating <- map
-      .getTyped[String]("energy-rating")
+    energyRating <- getTyped[String](map, "energy-rating")
       .flatMap { string =>
         Try { KilowattHourPerSquareMetrePerYear(string.toFloat) }
       }
-    carbonDioxideEmissionsIndicator <- map
-      .getTyped[String]("carbon-dioxide-emissions-indicator")
+    carbonDioxideEmissionsIndicator <- getTyped[String](
+      map,
+      "carbon-dioxide-emissions-indicator"
+    )
       .flatMap { string =>
         Try { KilogramOfCarbonDioxidePerSquareMetrePerYear(string.toFloat) }
       }

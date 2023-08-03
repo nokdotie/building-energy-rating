@@ -1,4 +1,4 @@
-package ie.nok.ber.common.certificate.stores
+package ie.nok.ber.stores
 
 import ie.nok.ber.common.certificate._
 import munit.ScalaCheckSuite
