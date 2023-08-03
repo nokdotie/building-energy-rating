@@ -1,4 +1,4 @@
-package ie.nok.ber.common.certificate.utils
+package ie.nok.ber.scraper.services.ndberseaiie
 
 import ie.nok.ber.common.certificate._
 import java.io.File
@@ -10,7 +10,7 @@ import org.apache.pdfbox.text.PDFTextStripperByArea
 import scala.util.{Try, Using}
 import scala.util.matching.Regex
 
-object PdfParser {
+object NdberSeaiIePdfParser {
   val dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
   def getTextForRegions(document: PDDocument): String = {

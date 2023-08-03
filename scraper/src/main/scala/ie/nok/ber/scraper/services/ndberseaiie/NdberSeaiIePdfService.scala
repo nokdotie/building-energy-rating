@@ -1,7 +1,6 @@
-package ie.nok.ber.common.certificate.services
+package ie.nok.ber.scraper.services.ndberseaiie
 
 import ie.nok.ber.common.certificate.{Certificate, CertificateNumber}
-import ie.nok.ber.common.certificate.utils.PdfParser
 import ie.nok.http.Client.requestBodyAsTempFile
 import java.io.File
 import scala.util.Failure
@@ -36,7 +35,7 @@ object NdberSeaiIePdfService {
       file <- getFile(certificateNumber)
       certificate <- file.fold(ZIO.none) { file =>
         ZIO.fromTry {
-          PdfParser
+          NdberSeaiIePdfParser
             .tryParse(file)
             .recoverWith { throwable =>
               println(

@@ -1,4 +1,4 @@
-package ie.nok.ber.common.certificate.utils
+package ie.nok.ber.scraper.services.ndberseaiie
 
 import ie.nok.ber.common.certificate._
 import java.io.File
@@ -7,11 +7,11 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import scala.util.Using
 import scala.util.chaining.scalaUtilChainingOps
 
-class PdfParserSuite extends munit.FunSuite {
+class NdberSeaiIePdfParserSuite extends munit.FunSuite {
   val pdfPathAndExpectedCertificate = List(
     // 3.2.1
     (
-      "./certificates/100000066.pdf",
+      "./ndberseaiie/100000066.pdf",
       Certificate(
         CertificateNumber(100000066),
         Rating.B3,
@@ -29,7 +29,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/100000181.pdf",
+      "./ndberseaiie/100000181.pdf",
       Certificate(
         CertificateNumber(100000181),
         Rating.B3,
@@ -45,7 +45,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/100000280.pdf",
+      "./ndberseaiie/100000280.pdf",
       Certificate(
         CertificateNumber(100000280),
         Rating.B2,
@@ -62,7 +62,7 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     // 4.0.0
     (
-      "./certificates/100000298.pdf",
+      "./ndberseaiie/100000298.pdf",
       Certificate(
         CertificateNumber(100000298),
         Rating.B3,
@@ -78,7 +78,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/100000595.pdf",
+      "./ndberseaiie/100000595.pdf",
       Certificate(
         CertificateNumber(100000595),
         Rating.B3,
@@ -94,7 +94,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/100000652.pdf",
+      "./ndberseaiie/100000652.pdf",
       Certificate(
         CertificateNumber(100000652),
         Rating.B2,
@@ -111,7 +111,7 @@ class PdfParserSuite extends munit.FunSuite {
     ),
     // 4.1.0
     (
-      "./certificates/100000645.pdf",
+      "./ndberseaiie/100000645.pdf",
       Certificate(
         CertificateNumber(100000645),
         Rating.B3,
@@ -127,7 +127,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/100000744.pdf",
+      "./ndberseaiie/100000744.pdf",
       Certificate(
         CertificateNumber(100000744),
         Rating.B3,
@@ -145,7 +145,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/100000967.pdf",
+      "./ndberseaiie/100000967.pdf",
       Certificate(
         CertificateNumber(100000967),
         Rating.B3,
@@ -161,7 +161,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/100290303.pdf",
+      "./ndberseaiie/100290303.pdf",
       Certificate(
         CertificateNumber(100290303),
         Rating.E2,
@@ -177,7 +177,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/106559123.pdf",
+      "./ndberseaiie/106559123.pdf",
       Certificate(
         CertificateNumber(106559123),
         Rating.F,
@@ -193,7 +193,7 @@ class PdfParserSuite extends munit.FunSuite {
       )
     ),
     (
-      "./certificates/106559149.pdf",
+      "./ndberseaiie/106559149.pdf",
       Certificate(
         CertificateNumber(106559149),
         Rating.G,
@@ -218,7 +218,7 @@ class PdfParserSuite extends munit.FunSuite {
         .getFile()
         .pipe { File(_) }
 
-      val Certificate = PdfParser.tryParse(file).get
+      val Certificate = NdberSeaiIePdfParser.tryParse(file).get
 
       assertEquals(Certificate, expectedCertificate)
     }
