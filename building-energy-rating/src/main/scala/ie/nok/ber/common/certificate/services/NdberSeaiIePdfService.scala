@@ -1,11 +1,12 @@
 package ie.nok.ber.common.certificate.services
 
 import ie.nok.ber.common.certificate.{Certificate, CertificateNumber}
-import ie.nok.ber.common.utils.ZioHttpResponseUtils.responseToFile
 import ie.nok.ber.common.certificate.utils.PdfParser
+import ie.nok.http.Client.requestBodyAsTempFile
 import java.io.File
 import scala.util.Failure
-import zio.{durationInt, ZIO}
+import scala.util.chaining.scalaUtilChainingOps
+import zio.{durationInt, Scope, ZIO}
 import zio.Schedule.{recurs, fixed}
 import zio.http.Client
 import zio.http.model.HeaderValues.applicationOctetStream
@@ -14,21 +15,23 @@ object NdberSeaiIePdfService {
   def url(certificateNumber: CertificateNumber): String =
     s"https://ndber.seai.ie/PASS/Download/PassDownloadBER.ashx?type=nas&file=bercert&ber=${certificateNumber.value}"
 
+  val notFoundResponseBody =
+    "File Not found or other exception handled by system. Please consult your system administrator."
+  val notFoundResponseBodyLength = notFoundResponseBody.length()
+
   def getFile(
       certificateNumber: CertificateNumber
-  ): ZIO[Client, Throwable, Option[File]] =
-    Client
-      .request(url(certificateNumber))
+  ): ZIO[Client & Scope, Throwable, Option[File]] =
+    url(certificateNumber)
+      .pipe { requestBodyAsTempFile(_) }
       .retry(recurs(3) && fixed(1.second))
-      .flatMap {
-        case response if response.hasContentType(applicationOctetStream) =>
-          responseToFile(response).asSome
-        case _ => ZIO.none
-      }
+      .map { _.toFile }
+      .asSome
+      .map { _.filter { _.length > notFoundResponseBodyLength } }
 
   def getCertificate(
       certificateNumber: CertificateNumber
-  ): ZIO[Client, Throwable, Option[Certificate]] =
+  ): ZIO[Client & Scope, Throwable, Option[Certificate]] =
     for {
       file <- getFile(certificateNumber)
       certificate <- file.fold(ZIO.none) { file =>
