@@ -1,6 +1,7 @@
 package ie.nok.ber
 
 import scala.util.{Try, Failure, Success}
+import zio.json.{JsonCodec, DeriveJsonCodec}
 
 enum Rating {
   case A1, A2, A3
@@ -34,4 +35,6 @@ object Rating {
       case "G"     => Success(G)
       case unknown => Failure(Exception(s"Unknown rating: $unknown"))
     }
+
+  given JsonCodec[Rating] = DeriveJsonCodec.gen[Rating]
 }
