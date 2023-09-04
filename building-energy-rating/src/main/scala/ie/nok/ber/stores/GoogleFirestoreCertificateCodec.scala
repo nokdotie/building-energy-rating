@@ -37,10 +37,10 @@ protected[stores] object GoogleFirestoreCertificateCodec {
     validUntil <- getTyped[String](map, "valid-until")
       .flatMap { string => Try { LocalDate.parse(string) } }
     propertyAddress <- getTyped[String](map, "address")
-      .map { Address.apply }
+      .map { Address.fromString }
     propertyEircode <- getTyped[String](map, "eircode")
       .map { Option.apply }
-      .map { _.map { Eircode.apply } }
+      .map { _.map { Eircode.fromString } }
     assessorNumber <- getTyped[Long](map, "assessor-number")
       .flatMap { long => Try { AssessorNumber(long.toInt) } }
     assessorCompanyNumber <- getTyped[Long](map, "assessor-company-number")

@@ -1,4 +1,10 @@
 package ie.nok.ber
 
-final case class KilogramOfCarbonDioxidePerSquareMetrePerYear(value: Float)
-    extends AnyVal
+import zio.json.{JsonCodec, DeriveJsonCodec}
+
+case class KilogramOfCarbonDioxidePerSquareMetrePerYear(value: Float)
+
+object KilogramOfCarbonDioxidePerSquareMetrePerYear {
+  given JsonCodec[KilogramOfCarbonDioxidePerSquareMetrePerYear] =
+    DeriveJsonCodec.gen[KilogramOfCarbonDioxidePerSquareMetrePerYear]
+}

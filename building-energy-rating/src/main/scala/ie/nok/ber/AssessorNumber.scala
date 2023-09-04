@@ -1,3 +1,9 @@
 package ie.nok.ber
 
-final case class AssessorNumber(value: Int) extends AnyVal
+import zio.json.{JsonCodec, DeriveJsonCodec}
+
+case class AssessorNumber(value: Int)
+
+object AssessorNumber {
+  given JsonCodec[AssessorNumber] = DeriveJsonCodec.gen[AssessorNumber]
+}

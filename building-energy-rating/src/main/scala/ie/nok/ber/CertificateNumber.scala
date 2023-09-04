@@ -2,9 +2,10 @@ package ie.nok.ber
 
 import scala.util.chaining.scalaUtilChainingOps
 import zio.Random
+import zio.json.{JsonCodec, DeriveJsonCodec}
 import zio.stream.ZStream
 
-final case class CertificateNumber(value: Int) extends AnyVal
+case class CertificateNumber(value: Int)
 
 object CertificateNumber {
   val MinValue: CertificateNumber = CertificateNumber(100_000_000)
@@ -27,4 +28,6 @@ object CertificateNumber {
       .nextIntBetween(MinValue.value, MaxValue.value)
       .pipe(ZStream.fromZIO)
       .flatMap(streamAllFrom)
+
+  given JsonCodec[CertificateNumber] = DeriveJsonCodec.gen[CertificateNumber]
 }

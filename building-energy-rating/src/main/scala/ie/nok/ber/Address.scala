@@ -1,10 +1,13 @@
 package ie.nok.ber
 
 import scala.util.chaining.scalaUtilChainingOps
+import zio.json.{JsonCodec, DeriveJsonCodec}
 
-sealed abstract case class Address private (value: String)
+case class Address(value: String)
 object Address {
-  def apply(value: String): Address =
+  def fromString(value: String): Address =
     value.trim
-      .pipe { new Address(_) {} }
+      .pipe { Address.apply }
+
+  given JsonCodec[Address] = DeriveJsonCodec.gen[Address]
 }
