@@ -21,9 +21,9 @@ lazy val `building-energy-rating` = project
     githubRepository := "building-energy-rating",
     resolvers += Resolver.githubPackages("nok-ie"),
     libraryDependencies ++= List(
-      "com.google.cloud" % "google-cloud-firestore" % "3.14.0",
-      "ie.nok" %% "scala-libraries" % "20230803.120044.846611588",
-      "org.apache.pdfbox" % "pdfbox" % "2.0.29",
+      "com.google.cloud" % "google-cloud-firestore" % "3.14.1",
+      "ie.nok" %% "scala-libraries" % "20230831.203959.161809335",
+      "org.apache.pdfbox" % "pdfbox" % "3.0.0",
       "org.scalameta" %% "munit" % "0.7.29" % Test,
       "org.scalameta" %% "munit-scalacheck" % "0.7.29" % Test
     )
