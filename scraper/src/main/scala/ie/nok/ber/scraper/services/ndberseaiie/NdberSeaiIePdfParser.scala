@@ -5,6 +5,7 @@ import java.io.File
 import java.time.LocalDate
 import java.awt.Rectangle
 import java.time.format.DateTimeFormatter
+import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripperByArea
 import scala.util.{Try, Using}
@@ -104,6 +105,6 @@ object NdberSeaiIePdfParser {
   }
 
   def tryParse(file: File): Try[Certificate] =
-    Using.resource(PDDocument.load(file))(tryParse)
+    Using.resource(Loader.loadPDF(file))(tryParse)
 
 }
