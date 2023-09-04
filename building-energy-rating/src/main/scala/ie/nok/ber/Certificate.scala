@@ -1,6 +1,7 @@
 package ie.nok.ber
 
 import java.time.{LocalDate, Year}
+import zio.json.{JsonCodec, DeriveJsonCodec}
 
 case class Certificate(
     number: CertificateNumber,
@@ -15,3 +16,7 @@ case class Certificate(
     energyRating: KilowattHourPerSquareMetrePerYear,
     carbonDioxideEmissionsIndicator: KilogramOfCarbonDioxidePerSquareMetrePerYear
 )
+
+object Certificate {
+  given JsonCodec[Certificate] = DeriveJsonCodec.gen[Certificate]
+}

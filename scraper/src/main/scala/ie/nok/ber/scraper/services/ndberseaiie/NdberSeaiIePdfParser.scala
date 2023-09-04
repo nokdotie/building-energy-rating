@@ -61,9 +61,9 @@ object NdberSeaiIePdfParser {
         .map { LocalDate.parse(_, dateTimeFormat) }
       propertyAddress <- tryFindMatch(text, "(?s)Address (.+)".r)
         .map { _.split("\n(Eircode|BER Number)").head.replaceAll(" +", " ") }
-        .map { Address.apply }
+        .map { Address.fromString }
       propertyEircode = tryFindMatch(text, "Eircode (.+)".r).map {
-        Eircode.apply
+        Eircode.fromString
       }.toOption
       assessorNumber <- tryFindMatch(text, "Assessor Number ([0-9]+)".r)
         .flatMap { str => Try { str.toInt } }

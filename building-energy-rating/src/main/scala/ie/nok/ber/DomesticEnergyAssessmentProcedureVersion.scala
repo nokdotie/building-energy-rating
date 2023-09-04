@@ -1,6 +1,7 @@
 package ie.nok.ber
 
 import scala.util.{Try, Success, Failure}
+import zio.json.{JsonCodec, DeriveJsonCodec}
 
 enum DomesticEnergyAssessmentProcedureVersion {
   case `3.2.1`
@@ -23,4 +24,7 @@ object DomesticEnergyAssessmentProcedureVersion {
         )
       )
   }
+
+  given JsonCodec[DomesticEnergyAssessmentProcedureVersion] =
+    DeriveJsonCodec.gen[DomesticEnergyAssessmentProcedureVersion]
 }
