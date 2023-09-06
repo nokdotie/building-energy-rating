@@ -1,6 +1,7 @@
 package ie.nok.ber.stores
 
 import ie.nok.ber._
+import ie.nok.ber.services.ndberseaiie.NdberSeaiIePdfService
 import java.time.{LocalDate, Year}
 import java.util.{Map => JMap}
 import scala.collection.JavaConverters.mapAsJavaMapConverter
@@ -13,6 +14,7 @@ protected[stores] object GoogleFirestoreCertificateCodec {
 
   def encode(certificate: Certificate): JMap[String, Any] =
     Map(
+      "url" -> certificate.url,
       "number" -> certificate.number.value.toLong,
       "rating" -> certificate.rating.toString,
       "issued-on" -> certificate.issuedOn.toString,
@@ -63,7 +65,10 @@ protected[stores] object GoogleFirestoreCertificateCodec {
       .flatMap { string =>
         Try { KilogramOfCarbonDioxidePerSquareMetrePerYear(string.toFloat) }
       }
+    url = getTyped[String](map, "url")
+      .getOrElse { NdberSeaiIePdfService.getUrl(number) }
   } yield Certificate(
+    url = url,
     number = number,
     rating = rating,
     issuedOn = issuedOn,
