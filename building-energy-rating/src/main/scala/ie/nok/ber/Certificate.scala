@@ -4,6 +4,7 @@ import java.time.{LocalDate, Year}
 import zio.json.{JsonCodec, DeriveJsonCodec}
 
 case class Certificate(
+    url: String,
     number: CertificateNumber,
     rating: Rating,
     issuedOn: LocalDate,

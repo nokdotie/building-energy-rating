@@ -1,4 +1,4 @@
-package ie.nok.ber.scraper.services.ndberseaiie
+package ie.nok.ber.services.ndberseaiie
 
 import ie.nok.ber._
 import java.io.File
@@ -13,6 +13,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/100000066.pdf",
       Certificate(
+        "",
         CertificateNumber(100000066),
         Rating.B3,
         LocalDate.of(2018, 9, 2),
@@ -31,6 +32,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/100000181.pdf",
       Certificate(
+        "",
         CertificateNumber(100000181),
         Rating.B3,
         LocalDate.of(2019, 6, 3),
@@ -47,6 +49,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/100000280.pdf",
       Certificate(
+        "",
         CertificateNumber(100000280),
         Rating.B2,
         LocalDate.of(2016, 4, 25),
@@ -64,6 +67,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/100000298.pdf",
       Certificate(
+        "",
         CertificateNumber(100000298),
         Rating.B3,
         LocalDate.of(2020, 8, 15),
@@ -80,6 +84,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/100000595.pdf",
       Certificate(
+        "",
         CertificateNumber(100000595),
         Rating.B3,
         LocalDate.of(2022, 1, 20),
@@ -98,6 +103,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/100000652.pdf",
       Certificate(
+        "",
         CertificateNumber(100000652),
         Rating.B2,
         LocalDate.of(2021, 10, 18),
@@ -117,6 +123,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/100000645.pdf",
       Certificate(
+        "",
         CertificateNumber(100000645),
         Rating.B3,
         LocalDate.of(2022, 9, 23),
@@ -135,6 +142,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/100000744.pdf",
       Certificate(
+        "",
         CertificateNumber(100000744),
         Rating.B3,
         LocalDate.of(2023, 3, 9),
@@ -153,6 +161,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/100000967.pdf",
       Certificate(
+        "",
         CertificateNumber(100000967),
         Rating.B3,
         LocalDate.of(2022, 5, 25),
@@ -171,6 +180,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/100290303.pdf",
       Certificate(
+        "",
         CertificateNumber(100290303),
         Rating.E2,
         LocalDate.of(2014, 10, 24),
@@ -187,6 +197,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/106559123.pdf",
       Certificate(
+        "",
         CertificateNumber(106559123),
         Rating.F,
         LocalDate.of(2014, 6, 28),
@@ -203,6 +214,7 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
     (
       "./ndberseaiie/106559149.pdf",
       Certificate(
+        "",
         CertificateNumber(106559149),
         Rating.G,
         LocalDate.of(2014, 6, 29),
@@ -226,7 +238,10 @@ class NdberSeaiIePdfParserSuite extends munit.FunSuite {
         .getFile()
         .pipe { File(_) }
 
-      val Certificate = NdberSeaiIePdfParser.tryParse(file).get
+      val Certificate =
+        NdberSeaiIePdfParser
+          .tryParse("", file)
+          .get
 
       assertEquals(Certificate, expectedCertificate)
     }

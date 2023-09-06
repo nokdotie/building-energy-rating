@@ -5,6 +5,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import java.time.LocalDate
 
 private val genCertificate: Gen[Certificate] = for {
+  url <- arbitrary[String]
   number <- arbitrary[CertificateNumber]
   rating <- arbitrary[Rating]
   issuedOn <- arbitrary[LocalDate]
@@ -21,6 +22,7 @@ private val genCertificate: Gen[Certificate] = for {
     KilogramOfCarbonDioxidePerSquareMetrePerYear
   ]
 } yield Certificate(
+  url,
   number,
   rating,
   issuedOn,

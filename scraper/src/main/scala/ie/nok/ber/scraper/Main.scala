@@ -1,7 +1,7 @@
 package ie.nok.ber.scraper
 
 import ie.nok.ber.{Certificate, CertificateNumber}
-import ie.nok.ber.scraper.services.ndberseaiie.NdberSeaiIePdfService
+import ie.nok.ber.services.ndberseaiie.NdberSeaiIePdfService
 import ie.nok.ber.stores.{CertificateStore, GoogleFirestoreCertificateStore}
 import ie.nok.gcp.firestore.Firestore
 import zio.{Console, Scope, ZIO, ZIOAppDefault}

@@ -1,4 +1,4 @@
-package ie.nok.ber.scraper.services.ndberseaiie
+package ie.nok.ber.services.ndberseaiie
 
 import ie.nok.ber._
 import java.io.File
@@ -11,7 +11,7 @@ import org.apache.pdfbox.text.PDFTextStripperByArea
 import scala.util.{Try, Using}
 import scala.util.matching.Regex
 
-object NdberSeaiIePdfParser {
+private[ndberseaiie] object NdberSeaiIePdfParser {
   val dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
   def getTextForRegions(document: PDDocument): String = {
@@ -39,7 +39,7 @@ object NdberSeaiIePdfParser {
       .toRight(new Throwable(s"Missing pattern: $pattern"))
       .toTry
 
-  def tryParse(document: PDDocument): Try[Certificate] = {
+  def tryParse(url: String, document: PDDocument): Try[Certificate] = {
     val text = getTextForRegions(document)
 
     for {
@@ -90,6 +90,7 @@ object NdberSeaiIePdfParser {
         .flatMap { str => Try { str.toFloat } }
         .map { KilogramOfCarbonDioxidePerSquareMetrePerYear.apply }
     } yield Certificate(
+      url,
       number,
       rating,
       issuedOn,
@@ -104,7 +105,7 @@ object NdberSeaiIePdfParser {
     )
   }
 
-  def tryParse(file: File): Try[Certificate] =
-    Using.resource(Loader.loadPDF(file))(tryParse)
+  def tryParse(url: String, file: File): Try[Certificate] =
+    Using.resource(Loader.loadPDF(file))(tryParse(url, _))
 
 }
