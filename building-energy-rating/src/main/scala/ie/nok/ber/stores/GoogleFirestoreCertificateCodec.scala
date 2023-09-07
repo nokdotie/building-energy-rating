@@ -6,10 +6,15 @@ import java.time.{LocalDate, Year}
 import java.util.{Map => JMap}
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.util.Try
+import scala.util.chaining.scalaUtilChainingOps
 
 protected[stores] object GoogleFirestoreCertificateCodec {
   private def getTyped[A](map: JMap[String, Any], key: String): Try[A] = Try {
-    map.get(key).asInstanceOf[A]
+    map
+      .get(key)
+      .pipe { Option.apply }
+      .get
+      .asInstanceOf[A]
   }
 
   def encode(certificate: Certificate): JMap[String, Any] =
@@ -40,9 +45,9 @@ protected[stores] object GoogleFirestoreCertificateCodec {
       .flatMap { string => Try { LocalDate.parse(string) } }
     propertyAddress <- getTyped[String](map, "address")
       .map { Address.fromString }
-    propertyEircode <- getTyped[String](map, "eircode")
-      .map { Option.apply }
-      .map { _.map { Eircode.fromString } }
+    propertyEircode = getTyped[String](map, "eircode").map {
+      Eircode.fromString
+    }.toOption
     assessorNumber <- getTyped[Long](map, "assessor-number")
       .flatMap { long => Try { AssessorNumber(long.toInt) } }
     assessorCompanyNumber <- getTyped[Long](map, "assessor-company-number")
