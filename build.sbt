@@ -17,9 +17,9 @@ lazy val root = project
 
 lazy val `building-energy-rating` = project
   .settings(
-    githubOwner := "nok-ie",
+    githubOwner := "nokdotie",
     githubRepository := "building-energy-rating",
-    resolvers += Resolver.githubPackages("nok-ie"),
+    resolvers += Resolver.githubPackages("nokdotie"),
     libraryDependencies ++= List(
       "com.google.cloud" % "google-cloud-firestore" % "3.15.2",
       "ie.nok" %% "scala-libraries" % "20231012.185102.393149873",
