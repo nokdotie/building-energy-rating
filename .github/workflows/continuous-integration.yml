@@ -9,6 +9,6 @@ concurrency:
 
 jobs:
   scala:
-    uses: nok-ie/github-workflows/.github/workflows/scala-test.yml@main
+    uses: nokdotie/github-workflows/.github/workflows/scala-test.yml@main
     secrets:
       GH_TOKEN_READ_PACKAGES: ${{ secrets.GH_TOKEN_READ_PACKAGES }}
