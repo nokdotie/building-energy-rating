@@ -1,10 +1,11 @@
 package ie.nok.ber.stores
 
-import ie.nok.ber._
+import ie.nok.ber.*
 import ie.nok.ber.services.ndberseaiie.NdberSeaiIePdfService
-import java.time.{LocalDate, Year}
-import java.util.{Map => JMap}
-import scala.collection.JavaConverters.mapAsJavaMapConverter
+
+import java.time.LocalDate
+import java.util.Map as JMap
+import scala.jdk.CollectionConverters.MapHasAsJava
 import scala.util.Try
 import scala.util.chaining.scalaUtilChainingOps
 
@@ -19,18 +20,18 @@ protected[stores] object GoogleFirestoreCertificateCodec {
 
   def encode(certificate: Certificate): JMap[String, Any] =
     Map(
-      "url" -> certificate.url,
-      "number" -> certificate.number.value.toLong,
-      "rating" -> certificate.rating.toString,
-      "issued-on" -> certificate.issuedOn.toString,
-      "valid-until" -> certificate.validUntil.toString,
-      "address" -> certificate.propertyAddress.value,
-      "eircode" -> certificate.propertyEircode.fold(null)(_.value),
-      "assessor-number" -> certificate.assessorNumber.value.toLong,
-      "assessor-company-number" -> certificate.assessorCompanyNumber.value.toLong,
+      "url"                                          -> certificate.url,
+      "number"                                       -> certificate.number.value.toLong,
+      "rating"                                       -> certificate.rating.toString,
+      "issued-on"                                    -> certificate.issuedOn.toString,
+      "valid-until"                                  -> certificate.validUntil.toString,
+      "address"                                      -> certificate.propertyAddress.value,
+      "eircode"                                      -> certificate.propertyEircode.fold(null)(_.value),
+      "assessor-number"                              -> certificate.assessorNumber.value.toLong,
+      "assessor-company-number"                      -> certificate.assessorCompanyNumber.value.toLong,
       "domestic-energy-assessment-procedure-version" -> certificate.domesticEnergyAssessmentProcedureVersion.toString,
-      "energy-rating" -> certificate.energyRating.value.toString,
-      "carbon-dioxide-emissions-indicator" -> certificate.carbonDioxideEmissionsIndicator.value.toString
+      "energy-rating"                                -> certificate.energyRating.value.toString,
+      "carbon-dioxide-emissions-indicator"           -> certificate.carbonDioxideEmissionsIndicator.value.toString
     ).asJava
 
   def decode(map: JMap[String, Any]): Certificate = (for {
@@ -82,8 +83,7 @@ protected[stores] object GoogleFirestoreCertificateCodec {
     propertyEircode = propertyEircode,
     assessorNumber = assessorNumber,
     assessorCompanyNumber = assessorCompanyNumber,
-    domesticEnergyAssessmentProcedureVersion =
-      domesticEnergyAssessmentProcedureVersion,
+    domesticEnergyAssessmentProcedureVersion = domesticEnergyAssessmentProcedureVersion,
     energyRating = energyRating,
     carbonDioxideEmissionsIndicator = carbonDioxideEmissionsIndicator
   )).get

@@ -2,13 +2,14 @@ package ie.nok.ber.services.ndberseaiie
 
 import ie.nok.ber.{Certificate, CertificateNumber}
 import ie.nok.http.Client.requestBodyAsTempFile
+import zio.Schedule.{fixed, recurs}
+import zio.http.Client
+import zio.http.model.HeaderValues.applicationOctetStream
+import zio.{Scope, ZIO, durationInt}
+
 import java.io.File
 import scala.util.Failure
 import scala.util.chaining.scalaUtilChainingOps
-import zio.{durationInt, Scope, ZIO}
-import zio.Schedule.{recurs, fixed}
-import zio.http.Client
-import zio.http.model.HeaderValues.applicationOctetStream
 
 object NdberSeaiIePdfService {
   def getUrl(certificateNumber: CertificateNumber): String =
@@ -38,7 +39,7 @@ object NdberSeaiIePdfService {
             .tryParse(url, file)
             .recoverWith { throwable =>
               println(
-                s"Failed to parse ${certificateNumber}: ${throwable.getMessage}"
+                s"Failed to parse $certificateNumber: ${throwable.getMessage}"
               )
               throwable.printStackTrace()
 
