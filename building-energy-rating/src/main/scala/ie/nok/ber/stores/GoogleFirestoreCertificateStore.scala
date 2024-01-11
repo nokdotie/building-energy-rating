@@ -1,13 +1,14 @@
 package ie.nok.ber.stores
 
-import com.google.cloud.firestore._
+import com.google.cloud.firestore.*
 import ie.nok.ber.{Certificate, CertificateNumber, Eircode}
 import ie.nok.gcp.firestore.{CollectionPath, DocumentPath, Firestore}
-import scala.collection.JavaConverters.asScalaBufferConverter
-import scala.util.chaining.scalaUtilChainingOps
-import zio.{durationInt, System, ZIO, ZLayer}
-import zio.Schedule.{recurs, fixed}
+import zio.Schedule.{fixed, recurs}
 import zio.stream.ZPipeline
+import zio.{System, ZIO, ZLayer, durationInt}
+
+import scala.jdk.CollectionConverters.CollectionHasAsScala
+import scala.util.chaining.scalaUtilChainingOps
 
 class GoogleFirestoreCertificateStore(
     firestore: Firestore.Service,
@@ -56,8 +57,7 @@ class GoogleFirestoreCertificateStore(
         .retry(recurs(3) && fixed(1.second))
     } yield results.size
 
-  protected[ber] val upsertPipeline
-      : ZPipeline[Any, Throwable, Certificate, Int] =
+  protected[ber] val upsertPipeline: ZPipeline[Any, Throwable, Certificate, Int] =
     ZPipeline
       .groupedWithin[Certificate](100, 10.seconds)
       .mapZIO { chunks =>
@@ -92,10 +92,7 @@ class GoogleFirestoreCertificateStore(
       }
       .retry(recurs(3) && fixed(1.second))
       .map { snapshot =>
-        snapshot
-          .getDocuments()
-          .asScala
-          .toList
+        snapshot.getDocuments.asScala.toList
           .map { _.getData }
           .map { GoogleFirestoreCertificateCodec.decode }
       }

@@ -2,7 +2,7 @@ package ie.nok.ber.stores
 
 import ie.nok.ber.{Certificate, CertificateNumber, Eircode}
 import zio.ZIO
-import zio.stream.{ZStream, ZPipeline}
+import zio.stream.{ZPipeline, ZStream}
 
 trait CertificateStore {
   protected[ber] def upsertBatch(
@@ -25,8 +25,7 @@ object CertificateStore {
   ): ZIO[CertificateStore, Throwable, Int] =
     ZIO.serviceWithZIO[CertificateStore] { _.upsertBatch(certificates) }
 
-  protected[ber] val upsertPipeline
-      : ZPipeline[CertificateStore, Throwable, Certificate, Int] =
+  protected[ber] val upsertPipeline: ZPipeline[CertificateStore, Throwable, Certificate, Int] =
     ZPipeline.serviceWithPipeline[CertificateStore] { _.upsertPipeline }
 
   def getByNumber(

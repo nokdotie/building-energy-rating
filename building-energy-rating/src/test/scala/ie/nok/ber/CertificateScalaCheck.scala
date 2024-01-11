@@ -1,18 +1,19 @@
 package ie.nok.ber
 
-import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.{Arbitrary, Gen}
+
 import java.time.LocalDate
 
 private val genCertificate: Gen[Certificate] = for {
-  url <- arbitrary[String]
-  number <- arbitrary[CertificateNumber]
-  rating <- arbitrary[Rating]
-  issuedOn <- arbitrary[LocalDate]
-  validUntil <- arbitrary[LocalDate]
-  propertyAddress <- arbitrary[Address]
-  propertyEircode <- arbitrary[Option[Eircode]]
-  assessorNumber <- arbitrary[AssessorNumber]
+  url                   <- arbitrary[String]
+  number                <- arbitrary[CertificateNumber]
+  rating                <- arbitrary[Rating]
+  issuedOn              <- arbitrary[LocalDate]
+  validUntil            <- arbitrary[LocalDate]
+  propertyAddress       <- arbitrary[Address]
+  propertyEircode       <- arbitrary[Option[Eircode]]
+  assessorNumber        <- arbitrary[AssessorNumber]
   assessorCompanyNumber <- arbitrary[AssessorCompanyNumber]
   domesticEnergyAssessmentProcedureVersion <- arbitrary[
     DomesticEnergyAssessmentProcedureVersion

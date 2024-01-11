@@ -1,25 +1,26 @@
 package ie.nok.ber.services.ndberseaiie
 
-import ie.nok.ber._
-import java.io.File
-import java.time.LocalDate
-import java.awt.Rectangle
-import java.time.format.DateTimeFormatter
+import ie.nok.ber.*
 import org.apache.pdfbox.Loader
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.text.PDFTextStripperByArea
-import scala.util.{Try, Using}
+
+import java.awt.Rectangle
+import java.io.File
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.util.matching.Regex
+import scala.util.{Try, Using}
 
 private[ndberseaiie] object NdberSeaiIePdfParser {
-  val dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+  private val dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
   def getTextForRegions(document: PDDocument): String = {
     val regions = List(
-      new Rectangle(10, 70, 280, 180), // Information
-      new Rectangle(10, 300, 430, 450), // Building Energy Rating
+      new Rectangle(10, 70, 280, 180),   // Information
+      new Rectangle(10, 300, 430, 450),  // Building Energy Rating
       new Rectangle(490, 300, 100, 410), // Carbon Dioxide
-      new Rectangle(490, 820, 100, 20) // DEAP Version
+      new Rectangle(490, 820, 100, 20)   // DEAP Version
     ).zipWithIndex.map { (region, index) => (index.toString, region) }
 
     val stripper = new PDFTextStripperByArea()
