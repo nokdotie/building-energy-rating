@@ -18,11 +18,10 @@ object DomesticEnergyAssessmentProcedureVersion {
     case "4.0.0" => Success(`4.0.0`)
     case "4.1.0" => Success(`4.1.0`)
     case unknown =>
-      Failure(
-        Exception(
-          s"Unknown domestic energy assessment procedure version: $unknown"
-        )
-      )
+      val message = s"Unknown DomesticEnergyAssessmentProcedureVersion: $unknown"
+      println(message)
+
+      Failure(Exception(message))
   }
 
   given JsonCodec[DomesticEnergyAssessmentProcedureVersion] =

@@ -33,7 +33,11 @@ object Rating {
       case "E2"    => Success(E2)
       case "F"     => Success(F)
       case "G"     => Success(G)
-      case unknown => Failure(Exception(s"Unknown rating: $unknown"))
+      case unknown =>
+        val message = s"Unknown rating: $unknown"
+        println(message)
+
+        Failure(Exception(message))
     }
 
   given JsonCodec[Rating] = DeriveJsonCodec.gen[Rating]
