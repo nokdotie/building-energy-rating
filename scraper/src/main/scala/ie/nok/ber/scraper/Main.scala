@@ -4,11 +4,18 @@ import ie.nok.ber.{Certificate, CertificateNumber}
 import ie.nok.ber.services.ndberseaiie.NdberSeaiIePdfService
 import ie.nok.ber.stores.{CertificateStore, GoogleFirestoreCertificateStore}
 import ie.nok.google.firestore.Firestore
-import zio.{Console, Scope, ZIO, ZIOAppDefault}
+import scala.util.chaining.scalaUtilChainingOps
+import zio.{Console, Scope, ZIO, ZIOApp, ZIOAppArgs, EnvironmentTag}
 import zio.http.{Client, ClientConfig}
-import zio.stream.ZPipeline
+import zio.stream.{ZStream, ZPipeline}
 
-val getCertificates: ZPipeline[
+val certificateNumbersStream: ZStream[ZIOAppArgs, Throwable, CertificateNumber] =
+  ZIOAppArgs.getArgs
+    .map { _.headOption.flatMap { _.toIntOption }.getOrElse(0) }
+    .pipe { ZStream.fromZIO }
+    .flatMap { CertificateNumber.streamAllFrom(_) }
+
+val certificatesPipeline: ZPipeline[
   Client with Scope,
   Throwable,
   CertificateNumber,
@@ -17,33 +24,30 @@ val getCertificates: ZPipeline[
   val concurrency = 10
 
   ZPipeline[CertificateNumber]
-    .mapZIOParUnordered(concurrency) { certificateNumber =>
+    .mapZIOPar(concurrency) { certificateNumber =>
       NdberSeaiIePdfService.getCertificate(certificateNumber)
     }
     .collectSome
 }
 
-val app: ZIO[
-  CertificateStore with Client with Scope,
-  Throwable,
-  Unit
-] =
-  CertificateNumber.streamAllWithRandomStart
-    // CertificateNumber.streamAllFrom(0)
-    .via(getCertificates)
-    .tap { certificate =>
-      Console.printLine(s"Found: ${certificate.number.value}")
-    }
-    .via(CertificateStore.upsertPipeline)
-    .debug("Upserted")
-    .runDrain
+object Main extends ZIOApp {
 
-object Main extends ZIOAppDefault {
-  def run: ZIO[Any, Throwable, Unit] = app.provide(
-    Firestore.live,
-    GoogleFirestoreCertificateStore.layer,
-    Client.fromConfig,
-    ClientConfig.default,
-    Scope.default
-  )
+  override type Environment = Client with GoogleFirestoreCertificateStore
+
+  override val environmentTag = EnvironmentTag[Environment]
+
+  override val bootstrap =
+    ClientConfig.default.andTo(Client.fromConfig) ++
+      Scope.default
+        .andTo(Firestore.live)
+        .andTo(GoogleFirestoreCertificateStore.layer)
+
+  override def run: ZIO[Environment with ZIOAppArgs with Scope, Any, Any] =
+    certificateNumbersStream
+      .via(certificatesPipeline)
+      .tap { c => Console.printLine(s"Found: ${c.number.value}") }
+      .via(CertificateStore.upsertPipeline)
+      .tap { u => Console.printLine(s"Upserted: $u") }
+      .runDrain
+
 }
