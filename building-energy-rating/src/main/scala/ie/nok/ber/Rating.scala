@@ -17,7 +17,7 @@ object Rating {
   import Rating._
 
   def tryFromString(value: String): Try[Rating] =
-    value match {
+    value.trim.toUpperCase match {
       case "A1" => Success(A1)
       case "A2" => Success(A2)
       case "A3" => Success(A3)
