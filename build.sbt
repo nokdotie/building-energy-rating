@@ -1,7 +1,7 @@
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, ZoneOffset}
 
-ThisBuild / scalaVersion := "3.3.1"
+ThisBuild / scalaVersion := "3.3.3"
 ThisBuild / organization := "ie.nok"
 ThisBuild / version := DateTimeFormatter
   .ofPattern("yyyyMMdd.HHmmss.n")
@@ -21,11 +21,11 @@ lazy val `building-energy-rating` = project
     githubRepository := "building-energy-rating",
     resolvers += Resolver.githubPackages("nokdotie"),
     libraryDependencies ++= List(
-      "com.google.cloud"  % "google-cloud-firestore" % "3.15.2",
-      "ie.nok"           %% "scala-libraries"        % "20240307.163559.353124094" % "compile->compile;test->test",
-      "org.apache.pdfbox" % "pdfbox"                 % "3.0.0",
-      "org.scalameta"    %% "munit"                  % "0.7.29"                    % Test,
-      "org.scalameta"    %% "munit-scalacheck"       % "0.7.29"                    % Test
+      "com.google.cloud"  % "google-cloud-firestore" % "3.15.7",
+      "ie.nok"           %% "scala-libraries"        % "20240627.143942.92337699" % "compile->compile;test->test",
+      "org.apache.pdfbox" % "pdfbox"                 % "3.0.3",
+      "org.scalameta"    %% "munit"                  % "1.0.1"                    % Test,
+      "org.scalameta"    %% "munit-scalacheck"       % "1.0.0"                    % Test
     ),
     Test / publishArtifact := true
   )
